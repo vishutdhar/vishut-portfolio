@@ -96,6 +96,11 @@ a:focus-visible {
     outline: none;
 }
 
+/* Remove default focus outline for all elements */
+*:focus {
+    outline: none;
+}
+
 /* Navigation */
 nav {
     position: fixed;
