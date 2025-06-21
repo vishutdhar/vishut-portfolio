@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vishut Dhar - Sr. Supplier Quality Engineer | Quality Excellence & Data Analytics</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Senior Supplier Quality Engineer at General Motors with 6+ years experience. Specialized in data-driven quality management, achieving $15M annual savings through process optimization.">
+    <meta name="keywords" content="Vishut Dhar, Quality Engineer, Supplier Quality, General Motors, IATF 16949, Six Sigma, Quality Management, Automotive Engineering">
+    <meta name="author" content="Vishut Dhar">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Vishut Dhar - Senior Supplier Quality Engineer">
+    <meta property="og:description" content="Experienced Quality Engineer specializing in data-driven solutions and continuous improvement. Achieved $15M annual savings at General Motors.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://vishutdhar.com">
+    <meta property="og:image" content="your-headshot.jpg">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Vishut Dhar - Senior Supplier Quality Engineer">
+    <meta name="twitter:description" content="Quality Engineering Leader | Data Analytics | $15M Annual Savings">
+    <meta name="twitter:image" content="your-headshot.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' fill='%231a237e'>VD</text></svg>">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="styles.css">
+            --accent-color: #ff6f00;
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-light: #f5f7fa;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            scroll-behavior: smooth;
+        }
+
+        /* Skip Link for Accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 0 0 5px 0;
+            z-index: 2000;
+            transition: top 0.3s ease;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Focus Styles for Accessibility */
+        *:focus {
+            outline: 3px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        button:focus,
+        a:focus {
+            outline: 3px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+            background-size: cover;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: var(--white);
+            z-index: 1;
+            padding: 2rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-profile {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            border: 5px solid var(--white);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            animation: profileFloat 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .hero-profile::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .hero-profile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes profileFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero-title {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            justify-content: center;
+            margin-top: 3rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #ff8f00;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 111, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
+
+        .btn-secondary:hover {
+            background: var(--white);
+            color: var(--primary-color);
+        }
+
+        /* Hero Social Links */
+        .hero-social {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .hero-social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            border-radius: 50%;
+            font-size: 1.2rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .hero-social-link:hover {
+            background: var(--white);
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .hero-social-link svg,
+        .social-link svg {
+            width: 100%;
+            height: 100%;
+            max-width: 24px;
+            max-height: 24px;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--accent-color);
+        }
+
+        /* About Section */
+        .about {
+            background: var(--bg-light);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .about-image {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 20px;
+            padding: 1rem;
+            text-align: center;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-photo {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 6px solid var(--white);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .profile-photo:hover {
+            transform: scale(1.05);
+        }
+
+        .about-image::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.3;
+            }
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .skill-tag {
+            background: var(--white);
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .skill-tag:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Experience Section */
+        .experience-timeline {
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .experience-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--secondary-color);
+        }
+
+        .experience-item {
+            position: relative;
+            margin-bottom: 3rem;
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .experience-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .experience-item::before {
+            content: '';
+            position: absolute;
+            left: -3.4rem;
+            top: 2rem;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            border: 4px solid var(--white);
+        }
+
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .experience-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .company-name {
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .experience-date {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .experience-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .experience-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.8rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .experience-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, transparent 0%, rgba(255, 111, 0, 0.2) 50%, transparent 100%);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            color: var(--primary-color);
+            position: relative;
+            padding-left: 1.8rem;
+        }
+
+        .highlight::before {
+            content: '📈';
+            position: absolute;
+            left: 0.3rem;
+            font-size: 1rem;
+        }
+
+        /* Education Section */
+        .education {
+            background: var(--bg-light);
+        }
+
+        .education-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .education-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .education-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .degree-icon {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .degree-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .university-name {
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .degree-year {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Projects Section */
+        .projects {
+            background: var(--white);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .project-card {
+            background: var(--bg-light);
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .project-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .project-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: var(--white);
+            font-size: 2rem;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .project-metrics {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            display: block;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            line-height: 1.2;
+        }
+
+        .metric-label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 0.3rem;
+        }
+
+        .project-description {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .project-highlights {
+            list-style: none;
+        }
+
+        .project-highlights li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+
+        .project-highlights li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* Contact Section */
+        .contact-content {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .contact-item i {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            color: var(--white);
+            border-radius: 50%;
+            font-size: 1.5rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--accent-color);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 111, 0, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-color);
+            color: var(--white);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        /* Mobile Menu Styles */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            position: relative;
+            width: 35px;
+            height: 35px;
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            position: absolute;
+            height: 3px;
+            width: 100%;
+            background: var(--primary-color);
+            border-radius: 3px;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-toggle span:nth-child(1) {
+            top: 8px;
+        }
+
+        .mobile-menu-toggle span:nth-child(2) {
+            top: 16px;
+        }
+
+        .mobile-menu-toggle span:nth-child(3) {
+            top: 24px;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            top: 16px;
+            transform: rotate(135deg);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+            left: -60px;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            top: 16px;
+            transform: rotate(-135deg);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(255, 255, 255, 0.98);
+                flex-direction: column;
+                padding: 2rem;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                animation: slideDown 0.3s ease;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 1rem 0;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links a:last-child {
+                border-bottom: none;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-profile {
+                width: 150px;
+                height: 150px;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .profile-photo {
+                width: 200px;
+                height: 200px;
+            }
+
+            .experience-timeline {
+                padding-left: 2rem;
+            }
+
+            .experience-header {
+                flex-direction: column;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <!-- Skip to Content Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Navigation -->
+    <nav role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <div class="nav-logo" aria-label="Vishut Dhar Logo">VD</div>
+            <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links" role="list">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#education">Education</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main id="main-content">
+    <section id="home" class="hero" role="banner">
+        <div class="hero-content">
+            <!-- Hero Profile Picture - Replace 'your-headshot.jpg' with your actual image -->
+            <div class="hero-profile">
+                <img src="your-headshot.jpg" alt="Vishut Dhar" loading="lazy">
+            </div>
+            <h1>Vishut Dhar</h1>
+            <p class="hero-title">Senior Supplier Quality Engineer</p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">6+</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">$15M</div>
+                    <div class="stat-label">Annual Savings</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">0.5%</div>
+                    <div class="stat-label">Scrap Rate Achievement</div>
+                </div>
+            </div>
+            <div class="cta-buttons">
+                <a href="#contact" class="btn btn-primary">Get In Touch</a>
+                <a href="#experience" class="btn btn-secondary">View Experience</a>
+                <a href="vishut-dhar-resume.pdf" download class="btn btn-secondary">
+                    <i class="fas fa-download" style="margin-right: 0.5rem;"></i>Download Resume
+                </a>
+            </div>
+            <div class="hero-social">
+                <a href="https://www.linkedin.com/in/vishutdhar/" target="_blank" class="hero-social-link" title="LinkedIn">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                    </svg>
+                </a>
+                <a href="https://github.com/vishutdhar" target="_blank" class="hero-social-link" title="GitHub">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <h2 class="section-title">About Me</h2>
+        <div class="about-content">
+            <!-- Replace 'your-headshot.jpg' with the actual path to your headshot image -->
+            <div class="about-image">
+                <img src="your-headshot.jpg" alt="Vishut Dhar - Senior Supplier Quality Engineer" class="profile-photo" loading="lazy">
+            </div>
+            <div class="about-text">
+                <h3 style="color: var(--secondary-color); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1.5rem;">📊</span> Data-Driven Quality Excellence
+                </h3>
+                <p>As a Senior Supplier Quality Engineer at General Motors and US citizen, I bring over 6 years of experience in automotive quality management driven by data analytics and measurable outcomes. My expertise centers on leveraging statistical analysis and data visualization to transform quality metrics into actionable insights that drive operational excellence.</p>
+                <p>I specialize in data-driven decision making, using advanced analytics to identify trends, predict failures, and optimize production processes. My systematic approach to quality improvement combines rigorous data analysis with practical implementation, consistently delivering quantifiable results. By turning complex datasets into clear strategic actions, I've achieved remarkable outcomes including a reduction in scrap rate from 5% to 0.5%, validated through comprehensive data tracking and analysis.</p>
+                <div class="skills-section">
+                    <h4 style="color: var(--primary-color); margin-bottom: 1rem; margin-top: 2rem;">Core Competencies</h4>
+                    <div class="skills-grid">
+                        <div class="skill-tag">Quality Management</div>
+                        <div class="skill-tag">IATF 16949</div>
+                        <div class="skill-tag">Root Cause Analysis</div>
+                        <div class="skill-tag">Statistical Analysis</div>
+                        <div class="skill-tag">Six Sigma</div>
+                        <div class="skill-tag">Data Visualization</div>
+                        <div class="skill-tag">Continuous Improvement</div>
+                        <div class="skill-tag">KPI Development</div>
+                    </div>
+                    
+                    <h4 style="color: var(--primary-color); margin-bottom: 1rem; margin-top: 2rem;">Technical Tools & Software</h4>
+                    <div class="skills-grid">
+                        <div class="skill-tag">Minitab</div>
+                        <div class="skill-tag">Power BI</div>
+                        <div class="skill-tag">Excel (Advanced)</div>
+                        <div class="skill-tag">SAP</div>
+                        <div class="skill-tag">APQP</div>
+                        <div class="skill-tag">PPAP</div>
+                        <div class="skill-tag">FMEA</div>
+                        <div class="skill-tag">SPC</div>
+                    </div>
+                    
+                    <h4 style="color: var(--primary-color); margin-bottom: 1rem; margin-top: 2rem;">Methodologies & Standards</h4>
+                    <div class="skills-grid">
+                        <div class="skill-tag">ISO 9001:2015</div>
+                        <div class="skill-tag">8D Problem Solving</div>
+                        <div class="skill-tag">5 Why Analysis</div>
+                        <div class="skill-tag">Kaizen</div>
+                        <div class="skill-tag">Lean Manufacturing</div>
+                        <div class="skill-tag">GMS (Global Manufacturing System)</div>
+                        <div class="skill-tag">DMAIC</div>
+                        <div class="skill-tag">Control Plans</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience">
+        <h2 class="section-title">Professional Experience</h2>
+        <div class="experience-timeline">
+            <div class="experience-item">
+                <div class="experience-header">
+                    <div>
+                        <h3 class="experience-title">Sr. Supplier Quality Engineer</h3>
+                        <p class="company-name">General Motors - Spring Hill, TN</p>
+                    </div>
+                    <span class="experience-date">June 2024 - Present</span>
+                </div>
+                <ul class="experience-list">
+                    <li>Primary point of contact for all supplier quality issues, leading investigations and rapid containment actions</li>
+                    <li>Managed Supplier Corrective Action Requests (SCARs) ensuring thorough root cause analysis</li>
+                    <li>Championed continuous improvement initiatives to enhance part quality and reduce costs</li>
+                    <li>Developed standardized work procedures to minimize scrap generation</li>
+                    <li><span class="highlight">Reduced scrap rate to 0.5% from 5% leading to annual savings of $15 million</span></li>
+                </ul>
+            </div>
+
+            <div class="experience-item">
+                <div class="experience-header">
+                    <div>
+                        <h3 class="experience-title">Quality Engineer</h3>
+                        <p class="company-name">General Motors - Spring Hill, TN</p>
+                    </div>
+                    <span class="experience-date">February 2023 - June 2024</span>
+                </div>
+                <ul class="experience-list">
+                    <li>Managed Quality Operations at cutting-edge Battery Cell, Module and Pack facility</li>
+                    <li>Led regional GMS activities and maintained strong cross-functional relationships</li>
+                    <li>Developed new products, processes, and operational plans supporting business strategies</li>
+                    <li>Played crucial role in launching new products ensuring quality standards</li>
+                    <li>Collaborated with cross-functional teams for successful product launches</li>
+                    <li><span class="highlight">Launched module and pack assembly from start to finish, brought assembly plant up to rate and met all manufacturing targets</span></li>
+                </ul>
+            </div>
+
+            <div class="experience-item">
+                <div class="experience-header">
+                    <div>
+                        <h3 class="experience-title">Quality Engineer - APQP</h3>
+                        <p class="company-name">Continental AG - Culpeper, VA</p>
+                    </div>
+                    <span class="experience-date">May 2021 - February 2023</span>
+                </div>
+                <ul class="experience-list">
+                    <li>Supervised APQP technicians and managed timely PPAP submissions</li>
+                    <li>Coordinated problem-solving activities to reduce scrap and customer complaints</li>
+                    <li>Conducted monthly internal audits and led external audits with no major findings</li>
+                    <li>Drafted and maintained Quality Assurance documentation (PFMEA, Control Plans, Work Instructions)</li>
+                    <li><span class="highlight">IATF 16949: ISO 9001 Certified Lead Auditor</span></li>
+                </ul>
+            </div>
+
+            <div class="experience-item">
+                <div class="experience-header">
+                    <div>
+                        <h3 class="experience-title">Quality Engineer</h3>
+                        <p class="company-name">Continental AG - Auburn Hills, MI</p>
+                    </div>
+                    <span class="experience-date">February 2018 - January 2019</span>
+                </div>
+                <ul class="experience-list">
+                    <li>Supported quality initiatives through part return analysis and root cause analysis</li>
+                    <li>Participated in validation programs including DV and PV testing</li>
+                    <li>Identified strategies for mitigating pump failures and reducing part replacements</li>
+                    <li><span class="highlight">Achieved 20% decrease in turnaround time for client responses</span></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <h2 class="section-title">Key Projects & Achievements</h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="project-title">Scrap Reduction Initiative</h3>
+                <div class="project-metrics">
+                    <div class="metric">
+                        <span class="metric-value">$15M</span>
+                        <span class="metric-label">Annual Savings</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">90%</span>
+                        <span class="metric-label">Reduction</span>
+                    </div>
+                </div>
+                <p class="project-description">Led comprehensive scrap reduction program at General Motors, implementing data-driven methodologies and standardized work procedures.</p>
+                <ul class="project-highlights">
+                    <li>Reduced scrap rate from 5% to 0.5%</li>
+                    <li>Implemented real-time monitoring systems</li>
+                    <li>Developed predictive analytics models</li>
+                </ul>
+            </div>
+
+            <div class="project-card">
+                <div class="project-icon">
+                    <i class="fas fa-battery-full"></i>
+                </div>
+                <h3 class="project-title">EV Battery Plant Launch</h3>
+                <div class="project-metrics">
+                    <div class="metric">
+                        <span class="metric-value">100%</span>
+                        <span class="metric-label">On-Time</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">0</span>
+                        <span class="metric-label">Major Defects</span>
+                    </div>
+                </div>
+                <p class="project-description">Successfully launched battery module and pack assembly operations from start to finish, ensuring all quality standards were met.</p>
+                <ul class="project-highlights">
+                    <li>Brought assembly plant up to full production rate</li>
+                    <li>Met all manufacturing targets</li>
+                    <li>Established quality control processes</li>
+                </ul>
+            </div>
+
+            <div class="project-card">
+                <div class="project-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="project-title">IATF 16949 Certification</h3>
+                <div class="project-metrics">
+                    <div class="metric">
+                        <span class="metric-value">0</span>
+                        <span class="metric-label">Major Findings</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">100%</span>
+                        <span class="metric-label">Compliance</span>
+                    </div>
+                </div>
+                <p class="project-description">Led external audits as IATF 16949: ISO 9001 Certified Lead Auditor, ensuring complete compliance with international standards.</p>
+                <ul class="project-highlights">
+                    <li>Conducted monthly internal audits</li>
+                    <li>Developed comprehensive documentation</li>
+                    <li>Trained cross-functional teams</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" class="education">
+        <h2 class="section-title">Education</h2>
+        <div class="education-grid">
+            <div class="education-card">
+                <i class="fas fa-graduation-cap degree-icon"></i>
+                <h3 class="degree-title">Master of Science</h3>
+                <p class="university-name">Lawrence Technological University</p>
+                <p>Automotive Engineering</p>
+                <p class="degree-year">2017 - 2019</p>
+            </div>
+            <div class="education-card">
+                <i class="fas fa-university degree-icon"></i>
+                <h3 class="degree-title">Bachelor of Science</h3>
+                <p class="university-name">Chandigarh Engineering College</p>
+                <p>Mechanical Engineering</p>
+                <p class="degree-year">2011 - 2015</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2 class="section-title">Get In Touch</h2>
+        <div class="contact-content">
+            <p>I'm passionate about collaborating on data-driven quality initiatives, exploring how analytics and metrics can transform manufacturing processes and deliver measurable improvements.</p>
+            <div class="contact-info">
+                <a href="tel:248-252-4831" class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <span>(248) 252-4831</span>
+                </a>
+                <a href="mailto:vishutdhar1993@gmail.com" class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>vishutdhar1993@gmail.com</span>
+                </a>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Spring Hill, TN</span>
+                </div>
+            </div>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/vishutdhar/" target="_blank" class="social-link" title="LinkedIn">
+                    <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                    </svg>
+                </a>
+                <a href="https://github.com/vishutdhar" target="_blank" class="social-link" title="GitHub">
+                    <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Vishut Dhar. All rights reserved.</p>
+    </footer>
+    </main>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+
+        mobileMenuToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            navLinks.classList.toggle('active');
+            
+            // Update aria-expanded for accessibility
+            const isExpanded = this.classList.contains('active');
+            this.setAttribute('aria-expanded', isExpanded);
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function() {
+                mobileMenuToggle.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Add scroll effect to navigation
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            } else {
+                nav.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            }
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'all 0.6s ease-out';
+            observer.observe(section);
+        });
+
+        // Animate statistics numbers
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                
+                if (element.dataset.isPercentage) {
+                    element.textContent = (progress * (end - start) + start).toFixed(1) + '%';
+                } else if (element.dataset.isMoney) {
+                    element.textContent = '$' + Math.floor(progress * (end - start) + start) + 'M';
+                } else {
+                    element.textContent = Math.floor(progress * (end - start) + start) + '+';
+                }
+                
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Create observer for stats
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.dataset.animated) {
+                    entry.target.dataset.animated = 'true';
+                    const statNumbers = entry.target.querySelectorAll('.stat-number');
+                    statNumbers.forEach(stat => {
+                        const text = stat.textContent;
+                        if (text.includes('$')) {
+                            stat.dataset.isMoney = 'true';
+                            animateValue(stat, 0, 15, 2000);
+                        } else if (text.includes('%')) {
+                            stat.dataset.isPercentage = 'true';
+                            animateValue(stat, 5, 0.5, 2000);
+                        } else {
+                            animateValue(stat, 0, 6, 1500);
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+
+        // Observe hero stats
+        const heroStats = document.querySelector('.hero-stats');
+        if (heroStats) {
+            statsObserver.observe(heroStats);
+        }
+
+        // Animate project metrics
+        const projectCards = document.querySelectorAll('.project-card');
+        projectCards.forEach(card => {
+            statsObserver.observe(card);
+        });
+    </script>
+</body>
+</html>
