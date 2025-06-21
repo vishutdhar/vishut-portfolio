@@ -80,15 +80,20 @@ body {
 }
 
 /* Focus Styles for Accessibility */
-*:focus {
+*:focus-visible {
     outline: 3px solid var(--accent-color);
     outline-offset: 2px;
 }
 
-button:focus,
-a:focus {
+button:focus-visible,
+a:focus-visible {
     outline: 3px solid var(--accent-color);
     outline-offset: 2px;
+}
+
+/* Remove outline for mouse clicks */
+*:focus:not(:focus-visible) {
+    outline: none;
 }
 
 /* Navigation */
