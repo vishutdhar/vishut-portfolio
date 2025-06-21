@@ -122,7 +122,7 @@ nav {
 .theme-toggle-float {
     position: fixed;
     bottom: 2rem;
-    right: 2rem;
+    left: 2rem;
     background: var(--bg-light);
     border: 1px solid var(--border-color);
     color: var(--text-dark);
