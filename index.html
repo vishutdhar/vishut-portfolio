@@ -29,6 +29,11 @@
     <!-- External CSS -->
     <link rel="stylesheet" href="styles.css">
     
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
@@ -377,6 +382,11 @@
     </footer>
     </main>
 
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
     <script>
         // Dark Mode Toggle
         const themeToggle = document.getElementById('themeToggle');
@@ -439,7 +449,10 @@
             });
         });
 
-        // Add scroll effect to navigation and progress indicator
+        // Back to Top Button
+        const backToTopButton = document.getElementById('backToTop');
+
+        // Add scroll effect to navigation, progress indicator, and back to top button
         window.addEventListener('scroll', function() {
             const nav = document.querySelector('nav');
             if (window.scrollY > 50) {
@@ -447,35 +460,80 @@
             } else {
                 nav.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
             }
-            
+
             // Update scroll progress
             const scrollProgress = document.getElementById('scrollProgress');
             const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
             const scrolled = (window.scrollY / scrollHeight) * 100;
             scrollProgress.style.width = scrolled + '%';
-        });
 
-        // Animate elements on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
+            // Show/hide back to top button
+            if (window.scrollY > 500) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
 
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+            // Active navigation highlighting
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-links a');
+
+            let currentSection = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 150;
+                const sectionHeight = section.offsetHeight;
+                if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                    currentSection = section.getAttribute('id');
                 }
             });
-        }, observerOptions);
 
-        // Observe all sections
-        document.querySelectorAll('section').forEach(section => {
-            section.style.opacity = '0';
-            section.style.transform = 'translateY(20px)';
-            section.style.transition = 'all 0.6s ease-out';
-            observer.observe(section);
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + currentSection) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Back to top button click handler
+        backToTopButton.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Scroll Reveal Animation
+        const revealObserverOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const revealObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, revealObserverOptions);
+
+        // Add reveal class to sections and observe them
+        document.querySelectorAll('section:not(#home)').forEach((section, index) => {
+            section.classList.add('reveal');
+            revealObserver.observe(section);
+        });
+
+        // Add stagger animation to grids
+        document.querySelectorAll('.projects-grid, .education-grid, .testimonials-grid, .skills-grid').forEach(grid => {
+            grid.classList.add('stagger-children');
+            revealObserver.observe(grid);
+        });
+
+        // Add reveal to experience items
+        document.querySelectorAll('.experience-item').forEach((item, index) => {
+            item.classList.add('reveal');
+            item.style.transitionDelay = (index * 0.15) + 's';
+            revealObserver.observe(item);
         });
 
         // Animate statistics numbers
