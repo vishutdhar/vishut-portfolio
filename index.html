@@ -349,13 +349,13 @@
         <div class="contact-content">
             <p>I'm passionate about collaborating on data-driven quality initiatives, exploring how analytics and metrics can transform manufacturing processes and deliver measurable improvements.</p>
             <div class="contact-info">
-                <a href="tel:248-252-4831" class="contact-item">
+                <a href="#" class="contact-item" id="phone-link">
                     <i class="fas fa-phone"></i>
-                    <span>(248) 252-4831</span>
+                    <span id="phone-text"></span>
                 </a>
-                <a href="mailto:vishutdhar1993@gmail.com" class="contact-item">
+                <a href="#" class="contact-item" id="email-link">
                     <i class="fas fa-envelope"></i>
-                    <span>vishutdhar1993@gmail.com</span>
+                    <span id="email-text"></span>
                 </a>
                 <div class="contact-item">
                     <i class="fas fa-map-marker-alt"></i>
@@ -389,6 +389,26 @@
     </button>
 
     <script>
+        // Contact info obfuscation - prevents bots from scraping
+        (function() {
+            var p = [50,52,56,45,50,53,50,45,52,56,51,49];
+            var e = [118,105,115,104,117,116,100,104,97,114,49,57,57,51,64,103,109,97,105,108,46,99,111,109];
+            var phone = String.fromCharCode.apply(null, p);
+            var email = String.fromCharCode.apply(null, e);
+            var pl = document.getElementById('phone-link');
+            var pt = document.getElementById('phone-text');
+            var el = document.getElementById('email-link');
+            var et = document.getElementById('email-text');
+            if (pl && pt) {
+                pl.href = 'tel:' + phone;
+                pt.textContent = '(' + phone.substring(0,3) + ') ' + phone.substring(4);
+            }
+            if (el && et) {
+                el.href = 'mailto:' + email;
+                et.textContent = email;
+            }
+        })();
+
         // Dark Mode Toggle
         const themeToggle = document.getElementById('themeToggle');
         const darkIcon = document.getElementById('darkIcon');
