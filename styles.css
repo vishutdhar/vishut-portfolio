@@ -128,38 +128,44 @@ nav {
     color: var(--primary-color);
 }
 
-/* Floating Theme Toggle */
-.theme-toggle-float {
-    position: fixed;
-    bottom: 2rem;
-    left: 2rem;
-    background: var(--bg-light);
+/* Nav Actions (theme toggle + mobile menu) */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Theme Toggle in Navbar */
+.theme-toggle {
+    background: transparent;
     border: 1px solid var(--border-color);
     color: var(--text-dark);
     cursor: pointer;
-    font-size: 1rem;
-    padding: 0.75rem;
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 10px var(--shadow-color);
-    z-index: 100;
-    opacity: 0.8;
 }
 
-.theme-toggle-float:hover {
-    opacity: 1;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px var(--shadow-color);
+.theme-toggle:hover {
+    background: var(--bg-light);
+    color: var(--accent-color);
+    border-color: var(--accent-color);
 }
 
-[data-theme="dark"] .theme-toggle-float {
-    background: var(--card-bg);
+[data-theme="dark"] .theme-toggle {
     border-color: var(--border-color);
+    color: var(--text-dark);
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+    background: var(--card-bg);
+    color: var(--accent-color);
 }
 
 .nav-links {
@@ -563,8 +569,8 @@ section {
 /* Scroll Reveal Animations */
 .reveal {
     opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(24px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
 
 .reveal.active {
@@ -574,8 +580,8 @@ section {
 
 .reveal-left {
     opacity: 0;
-    transform: translateX(-50px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-30px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
 
 .reveal-left.active {
@@ -585,8 +591,8 @@ section {
 
 .reveal-right {
     opacity: 0;
-    transform: translateX(50px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(30px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
 
 .reveal-right.active {
@@ -597,8 +603,8 @@ section {
 /* Staggered children animation */
 .stagger-children > * {
     opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(16px);
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
 }
 
 .stagger-children.active > *:nth-child(1) { transition-delay: 0.1s; }
@@ -1469,7 +1475,7 @@ footer {
     .skip-link,
     .hero-social,
     .social-links,
-    .theme-toggle-float,
+    .theme-toggle,
     .mobile-menu-toggle {
         display: none !important;
     }
