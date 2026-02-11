@@ -2,92 +2,60 @@
 
 A professional portfolio website showcasing my experience as a Senior Supplier Quality Engineer with expertise in data-driven quality management and continuous improvement.
 
-## 🌐 Live Demo
+**Live:** [https://vishutdhar.com](https://vishutdhar.com)
 
-Visit my portfolio at: [https://vishutdhar.github.io/vishut-portfolio/](https://vishutdhar.github.io/vishut-portfolio/)
-
-## 🚀 Features
-
-- **Responsive Design** - Optimized for all devices (desktop, tablet, mobile)
-- **Dark Mode** - Toggle between light and dark themes
-- **Smooth Animations** - Subtle animations for enhanced user experience
-- **Performance Optimized** - Fast loading with external CSS
-- **Accessibility** - WCAG compliant with proper ARIA labels
-- **Print Ready** - Clean print stylesheet for offline sharing
-
-## 💼 Sections
-
-- **Hero** - Introduction with key metrics and achievements
-- **About** - Professional summary and key skills
-- **Experience** - Detailed work history with accomplishments
-- **Projects** - Showcase of major achievements including $15M cost savings
-- **Education** - Academic background
-- **Testimonials** - Professional recommendations
-- **Contact** - Easy ways to get in touch
-
-## 🛠️ Technologies Used
+## Technology Stack
 
 - HTML5
-- CSS3 (with CSS Variables for theming)
+- CSS3 (CSS Variables for light/dark theming)
 - Vanilla JavaScript
-- Font Awesome Icons
 - Google Fonts
+- Vercel (hosting with automatic deployments)
 
-## 📊 Key Achievements Highlighted
+## Features
 
-- 📈 Reduced scrap rate from 5% to 0.5%
-- 💰 $15M annual savings through process optimization
-- 🏭 Successfully launched EV battery plant operations
-- ✅ Zero major findings in IATF audits
+- **Responsive Design** - Optimized for desktop, tablet, and mobile
+- **Dark/Light Mode** - Theme toggle with system preference detection
+- **Smooth Animations** - Scroll-triggered reveals and hover states
+- **Accessibility** - WCAG compliant with ARIA labels, skip-to-content link, keyboard navigation
+- **Print Stylesheet** - Clean output for offline sharing
+- **SEO** - robots.txt, sitemap.xml, semantic HTML
 
-## 🎨 Color Scheme
+## Sections
 
-- Primary: `#1a237e` (Deep Blue)
-- Secondary: `#3f51b5` (Medium Blue)
-- Accent: `#ff6f00` (Orange)
-- Light Background: `#f5f7fa`
-- Dark Theme: Automatic color adjustments
+- **Hero** - Introduction with key metrics
+- **About** - Professional summary and skills
+- **Experience** - Work history with accomplishments
+- **Projects** - Major achievements including $15M cost savings
+- **Education** - Academic background
+- **Testimonials** - Professional recommendations
+- **Contact** - Email, LinkedIn, phone
 
-## 📱 Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-- Mobile browsers
-
-## 🚀 Local Development
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/vishutdhar/vishut-portfolio.git
-   ```
-
-2. Open `index.html` in your browser or use a local server:
-   ```bash
-   python3 -m http.server 8000
-   ```
-
-## 📄 Files Structure
+## Project Structure
 
 ```
 vishut-portfolio/
-├── index.html          # Main HTML file
-├── styles.css          # All styling
-├── your-headshot.jpg   # Profile photo
-└── README.md          # This file
+├── index.html              # Main website
+├── styles.css              # All styling (light/dark themes)
+├── vishut-dhar-headshot.jpg # Profile photo
+├── robots.txt              # Search engine directives
+├── sitemap.xml             # Page index
+└── README.md               # This file
 ```
 
-## 📧 Contact
+## Deployment
 
-- **Email**: vishutdhar1993@gmail.com
-- **LinkedIn**: [linkedin.com/in/vishutdhar](https://www.linkedin.com/in/vishutdhar/)
-- **Phone**: (248) 252-4831
+Auto-deploys from `main` branch on GitHub to Vercel. Live at vishutdhar.com within ~1 minute of push.
 
-## 📜 License
+### Local Development
+1. Clone the repository
+2. Open `index.html` in a browser or use Live Server in VS Code
 
-© 2025 Vishut Dhar. All rights reserved.
+## Contact
 
----
+- **Email:** vishutdhar1993@gmail.com
+- **LinkedIn:** [linkedin.com/in/vishutdhar](https://www.linkedin.com/in/vishutdhar/)
 
-*Built with focus on simplicity, performance, and professional presentation.*
+## License
+
+(c) 2026 Vishut Dhar. All rights reserved.
