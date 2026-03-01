@@ -126,7 +126,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <main id="main-content">
+    <main id="main-content" tabindex="-1">
     <section id="home" class="hero" role="banner">
         <div class="hero-grid">
             <div class="hero-text">
@@ -166,7 +166,7 @@
                 </div>
             </div>
             <div class="hero-profile">
-                <img src="vishut-dhar-headshot.jpg" alt="Vishut Dhar" loading="eager">
+                <img src="vishut-dhar-headshot.jpg" alt="Vishut Dhar" width="800" height="785" loading="eager">
             </div>
         </div>
     </section>
@@ -177,7 +177,7 @@
         <div class="about-content">
             <!-- About Section Profile Photo -->
             <div class="about-image">
-                <img src="vishut-dhar-headshot.jpg" alt="Vishut Dhar - Senior Supplier Quality Engineer" class="profile-photo" loading="lazy">
+                <img src="vishut-dhar-headshot.jpg" alt="Vishut Dhar - Senior Supplier Quality Engineer" class="profile-photo" width="800" height="785" loading="lazy">
             </div>
             <div class="about-text">
                 <h3 class="about-heading">Data-Driven Quality Excellence</h3>
@@ -445,6 +445,9 @@
                     <i class="fas fa-map-marker-alt"></i>
                     <span>Spring Hill, TN</span>
                 </div>
+                <noscript>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Please enable JavaScript to view contact information.</p>
+                </noscript>
             </div>
             <div class="social-links">
                 <a href="https://www.linkedin.com/in/vishutdhar/" target="_blank" rel="noopener noreferrer" class="social-link" title="LinkedIn">
@@ -500,16 +503,17 @@
         const html = document.documentElement;
         
         // Check for saved theme preference or default to light mode
-        const currentTheme = localStorage.getItem('theme') || 'light';
+        var currentTheme = 'light';
+        try { currentTheme = localStorage.getItem('theme') || 'light'; } catch (e) {}
         html.setAttribute('data-theme', currentTheme);
         updateThemeIcon(currentTheme);
-        
+
         // Toggle theme
         themeToggle.addEventListener('click', () => {
             const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-            
+
             html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
+            try { localStorage.setItem('theme', newTheme); } catch (e) {}
             updateThemeIcon(newTheme);
         });
         
@@ -527,9 +531,11 @@
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                var target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                    target.focus({ preventScroll: true });
+                }
             });
         });
 
@@ -668,6 +674,7 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting && !entry.target.dataset.animated) {
                     entry.target.dataset.animated = 'true';
+                    // Hero stat numbers
                     const statNumbers = entry.target.querySelectorAll('.stat-number');
                     statNumbers.forEach(stat => {
                         const text = stat.textContent;
@@ -679,6 +686,32 @@
                             animateValue(stat, 5, 0.5, 800);
                         } else {
                             animateValue(stat, 0, 6, 600);
+                        }
+                    });
+                    // Project metric values
+                    var metricValues = entry.target.querySelectorAll('.metric-value');
+                    metricValues.forEach(function(metric) {
+                        var text = metric.textContent.trim();
+                        var end, fmt;
+                        if (text.includes('$')) {
+                            end = parseInt(text.replace(/[^0-9]/g, ''));
+                            fmt = function(v) { return '$' + Math.floor(v) + 'M'; };
+                        } else if (text.includes('%')) {
+                            end = parseInt(text.replace(/[^0-9]/g, ''));
+                            fmt = function(v) { return Math.floor(v) + '%'; };
+                        } else {
+                            end = parseInt(text) || 0;
+                            fmt = function(v) { return '' + Math.floor(v); };
+                        }
+                        if (end > 0) {
+                            var startTime = null;
+                            function step(ts) {
+                                if (!startTime) startTime = ts;
+                                var p = Math.min((ts - startTime) / 800, 1);
+                                metric.textContent = fmt(p * end);
+                                if (p < 1) requestAnimationFrame(step);
+                            }
+                            requestAnimationFrame(step);
                         }
                     });
                 }
