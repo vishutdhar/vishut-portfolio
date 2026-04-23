@@ -386,8 +386,8 @@ nav {
     border-color: #f0f6fc;
 }
 
-.hero-social-link svg,
-.social-link svg {
+.hero-social-link:not(.brand-linkedin):not(.brand-github) svg,
+.social-link:not(.brand-linkedin):not(.brand-github) svg {
     width: 100%;
     height: 100%;
     max-width: 20px;
