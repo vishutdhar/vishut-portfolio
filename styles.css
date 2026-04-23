@@ -346,6 +346,46 @@ nav {
     border-color: var(--accent);
 }
 
+.brand-linkedin {
+    padding: 0;
+    border-color: transparent;
+}
+
+.brand-linkedin svg {
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.brand-linkedin:hover {
+    border-color: #0A66C2;
+}
+
+.brand-github {
+    padding: 0;
+    border-color: transparent;
+}
+
+.brand-github svg {
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.brand-github:hover {
+    border-color: #181717;
+}
+
+[data-theme="dark"] .brand-github:hover {
+    border-color: #f0f6fc;
+}
+
 .hero-social-link svg,
 .social-link svg {
     width: 100%;
@@ -538,14 +578,22 @@ section {
 .skill-tag {
     padding: 0.5rem 0.75rem;
     border-left: 2px solid var(--accent);
+    border-right: 1px solid transparent;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    border-radius: 0 4px 4px 0;
     font-size: 0.9rem;
     color: var(--text-primary);
     font-weight: 500;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 .skill-tag:hover {
     background: rgba(196, 93, 62, 0.06);
+    border-right-color: var(--accent);
+    border-top-color: var(--accent);
+    border-bottom-color: var(--accent);
+    transform: translateY(-2px);
 }
 
 [data-theme="dark"] .skill-tag:hover {
@@ -603,6 +651,7 @@ section {
     align-items: flex-start;
     margin-bottom: 1rem;
     flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .experience-title {
@@ -662,6 +711,91 @@ section {
 /* Remove the emoji from highlight */
 .highlight::before {
     display: none;
+}
+
+/* ============================================
+   APPS / BUILDER SIDE SECTION
+   ============================================ */
+.apps {
+    padding: 6rem 2rem;
+    max-width: 100%;
+}
+
+.apps .section-title {
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.apps-intro {
+    max-width: 1100px;
+    margin: 0 auto 3rem auto;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    text-align: center;
+}
+
+.apps-category {
+    max-width: 1100px;
+    margin: 0 auto 3rem auto;
+}
+
+.apps-category:last-child {
+    margin-bottom: 0;
+}
+
+.apps-category-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    padding-left: 0.75rem;
+    border-left: 3px solid var(--accent);
+}
+
+.app-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.app-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    margin-bottom: 1rem;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.app-icon-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.company-logo {
+    height: 36px;
+    width: auto;
+    max-width: 140px;
+    object-fit: contain;
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+}
+
+[data-theme="dark"] .company-logo {
+    filter: brightness(0) invert(1);
+}
+
+.experience-heading {
+    flex: 1;
+    min-width: 0;
 }
 
 /* ============================================
@@ -1324,4 +1458,207 @@ footer {
     .testimonials {
         background: #fff !important;
     }
+}
+
+/* ============================================
+   POLISH PASS — borrowed from nateherk.com
+   (1) Card hover physics with cubic-bezier
+   (2) Subtle 1px grid background
+   (4) Animated conic-gradient ring on headshot
+   ============================================ */
+
+/* (1) Card hover physics — applies to project cards, app cards, experience items, testimonials */
+.project-card,
+.experience-item,
+.testimonial-card {
+    transition: transform .35s cubic-bezier(.2,.7,.2,1),
+                box-shadow .35s cubic-bezier(.2,.7,.2,1),
+                border-color .25s ease;
+    will-change: transform;
+}
+
+.project-card:hover,
+.app-card:hover,
+.testimonial-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.08);
+    border-color: var(--accent);
+}
+
+.experience-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .project-card:hover,
+[data-theme="dark"] .app-card:hover,
+[data-theme="dark"] .testimonial-card:hover,
+[data-theme="dark"] .experience-item:hover {
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.4);
+}
+
+/* (2) Subtle 1px grid background — uses accent at very low opacity */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(196, 93, 62, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(196, 93, 62, 0.045) 1px, transparent 1px);
+    background-size: 56px 56px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+[data-theme="dark"] body::before {
+    background-image:
+        linear-gradient(rgba(196, 93, 62, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(196, 93, 62, 0.07) 1px, transparent 1px);
+}
+
+/* Keep section content above the grid layer */
+nav,
+main,
+footer {
+    position: relative;
+    z-index: 1;
+}
+
+/* (4) Animated conic-gradient ring around headshot */
+@property --ang {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@keyframes spin-ang {
+    to { --ang: 360deg; }
+}
+
+.hero-profile {
+    position: relative;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 3px;
+    border-radius: 16px;
+    background: conic-gradient(
+        from var(--ang, 0deg),
+        var(--accent) 0deg,
+        var(--accent) 25deg,
+        transparent 110deg,
+        transparent 250deg,
+        var(--accent) 335deg,
+        var(--accent) 360deg
+    );
+    animation: spin-ang 7s linear infinite;
+}
+
+.hero-profile img {
+    border: none;
+    display: block;
+    background: var(--bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-profile {
+        animation: none;
+    }
+}
+
+/* ============================================
+   (D) SECTION DIVIDER — animated pulse line
+   ============================================ */
+.section-divider {
+    display: block;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.section-divider span {
+    display: block;
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--border) 15%,
+        var(--accent) 50%,
+        var(--border) 85%,
+        transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: pulse-line 6s ease-in-out infinite;
+}
+
+@keyframes pulse-line {
+    0%, 100% {
+        background-position: 200% 0;
+        opacity: 0.5;
+    }
+    50% {
+        background-position: 0 0;
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .section-divider span {
+        animation: none;
+        opacity: 0.6;
+    }
+}
+
+/* ============================================
+   (F) CURSOR LIGHT EFFECT — hero radial gradient
+   ============================================ */
+.hero {
+    position: relative;
+    overflow: hidden;
+}
+
+.cursor-light {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background: radial-gradient(
+        360px circle at var(--mx, 50%) var(--my, 50%),
+        rgba(196, 93, 62, 0.12) 0%,
+        rgba(196, 93, 62, 0.05) 40%,
+        transparent 70%
+    );
+    z-index: 0;
+}
+
+[data-theme="dark"] .cursor-light {
+    background: radial-gradient(
+        360px circle at var(--mx, 50%) var(--my, 50%),
+        rgba(212, 120, 94, 0.18) 0%,
+        rgba(212, 120, 94, 0.07) 40%,
+        transparent 70%
+    );
+}
+
+.hero-grid {
+    position: relative;
+    z-index: 1;
+}
+
+/* Make anchor-wrapped app cards inherit card look */
+a.project-card,
+a.app-card {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+a.app-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
