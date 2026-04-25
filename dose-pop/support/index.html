@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dose Pop Support</title>
+    <meta name="description" content="Support page for Dose Pop, a simple medication reminder app for iPhone and iPad.">
+    <link rel="canonical" href="https://vishutdhar.com/dose-pop/support">
+    <style>
+        :root {
+            --bg: #FAFAF8;
+            --surface: #FFFFFF;
+            --text: #1C1C1C;
+            --muted: #5C5C5C;
+            --border: #E5E3DF;
+            --accent: #0D9488;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #141413;
+                --surface: #1C1C1A;
+                --text: #EDEDEB;
+                --muted: #A0A09C;
+                --border: #2E2E2C;
+                --accent: #5EEAD4;
+            }
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            line-height: 1.65;
+            color: var(--text);
+            background: var(--bg);
+        }
+
+        main {
+            width: min(760px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 56px 0;
+        }
+
+        article {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: clamp(24px, 5vw, 44px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            line-height: 1.1;
+            margin: 0 0 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+        }
+
+        p, li { font-size: 1.05rem; }
+        .updated { color: var(--muted); margin-top: 0; }
+        a { color: var(--accent); }
+        ul { padding-left: 1.35rem; }
+        .back { display: inline-block; margin-bottom: 1.25rem; }
+    </style>
+</head>
+<body>
+    <main>
+        <a class="back" href="/">← Back to VishutDhar.com</a>
+        <article>
+            <h1>Dose Pop Support</h1>
+            <p class="updated">Simple medication reminders for iPhone and iPad.</p>
+
+            <p>If you need help with Dose Pop, email <a href="mailto:vishutdhar1993@gmail.com">vishutdhar1993@gmail.com</a>.</p>
+
+            <h2>Common checks</h2>
+            <ul>
+                <li>Open iPhone Settings → Notifications → Dose Pop and confirm notifications are allowed.</li>
+                <li>Check Focus modes and Silent Mode if reminders are not making sound.</li>
+                <li>Open Dose Pop after changing medication times so reminders can be refreshed.</li>
+                <li>Confirm the medication name, dose, and scheduled time are entered correctly.</li>
+            </ul>
+
+            <h2>Privacy and terms</h2>
+            <p>Read the <a href="/dose-pop/privacy">Dose Pop Privacy Policy</a> and <a href="/dose-pop/terms">Dose Pop Terms of Service</a>.</p>
+
+            <h2>Medical disclaimer</h2>
+            <p>Dose Pop is a reminder tool. It does not provide medical advice. Always follow instructions from your doctor, pharmacist, or other qualified healthcare professional.</p>
+        </article>
+    </main>
+</body>
+</html>
