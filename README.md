@@ -46,6 +46,7 @@ vishut-portfolio/
 ├── og-image.png             # Social sharing card (1200x630)
 ├── apple-touch-icon.png     # Home screen icon
 ├── vercel.json              # Security headers
+├── assets/apps/             # Personal project app icons
 ├── robots.txt               # Search engine directives
 ├── sitemap.xml              # Page index
 └── README.md                # This file

@@ -260,7 +260,7 @@ var statsObserver = new IntersectionObserver(function (entries) {
             });
         }
     });
-}, { threshold: 0.5 });
+}, { threshold: 0 });
 
 // Observe hero stats
 var heroStats = document.querySelector('.hero-stats');
@@ -272,3 +272,21 @@ if (heroStats) {
 document.querySelectorAll('.project-card').forEach(function (card) {
     statsObserver.observe(card);
 });
+
+// Cursor light effect on hero
+(function () {
+    var hero = document.querySelector('.hero');
+    var light = document.querySelector('.cursor-light');
+    if (!hero || !light) return;
+    if (prefersReducedMotion.matches) return;
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+    hero.addEventListener('pointermove', function (e) {
+        var rect = hero.getBoundingClientRect();
+        light.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
+        light.style.setProperty('--my', (e.clientY - rect.top) + 'px');
+        light.style.opacity = '1';
+    });
+    hero.addEventListener('pointerleave', function () {
+        light.style.opacity = '0';
+    });
+})();
