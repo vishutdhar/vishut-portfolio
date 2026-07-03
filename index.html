@@ -15,13 +15,16 @@
     <meta property="og:description" content="Experienced Quality Engineer specializing in data-driven solutions and continuous improvement. Achieved $15M annual savings at General Motors.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://vishutdhar.com">
-    <meta property="og:image" content="https://vishutdhar.com/vishut-dhar-headshot.jpg">
-    
+    <meta property="og:image" content="https://vishutdhar.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Vishut Dhar - Senior Supplier Quality Engineer">
+
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Vishut Dhar - Senior Supplier Quality Engineer">
     <meta name="twitter:description" content="Quality Engineering Leader | Data Analytics | $15M Annual Savings">
-    <meta name="twitter:image" content="https://vishutdhar.com/vishut-dhar-headshot.jpg">
+    <meta name="twitter:image" content="https://vishutdhar.com/og-image.png">
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://vishutdhar.com/">
@@ -77,8 +80,15 @@
     }
     </script>
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' fill='%23C45D3E'>VD</text></svg>">
+    <!-- Favicon + Home Screen Icon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' fill='%23C45D3E'>VD</text></svg>">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+    <!-- Browser Chrome Color -->
+    <meta name="theme-color" content="#FAFAF8">
+
+    <!-- Applies the saved/system theme before first paint -->
+    <script src="theme-init.js"></script>
 
     <!-- Google Fonts - DM Serif Display + DM Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -87,9 +97,6 @@
 
     <!-- External CSS -->
     <link rel="stylesheet" href="styles.css">
-
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <!-- Scroll Progress Indicator -->
@@ -113,9 +120,14 @@
                 <li><a href="#apps">Personal Projects</a></li>
             </ul>
             <div class="nav-actions">
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-                    <i class="fas fa-moon" id="darkIcon"></i>
-                    <i class="fas fa-sun" id="lightIcon" style="display: none;"></i>
+                <button class="theme-toggle" id="themeToggle" aria-label="Switch to dark theme">
+                    <svg id="darkIcon" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                    <svg id="lightIcon" class="icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+                    </svg>
                 </button>
                 <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false">
                     <span></span>
@@ -128,7 +140,7 @@
 
     <!-- Hero Section -->
     <main id="main-content" tabindex="-1">
-    <section id="home" class="hero" role="banner">
+    <section id="home" class="hero">
         <div class="cursor-light" aria-hidden="true"></div>
         <div class="hero-grid">
             <div class="hero-text">
@@ -170,7 +182,10 @@
                 </div>
             </div>
             <div class="hero-profile">
-                <img src="vishut-dhar-headshot.jpg" alt="Vishut Dhar" loading="eager">
+                <picture>
+                    <source srcset="vishut-dhar-headshot.webp" type="image/webp">
+                    <img src="vishut-dhar-headshot.jpg" alt="Vishut Dhar" width="1600" height="1570" loading="eager" fetchpriority="high">
+                </picture>
             </div>
         </div>
     </section>
@@ -183,7 +198,10 @@
         <div class="about-content">
             <!-- About Section Profile Photo -->
             <div class="about-image">
-                <img src="vishut-dhar-headshot.jpg" alt="Vishut Dhar - Senior Supplier Quality Engineer" class="profile-photo" loading="lazy">
+                <picture>
+                    <source srcset="vishut-dhar-headshot.webp" type="image/webp">
+                    <img src="vishut-dhar-headshot.jpg" alt="Vishut Dhar - Senior Supplier Quality Engineer" class="profile-photo" width="1600" height="1570" loading="lazy">
+                </picture>
             </div>
             <div class="about-text">
                 <h3 class="about-heading">Data-Driven Quality Excellence</h3>
@@ -219,10 +237,12 @@
         <div class="experience-timeline">
             <div class="experience-item">
                 <div class="experience-header">
-                    <img src="assets/logos/gm.png" alt="General Motors logo" class="company-logo" loading="lazy">
                     <div class="experience-heading">
-                        <h3 class="experience-title">Sr. Supplier Quality Engineer</h3>
-                        <p class="company-name">General Motors - Spring Hill, TN</p>
+                        <span class="company-logo gm"><svg viewBox="0 0 131.233 131.233" aria-hidden="true" focusable="false"><path fill="#0671D8" d="M64 0C28.654 0 0 28.654 0 64v368c0 35.346 28.654 64 64 64h368c35.346 0 64-28.654 64-64V64c0-35.346-28.654-64-64-64Zm0 32h368c17.673 0 32 14.327 32 32v368c0 17.673-14.327 32-32 32H64c-17.673 0-32-14.327-32-32V64c0-17.673 14.327-32 32-32" transform="scale(.26458)"/><path fill="#0671D8" d="M224 336v32h176v-32zm0-208v172h36V160h36v140h36V160h24c6.627 0 12 5.373 12 12v128h36V168c0-22.091-17.909-40-40-40zm-92 0c-22.091 0-40 17.909-40 40v92c0 22.091 17.909 40 40 40h32v8c0 15.464-14.327 28-32 28h-20v32h20c37.555 0 68-26.863 68-60V128Zm8 32h24v108h-24c-6.627 0-12-5.373-12-12v-84c0-6.627 5.373-12 12-12" transform="scale(.26458)"/></svg></span>
+                        <div>
+                            <h3 class="experience-title">Sr. Supplier Quality Engineer</h3>
+                            <p class="company-name">General Motors - Spring Hill, TN</p>
+                        </div>
                     </div>
                     <span class="experience-date">June 2024 - Present</span>
                 </div>
@@ -237,10 +257,12 @@
 
             <div class="experience-item">
                 <div class="experience-header">
-                    <img src="assets/logos/gm.png" alt="General Motors logo" class="company-logo" loading="lazy">
                     <div class="experience-heading">
-                        <h3 class="experience-title">Quality Engineer</h3>
-                        <p class="company-name">General Motors - Spring Hill, TN</p>
+                        <span class="company-logo gm"><svg viewBox="0 0 131.233 131.233" aria-hidden="true" focusable="false"><path fill="#0671D8" d="M64 0C28.654 0 0 28.654 0 64v368c0 35.346 28.654 64 64 64h368c35.346 0 64-28.654 64-64V64c0-35.346-28.654-64-64-64Zm0 32h368c17.673 0 32 14.327 32 32v368c0 17.673-14.327 32-32 32H64c-17.673 0-32-14.327-32-32V64c0-17.673 14.327-32 32-32" transform="scale(.26458)"/><path fill="#0671D8" d="M224 336v32h176v-32zm0-208v172h36V160h36v140h36V160h24c6.627 0 12 5.373 12 12v128h36V168c0-22.091-17.909-40-40-40zm-92 0c-22.091 0-40 17.909-40 40v92c0 22.091 17.909 40 40 40h32v8c0 15.464-14.327 28-32 28h-20v32h20c37.555 0 68-26.863 68-60V128Zm8 32h24v108h-24c-6.627 0-12-5.373-12-12v-84c0-6.627 5.373-12 12-12" transform="scale(.26458)"/></svg></span>
+                        <div>
+                            <h3 class="experience-title">Quality Engineer</h3>
+                            <p class="company-name">General Motors - Spring Hill, TN</p>
+                        </div>
                     </div>
                     <span class="experience-date">February 2023 - June 2024</span>
                 </div>
@@ -256,10 +278,12 @@
 
             <div class="experience-item">
                 <div class="experience-header">
-                    <img src="assets/logos/continental.png" alt="Continental AG logo" class="company-logo" loading="lazy">
                     <div class="experience-heading">
-                        <h3 class="experience-title">Quality Engineer - APQP</h3>
-                        <p class="company-name">Continental AG - Culpeper, VA</p>
+                        <span class="company-logo continental"><svg viewBox="0 0 120 120" aria-hidden="true" focusable="false"><defs><path id="conti-arc-top" d="M 30.66 89.34 A 41.5 41.5 0 1 1 89.34 89.34"/><path id="conti-arc-bot" d="M 13.23 87.0 A 54 54 0 0 0 106.77 87.0"/></defs><circle cx="60" cy="60" r="57" fill="none" stroke="currentColor" stroke-width="4.5"/><circle cx="60" cy="60" r="38" fill="none" stroke="currentColor" stroke-width="3.5"/><text fill="currentColor" font-family="'DM Sans', Arial, sans-serif" font-size="12.5" font-weight="600" letter-spacing="2"><textPath href="#conti-arc-top" startOffset="50%" text-anchor="middle">CONTINENTAL</textPath></text><text fill="currentColor" font-family="'DM Sans', Arial, sans-serif" font-size="12.5" font-weight="600" letter-spacing="2"><textPath href="#conti-arc-bot" startOffset="50%" text-anchor="middle">SINCE 1871</textPath></text><svg x="31" y="32.5" width="58" height="59" viewBox="189.4 0.55 30.2 30.7"><path fill="currentColor" d="M219.15 31.25h-29.5v-1h29.5zm-14.7-5.6l2.8-2.7 1.1 1.1-3 2.5c-.2.3-.4.8-.6 1.1h-2.2a3.72 3.72 0 0 1 1.9-2zm-9.4-17c-.1 0-2.3.6-2.3.6a14.09 14.09 0 0 0-1.5.7c-.5.3-1 .8-1 1.1l2 .5a7.64 7.64 0 0 1 .9-.9l.5-.2 1.6-1.7c.1-.1.1-.2-.25-.1zm13.5 5.4a44.61 44.61 0 0 1-3.4-4.2 12.11 12.11 0 0 0 .8-5.9 15.34 15.34 0 0 0-1.4-2.1c-.2-.3-1.1-1.3-1.5-1.3-.1 0-.2 0-.2.1l.1 1.1c-1.3.8-2.8 1.8-4.1 2.8a4.12 4.12 0 0 0 .1 1.2 2.51 2.51 0 0 0 .7.4 25.58 25.58 0 0 1 2.7-.5l-1.7 2.5-2 1.4-2.4-.8c-.2 0-.3 0-.4.1l-1.8 1.9a.52.52 0 0 0-.2.4l-.1 2.1v.7a3.65 3.65 0 0 0 .7 2.3l1.1-1.7a4.33 4.33 0 0 1-.5-1.2v-1.8l1.1-.8 3 2.1a15.1 15.1 0 0 0 1.6 2.4 28.37 28.37 0 0 0 4.3 3.1 12.78 12.78 0 0 0 .6 2.3l3.6 3.7-2.1 2.7a2.63 2.63 0 0 0-1.4 2.2h2.5l.3-1.4 3-3.3c.2-.2.2-.3.1-.5l-.8-2.8a5.28 5.28 0 0 0 1.3-3.1c0-2.7-2.7-3.4-3.6-4.15zm4.5 4.4a13.05 13.05 0 0 0-.7-1.9s.1-.1.4 0 1.8 1.2 1.8 1.2c.8 1.1 1.3 5.9 1.3 7.6a8.74 8.74 0 0 1-2.4-1.5zM136.45 17.35c0-1.8-.6-3.2-2.1-3.2s-2.2 1.4-2.2 3.2v11.9h1.8v1.9h-10.1v-1.9h1.9v-16.4h-1.9V11h7.9v3.1h.1a5.77 5.77 0 0 1 5.3-3.5 5.07 5.07 0 0 1 5.3 4.2 19.27 19.27 0 0 1 .3 3.3v11.2h2.4v1.9h-8.8l.1-13.9m-40.9 0c0-1.8-.6-3.2-2.1-3.2s-2.2 1.4-2.2 3.2v11.9h1.8v1.9h-10.1v-1.9h1.9V12.85h-1.9V11h7.9v3.1h.1a5.77 5.77 0 0 1 5.3-3.5 5.07 5.07 0 0 1 5.3 4.2 19.27 19.27 0 0 1 .3 3.3v11.2h2.4v1.9h-8.8l.1-13.9zm58.3-4.5v14.9a1.2 1.2 0 0 0 1.3 1.3 4.36 4.36 0 0 0 1.2-.2v1.8a7.49 7.49 0 0 1-3.9.8c-3.1 0-5-1.5-5-4.8V12.85h-2.1v-1.3c2.4-1.9 5.2-4.1 7.4-5.9h1.2V11H157v1.8zM27.75.55s4.9 4.9 7.1 7.4v1.9a15.64 15.64 0 0 0-10.4-4.1c-9.1 0-14.8 6.9-14.8 15.4s5.4 15.3 14.8 15.3A14.33 14.33 0 0 0 34.95 32v1.8c-2.8 3.9-8 6.4-14.5 6.4-11.6.1-19.6-8.3-19.6-19A19.34 19.34 0 0 1 20.45 2a23.24 23.24 0 0 1 7.3 1.2zm93.1 25.3a5.38 5.38 0 0 1-4.4 1.9c-1.8 0-4.7-1-4.8-5.7h10.8c0-.4.1-1.1.1-1.5 0-5.7-2.3-9.9-8.4-9.9s-9.2 4.7-9.2 10.5 3.1 10.4 9.2 10.4a8.26 8.26 0 0 0 7.9-4.7zm-9.3-5.8c0-5.3.4-7.3 2.2-7.3s2.2 1.9 2.3 7.3zm-89.1 1c0-6.2.6-8.9 2.7-8.9s2.7 2.7 2.7 8.9-.6 8.9-2.7 8.9-2.7-2.7-2.7-8.9m-7.5.1c0 6.1 3.7 11.1 10.2 11.1s10.2-5 10.2-11.1S31.65 10 25.15 10s-10.2 5-10.2 11.1m34.6-3.8c0-1.8-.6-3.2-2.1-3.2s-2.2 1.4-2.2 3.2v11.9H47v1.9H36.95v-1.9h1.9V12.85h-1.9V11h7.9v3.1h.1a5.77 5.77 0 0 1 5.3-3.5 5.07 5.07 0 0 1 5.3 4.2 19.27 19.27 0 0 1 .3 3.3v11.2h2.4v1.9h-8.8V17.35zm22.9-11.7c0 1.8 1.6 3 3.9 3s3.9-1.2 3.9-3-1.6-3-3.9-3-3.9 1.3-3.9 3m-5.5 7.2v14.9a1.2 1.2 0 0 0 1.3 1.3 4.36 4.36 0 0 0 1.2-.2v1.8a7.49 7.49 0 0 1-3.9.8c-3.1 0-5-1.5-5-4.8V12.85h-2.1v-1.3c2.4-1.9 5.2-4.1 7.4-5.9H67V11h2.5v1.8zm118 16.5h2.5v1.9h-8.9V5.45h-2.2v-1.9H185v25.8zm-17.1-8.1a1.91 1.91 0 0 0-1.4-.4c-1.9 0-2.3 1.9-2.3 3.8s.6 3.4 2.2 3.4a1.76 1.76 0 0 0 1.5-.6zm.2 7.6a6.18 6.18 0 0 1-5.3 2.8c-3.3 0-5.3-2.8-5.3-6.2 0-4 2.9-6.6 7.5-6.6a8.52 8.52 0 0 1 2.9.4v-1.3a3.42 3.42 0 0 0-3.7-3.7 5.63 5.63 0 0 0-4.6 2.4l-1.1-1.4a9.61 9.61 0 0 1 8-4.6c4.9 0 7.8 2.9 7.8 7.3v11.4h2.1v1.9h-8.2l-.1-2.4zm-96.7 2.4v-1.9h1.8V12.85h-1.8V11h8.2v18.3h1.9v1.9z"/></svg></svg></span>
+                        <div>
+                            <h3 class="experience-title">Quality Engineer - APQP</h3>
+                            <p class="company-name">Continental AG - Culpeper, VA</p>
+                        </div>
                     </div>
                     <span class="experience-date">May 2021 - February 2023</span>
                 </div>
@@ -274,10 +298,12 @@
 
             <div class="experience-item">
                 <div class="experience-header">
-                    <img src="assets/logos/continental.png" alt="Continental AG logo" class="company-logo" loading="lazy">
                     <div class="experience-heading">
-                        <h3 class="experience-title">Quality Engineer</h3>
-                        <p class="company-name">Continental AG - Auburn Hills, MI</p>
+                        <span class="company-logo continental"><svg viewBox="0 0 120 120" aria-hidden="true" focusable="false"><defs><path id="conti-arc-top" d="M 30.66 89.34 A 41.5 41.5 0 1 1 89.34 89.34"/><path id="conti-arc-bot" d="M 13.23 87.0 A 54 54 0 0 0 106.77 87.0"/></defs><circle cx="60" cy="60" r="57" fill="none" stroke="currentColor" stroke-width="4.5"/><circle cx="60" cy="60" r="38" fill="none" stroke="currentColor" stroke-width="3.5"/><text fill="currentColor" font-family="'DM Sans', Arial, sans-serif" font-size="12.5" font-weight="600" letter-spacing="2"><textPath href="#conti-arc-top" startOffset="50%" text-anchor="middle">CONTINENTAL</textPath></text><text fill="currentColor" font-family="'DM Sans', Arial, sans-serif" font-size="12.5" font-weight="600" letter-spacing="2"><textPath href="#conti-arc-bot" startOffset="50%" text-anchor="middle">SINCE 1871</textPath></text><svg x="31" y="32.5" width="58" height="59" viewBox="189.4 0.55 30.2 30.7"><path fill="currentColor" d="M219.15 31.25h-29.5v-1h29.5zm-14.7-5.6l2.8-2.7 1.1 1.1-3 2.5c-.2.3-.4.8-.6 1.1h-2.2a3.72 3.72 0 0 1 1.9-2zm-9.4-17c-.1 0-2.3.6-2.3.6a14.09 14.09 0 0 0-1.5.7c-.5.3-1 .8-1 1.1l2 .5a7.64 7.64 0 0 1 .9-.9l.5-.2 1.6-1.7c.1-.1.1-.2-.25-.1zm13.5 5.4a44.61 44.61 0 0 1-3.4-4.2 12.11 12.11 0 0 0 .8-5.9 15.34 15.34 0 0 0-1.4-2.1c-.2-.3-1.1-1.3-1.5-1.3-.1 0-.2 0-.2.1l.1 1.1c-1.3.8-2.8 1.8-4.1 2.8a4.12 4.12 0 0 0 .1 1.2 2.51 2.51 0 0 0 .7.4 25.58 25.58 0 0 1 2.7-.5l-1.7 2.5-2 1.4-2.4-.8c-.2 0-.3 0-.4.1l-1.8 1.9a.52.52 0 0 0-.2.4l-.1 2.1v.7a3.65 3.65 0 0 0 .7 2.3l1.1-1.7a4.33 4.33 0 0 1-.5-1.2v-1.8l1.1-.8 3 2.1a15.1 15.1 0 0 0 1.6 2.4 28.37 28.37 0 0 0 4.3 3.1 12.78 12.78 0 0 0 .6 2.3l3.6 3.7-2.1 2.7a2.63 2.63 0 0 0-1.4 2.2h2.5l.3-1.4 3-3.3c.2-.2.2-.3.1-.5l-.8-2.8a5.28 5.28 0 0 0 1.3-3.1c0-2.7-2.7-3.4-3.6-4.15zm4.5 4.4a13.05 13.05 0 0 0-.7-1.9s.1-.1.4 0 1.8 1.2 1.8 1.2c.8 1.1 1.3 5.9 1.3 7.6a8.74 8.74 0 0 1-2.4-1.5zM136.45 17.35c0-1.8-.6-3.2-2.1-3.2s-2.2 1.4-2.2 3.2v11.9h1.8v1.9h-10.1v-1.9h1.9v-16.4h-1.9V11h7.9v3.1h.1a5.77 5.77 0 0 1 5.3-3.5 5.07 5.07 0 0 1 5.3 4.2 19.27 19.27 0 0 1 .3 3.3v11.2h2.4v1.9h-8.8l.1-13.9m-40.9 0c0-1.8-.6-3.2-2.1-3.2s-2.2 1.4-2.2 3.2v11.9h1.8v1.9h-10.1v-1.9h1.9V12.85h-1.9V11h7.9v3.1h.1a5.77 5.77 0 0 1 5.3-3.5 5.07 5.07 0 0 1 5.3 4.2 19.27 19.27 0 0 1 .3 3.3v11.2h2.4v1.9h-8.8l.1-13.9zm58.3-4.5v14.9a1.2 1.2 0 0 0 1.3 1.3 4.36 4.36 0 0 0 1.2-.2v1.8a7.49 7.49 0 0 1-3.9.8c-3.1 0-5-1.5-5-4.8V12.85h-2.1v-1.3c2.4-1.9 5.2-4.1 7.4-5.9h1.2V11H157v1.8zM27.75.55s4.9 4.9 7.1 7.4v1.9a15.64 15.64 0 0 0-10.4-4.1c-9.1 0-14.8 6.9-14.8 15.4s5.4 15.3 14.8 15.3A14.33 14.33 0 0 0 34.95 32v1.8c-2.8 3.9-8 6.4-14.5 6.4-11.6.1-19.6-8.3-19.6-19A19.34 19.34 0 0 1 20.45 2a23.24 23.24 0 0 1 7.3 1.2zm93.1 25.3a5.38 5.38 0 0 1-4.4 1.9c-1.8 0-4.7-1-4.8-5.7h10.8c0-.4.1-1.1.1-1.5 0-5.7-2.3-9.9-8.4-9.9s-9.2 4.7-9.2 10.5 3.1 10.4 9.2 10.4a8.26 8.26 0 0 0 7.9-4.7zm-9.3-5.8c0-5.3.4-7.3 2.2-7.3s2.2 1.9 2.3 7.3zm-89.1 1c0-6.2.6-8.9 2.7-8.9s2.7 2.7 2.7 8.9-.6 8.9-2.7 8.9-2.7-2.7-2.7-8.9m-7.5.1c0 6.1 3.7 11.1 10.2 11.1s10.2-5 10.2-11.1S31.65 10 25.15 10s-10.2 5-10.2 11.1m34.6-3.8c0-1.8-.6-3.2-2.1-3.2s-2.2 1.4-2.2 3.2v11.9H47v1.9H36.95v-1.9h1.9V12.85h-1.9V11h7.9v3.1h.1a5.77 5.77 0 0 1 5.3-3.5 5.07 5.07 0 0 1 5.3 4.2 19.27 19.27 0 0 1 .3 3.3v11.2h2.4v1.9h-8.8V17.35zm22.9-11.7c0 1.8 1.6 3 3.9 3s3.9-1.2 3.9-3-1.6-3-3.9-3-3.9 1.3-3.9 3m-5.5 7.2v14.9a1.2 1.2 0 0 0 1.3 1.3 4.36 4.36 0 0 0 1.2-.2v1.8a7.49 7.49 0 0 1-3.9.8c-3.1 0-5-1.5-5-4.8V12.85h-2.1v-1.3c2.4-1.9 5.2-4.1 7.4-5.9H67V11h2.5v1.8zm118 16.5h2.5v1.9h-8.9V5.45h-2.2v-1.9H185v25.8zm-17.1-8.1a1.91 1.91 0 0 0-1.4-.4c-1.9 0-2.3 1.9-2.3 3.8s.6 3.4 2.2 3.4a1.76 1.76 0 0 0 1.5-.6zm.2 7.6a6.18 6.18 0 0 1-5.3 2.8c-3.3 0-5.3-2.8-5.3-6.2 0-4 2.9-6.6 7.5-6.6a8.52 8.52 0 0 1 2.9.4v-1.3a3.42 3.42 0 0 0-3.7-3.7 5.63 5.63 0 0 0-4.6 2.4l-1.1-1.4a9.61 9.61 0 0 1 8-4.6c4.9 0 7.8 2.9 7.8 7.3v11.4h2.1v1.9h-8.2l-.1-2.4zm-96.7 2.4v-1.9h1.8V12.85h-1.8V11h8.2v18.3h1.9v1.9z"/></svg></svg></span>
+                        <div>
+                            <h3 class="experience-title">Quality Engineer</h3>
+                            <p class="company-name">Continental AG - Auburn Hills, MI</p>
+                        </div>
                     </div>
                     <span class="experience-date">February 2018 - January 2019</span>
                 </div>
@@ -434,19 +460,27 @@
             <p>I'm passionate about collaborating on data-driven quality initiatives, exploring how analytics and metrics can transform manufacturing processes and deliver measurable improvements.</p>
             <div class="contact-info">
                 <a href="#" class="contact-item" id="phone-link">
-                    <i class="fas fa-phone"></i>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
                     <span id="phone-text"></span>
                 </a>
                 <a href="#" class="contact-item" id="email-link">
-                    <i class="fas fa-envelope"></i>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect width="20" height="16" x="2" y="4" rx="2"/>
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                    </svg>
                     <span id="email-text"></span>
                 </a>
                 <div class="contact-item">
-                    <i class="fas fa-map-marker-alt"></i>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0Z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
                     <span>Spring Hill, TN</span>
                 </div>
                 <noscript>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Please enable JavaScript to view contact information.</p>
+                    <p class="contact-noscript">Please enable JavaScript to view contact information.</p>
                 </noscript>
             </div>
             <div class="social-links">
@@ -466,6 +500,7 @@
         </div>
     </section>
 
+
     <div class="section-divider" aria-hidden="true"><span></span></div>
 
     <!-- Personal Projects Section -->
@@ -477,22 +512,22 @@
             <h3 class="apps-category-title">iOS Apps</h3>
             <div class="projects-grid">
                 <a href="https://vishutdhar.github.io/runwalk-site/" class="project-card app-card" target="_blank" rel="noopener noreferrer">
-                    <img src="assets/apps/walkrun.png" alt="Walk Run icon" class="app-icon" loading="lazy">
+                    <img src="assets/apps/walkrun.png" alt="Walk Run icon" class="app-icon" width="64" height="64" loading="lazy">
                     <h3 class="project-title">Walk Run</h3>
                     <p class="project-description">Interval training app for runners and walkers.</p>
                 </a>
                 <a href="https://vishutdhar.github.io/HabitFlame-Public/" class="project-card app-card" target="_blank" rel="noopener noreferrer">
-                    <img src="assets/apps/habitflame.png" alt="Habit Flame icon" class="app-icon" loading="lazy">
+                    <img src="assets/apps/habitflame.png" alt="Habit Flame icon" class="app-icon" width="64" height="64" loading="lazy">
                     <h3 class="project-title">Habit Flame</h3>
                     <p class="project-description">Habit tracker with an accountability partner feature.</p>
                 </a>
                 <a href="https://vishutdhar.github.io/smarthomeqr/" class="project-card app-card" target="_blank" rel="noopener noreferrer">
-                    <img src="assets/apps/smarthomeqr.png" alt="SmartHomeQR icon" class="app-icon" loading="lazy">
+                    <img src="assets/apps/smarthomeqr.png" alt="SmartHomeQR icon" class="app-icon" width="64" height="64" loading="lazy">
                     <h3 class="project-title">SmartHomeQR</h3>
                     <p class="project-description">Saves smart home QR codes for quick access. Also on Android.</p>
                 </a>
                 <div class="project-card app-card">
-                    <img src="assets/apps/dosepop.png" alt="Dose Pop icon" class="app-icon" loading="lazy">
+                    <img src="assets/apps/dosepop.png" alt="Dose Pop icon" class="app-icon" width="64" height="64" loading="lazy">
                     <h3 class="project-title">Dose Pop</h3>
                     <p class="project-description">Medication and dose reminders. Coming soon.</p>
                 </div>
@@ -503,7 +538,7 @@
             <h3 class="apps-category-title">Web Apps</h3>
             <div class="projects-grid">
                 <a href="https://mydharmapath.com" class="project-card app-card" target="_blank" rel="noopener noreferrer">
-                    <img src="assets/apps/dharmapath.png" alt="Dharma Path icon" class="app-icon" loading="lazy">
+                    <img src="assets/apps/dharmapath.png" alt="Dharma Path icon" class="app-icon" width="64" height="64" loading="lazy">
                     <h3 class="project-title">Dharma Path</h3>
                     <p class="project-description">Next.js learning app with a four-level curriculum on Hindu philosophy.</p>
                 </a>
@@ -514,299 +549,28 @@
             <h3 class="apps-category-title">Automations</h3>
             <div class="projects-grid">
                 <a href="https://x.com/USC1787" class="project-card app-card" target="_blank" rel="noopener noreferrer">
-                    <img src="assets/apps/usc1787.png" alt="USC1787 icon" class="app-icon" loading="lazy">
+                    <img src="assets/apps/usc1787.png" alt="USC1787 icon" class="app-icon" width="64" height="64" loading="lazy">
                     <h3 class="project-title">@USC1787</h3>
                     <p class="project-description">Daily X bot posting U.S. Constitution content.</p>
                 </a>
             </div>
         </div>
     </section>
+    </main>
 
     <!-- Footer -->
     <footer>
         <p>&copy; 2026 Vishut Dhar. All rights reserved.</p>
     </footer>
-    </main>
 
     <!-- Back to Top Button -->
     <button class="back-to-top" id="backToTop" aria-label="Back to top">
-        <i class="fas fa-arrow-up"></i>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m5 12 7-7 7 7"/>
+            <path d="M12 19V5"/>
+        </svg>
     </button>
 
-    <script>
-        // Contact info obfuscation - prevents bots from scraping
-        (function() {
-            var p = [50,52,56,45,50,53,50,45,52,56,51,49];
-            var e = [118,105,115,104,117,116,100,104,97,114,49,57,57,51,64,103,109,97,105,108,46,99,111,109];
-            var phone = String.fromCharCode.apply(null, p);
-            var email = String.fromCharCode.apply(null, e);
-            var pl = document.getElementById('phone-link');
-            var pt = document.getElementById('phone-text');
-            var el = document.getElementById('email-link');
-            var et = document.getElementById('email-text');
-            if (pl && pt) {
-                pl.href = 'tel:' + phone;
-                pt.textContent = '(' + phone.substring(0,3) + ') ' + phone.substring(4);
-            }
-            if (el && et) {
-                el.href = 'mailto:' + email;
-                et.textContent = email;
-            }
-        })();
-
-        // Dark Mode Toggle
-        const themeToggle = document.getElementById('themeToggle');
-        const darkIcon = document.getElementById('darkIcon');
-        const lightIcon = document.getElementById('lightIcon');
-        const html = document.documentElement;
-        
-        // Check for saved theme preference or default to light mode
-        var currentTheme = 'light';
-        try { currentTheme = localStorage.getItem('theme') || 'light'; } catch (e) {}
-        html.setAttribute('data-theme', currentTheme);
-        updateThemeIcon(currentTheme);
-
-        // Toggle theme
-        themeToggle.addEventListener('click', () => {
-            const newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-
-            html.setAttribute('data-theme', newTheme);
-            try { localStorage.setItem('theme', newTheme); } catch (e) {}
-            updateThemeIcon(newTheme);
-        });
-        
-        function updateThemeIcon(theme) {
-            if (theme === 'dark') {
-                darkIcon.style.display = 'none';
-                lightIcon.style.display = 'block';
-            } else {
-                darkIcon.style.display = 'block';
-                lightIcon.style.display = 'none';
-            }
-        }
-
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                var target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                    target.focus({ preventScroll: true });
-                }
-            });
-        });
-
-        // Mobile menu toggle
-        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-        const navLinks = document.querySelector('.nav-links');
-
-        mobileMenuToggle.addEventListener('click', function() {
-            this.classList.toggle('active');
-            navLinks.classList.toggle('active');
-            
-            // Update aria-expanded for accessibility
-            const isExpanded = this.classList.contains('active');
-            this.setAttribute('aria-expanded', isExpanded);
-        });
-
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', function() {
-                mobileMenuToggle.classList.remove('active');
-                navLinks.classList.remove('active');
-            });
-        });
-
-        // Back to Top Button
-        const backToTopButton = document.getElementById('backToTop');
-
-        // Add scroll effect to navigation, progress indicator, and back to top button
-        window.addEventListener('scroll', function() {
-            const nav = document.querySelector('nav');
-            if (window.scrollY > 50) {
-                nav.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-            } else {
-                nav.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
-            }
-
-            // Update scroll progress
-            const scrollProgress = document.getElementById('scrollProgress');
-            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrolled = (window.scrollY / scrollHeight) * 100;
-            scrollProgress.style.width = scrolled + '%';
-
-            // Show/hide back to top button
-            if (window.scrollY > 500) {
-                backToTopButton.classList.add('visible');
-            } else {
-                backToTopButton.classList.remove('visible');
-            }
-
-            // Active navigation highlighting
-            const sections = document.querySelectorAll('section[id]');
-            const navLinkElements = document.querySelectorAll('.nav-links a');
-
-            let currentSection = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop - 150;
-                const sectionHeight = section.offsetHeight;
-                if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
-                    currentSection = section.getAttribute('id');
-                }
-            });
-
-            navLinkElements.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + currentSection) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // Back to top button click handler
-        backToTopButton.addEventListener('click', function() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        // Scroll Reveal Animation
-        const revealObserverOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -20px 0px'
-        };
-
-        const revealObserver = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
-            });
-        }, revealObserverOptions);
-
-        // Add reveal class to sections and observe them
-        document.querySelectorAll('section:not(#home)').forEach((section, index) => {
-            section.classList.add('reveal');
-            revealObserver.observe(section);
-        });
-
-        // Add stagger animation to grids
-        document.querySelectorAll('.projects-grid, .education-grid, .testimonials-grid, .skills-grid').forEach(grid => {
-            grid.classList.add('stagger-children');
-            revealObserver.observe(grid);
-        });
-
-        // Add reveal to experience items
-        document.querySelectorAll('.experience-item').forEach((item, index) => {
-            item.classList.add('reveal');
-            item.style.transitionDelay = (index * 0.15) + 's';
-            revealObserver.observe(item);
-        });
-
-        // Animate statistics numbers
-        function animateValue(element, start, end, duration) {
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                
-                if (element.dataset.isPercentage) {
-                    element.textContent = (progress * (end - start) + start).toFixed(1) + '%';
-                } else if (element.dataset.isMoney) {
-                    element.textContent = '$' + Math.floor(progress * (end - start) + start) + 'M';
-                } else {
-                    element.textContent = Math.floor(progress * (end - start) + start) + '+';
-                }
-                
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                }
-            };
-            window.requestAnimationFrame(step);
-        }
-
-        // Create observer for stats
-        const statsObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && !entry.target.dataset.animated) {
-                    entry.target.dataset.animated = 'true';
-                    // Hero stat numbers
-                    const statNumbers = entry.target.querySelectorAll('.stat-number');
-                    statNumbers.forEach(stat => {
-                        const text = stat.textContent;
-                        if (text.includes('$')) {
-                            stat.dataset.isMoney = 'true';
-                            animateValue(stat, 0, 15, 800);
-                        } else if (text.includes('%')) {
-                            stat.dataset.isPercentage = 'true';
-                            animateValue(stat, 5, 0.5, 800);
-                        } else {
-                            animateValue(stat, 0, 6, 600);
-                        }
-                    });
-                    // Project metric values
-                    var metricValues = entry.target.querySelectorAll('.metric-value');
-                    metricValues.forEach(function(metric) {
-                        var text = metric.textContent.trim();
-                        var end, fmt;
-                        if (text.includes('$')) {
-                            end = parseInt(text.replace(/[^0-9]/g, ''));
-                            fmt = function(v) { return '$' + Math.floor(v) + 'M'; };
-                        } else if (text.includes('%')) {
-                            end = parseInt(text.replace(/[^0-9]/g, ''));
-                            fmt = function(v) { return Math.floor(v) + '%'; };
-                        } else {
-                            end = parseInt(text) || 0;
-                            fmt = function(v) { return '' + Math.floor(v); };
-                        }
-                        if (end > 0) {
-                            var startTime = null;
-                            function step(ts) {
-                                if (!startTime) startTime = ts;
-                                var p = Math.min((ts - startTime) / 800, 1);
-                                metric.textContent = fmt(p * end);
-                                if (p < 1) requestAnimationFrame(step);
-                            }
-                            requestAnimationFrame(step);
-                        }
-                    });
-                }
-            });
-        }, { threshold: 0 });
-
-        // Observe hero stats
-        const heroStats = document.querySelector('.hero-stats');
-        if (heroStats) {
-            statsObserver.observe(heroStats);
-        }
-
-        // Animate project metrics
-        const projectCards = document.querySelectorAll('.project-card');
-        projectCards.forEach(card => {
-            statsObserver.observe(card);
-        });
-
-        // Cursor light effect on hero
-        (function() {
-            const hero = document.querySelector('.hero');
-            const light = document.querySelector('.cursor-light');
-            if (!hero || !light) return;
-            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-            if (window.matchMedia('(pointer: coarse)').matches) return;
-            hero.addEventListener('pointermove', function(e) {
-                const rect = hero.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                light.style.setProperty('--mx', x + 'px');
-                light.style.setProperty('--my', y + 'px');
-                light.style.opacity = '1';
-            });
-            hero.addEventListener('pointerleave', function() {
-                light.style.opacity = '0';
-            });
-        })();
-    </script>
+    <script src="script.js" defer></script>
 </body>
 </html>

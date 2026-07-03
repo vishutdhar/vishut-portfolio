@@ -15,11 +15,13 @@ A professional portfolio website showcasing my experience as a Senior Supplier Q
 ## Features
 
 - **Responsive Design** - Optimized for desktop, tablet, and mobile
-- **Dark/Light Mode** - Theme toggle with system preference detection
-- **Smooth Animations** - Scroll-triggered reveals and hover states
+- **Dark/Light Mode** - Follows system preference by default; manual toggle persists the choice
+- **Smooth Animations** - Scroll-triggered reveals and hover states, with reduced-motion support
 - **Accessibility** - WCAG compliant with ARIA labels, skip-to-content link, keyboard navigation
+- **Performance** - Inline SVG icons (no icon-font CDN), WebP images with JPEG fallback
+- **Security** - Strict Content-Security-Policy and hardening headers via vercel.json
 - **Print Stylesheet** - Clean output for offline sharing
-- **SEO** - robots.txt, sitemap.xml, semantic HTML
+- **SEO** - robots.txt, sitemap.xml, semantic HTML, JSON-LD, Open Graph image
 
 ## Sections
 
@@ -35,12 +37,19 @@ A professional portfolio website showcasing my experience as a Senior Supplier Q
 
 ```
 vishut-portfolio/
-├── index.html              # Main website
-├── styles.css              # All styling (light/dark themes)
-├── vishut-dhar-headshot.jpg # Profile photo
-├── robots.txt              # Search engine directives
-├── sitemap.xml             # Page index
-└── README.md               # This file
+├── index.html               # Main website
+├── styles.css               # All styling (light/dark themes)
+├── theme-init.js            # Applies saved/system theme before first paint
+├── script.js                # All page behavior
+├── vishut-dhar-headshot.jpg # Profile photo (JPEG fallback)
+├── vishut-dhar-headshot.webp # Profile photo (WebP)
+├── og-image.png             # Social sharing card (1200x630)
+├── apple-touch-icon.png     # Home screen icon
+├── vercel.json              # Security headers
+├── assets/apps/             # Personal project app icons
+├── robots.txt               # Search engine directives
+├── sitemap.xml              # Page index
+└── README.md                # This file
 ```
 
 ## Deployment
