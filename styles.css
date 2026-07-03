@@ -1437,6 +1437,14 @@ footer {
         background: #fff;
         font-size: 11pt;
         line-height: 1.5;
+        /* the fade-in animation never runs in print, so force the end state */
+        opacity: 1 !important;
+    }
+
+    .reveal,
+    .stagger-children > * {
+        opacity: 1 !important;
+        transform: none !important;
     }
 
     .hero {
