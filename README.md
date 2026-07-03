@@ -27,11 +27,12 @@ A professional portfolio website showcasing my experience as a Senior Supplier Q
 
 - **Hero** - Introduction with key metrics
 - **About** - Professional summary and skills
-- **Experience** - Work history with accomplishments
+- **Experience** - Work history with accomplishments and company logo marks (GM, Continental)
 - **Projects** - Major achievements including $15M cost savings
 - **Education** - Academic background
 - **Testimonials** - Professional recommendations
 - **Contact** - Email, LinkedIn, phone
+- **Personal Projects** - iOS apps, web apps, and automations shipped outside of work
 
 ## Project Structure
 
