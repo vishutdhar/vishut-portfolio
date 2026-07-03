@@ -684,11 +684,11 @@ section {
 
 .experience-heading {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.9rem;
 }
 
-/* Compact company logo marks */
+/* Compact company logo marks, top-aligned with the job title cap height */
 .company-logo {
     display: flex;
     align-items: center;
@@ -696,6 +696,7 @@ section {
     width: 32px;
     height: 32px;
     flex-shrink: 0;
+    margin-top: 3px;
 }
 
 .company-logo svg {
