@@ -47,13 +47,20 @@ themeToggle.addEventListener('click', function () {
 });
 
 // Follow system theme changes while the visitor has not chosen one explicitly
-prefersDark.addEventListener('change', function (event) {
+function onSystemThemeChange(event) {
     var stored = null;
     try { stored = localStorage.getItem('theme'); } catch (e) {}
     if (stored !== 'light' && stored !== 'dark') {
         applyTheme(event.matches ? 'dark' : 'light');
     }
-});
+}
+
+// Older Safari only implements addListener on MediaQueryList
+if (typeof prefersDark.addEventListener === 'function') {
+    prefersDark.addEventListener('change', onSystemThemeChange);
+} else if (typeof prefersDark.addListener === 'function') {
+    prefersDark.addListener(onSystemThemeChange);
+}
 
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {

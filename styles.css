@@ -649,7 +649,9 @@ section {
 }
 
 .company-logo.continental {
-    color: #F7A600;
+    color: var(--text-primary);
+    width: 40px;
+    height: 40px;
 }
 
 .experience-title {
