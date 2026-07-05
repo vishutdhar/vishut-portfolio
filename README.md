@@ -71,3 +71,5 @@ Auto-deploys from `main` branch on GitHub to Vercel. Live at vishutdhar.com with
 ## License
 
 (c) 2026 Vishut Dhar. All rights reserved.
+
+Fonts (DM Sans, DM Serif Display) are licensed under the SIL Open Font License 1.1; see `assets/fonts/OFL-DM-Sans.txt` and `assets/fonts/OFL-DM-Serif-Display.txt`.
