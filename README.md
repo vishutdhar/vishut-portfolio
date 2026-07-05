@@ -9,7 +9,7 @@ A professional portfolio website showcasing my experience as a Senior Supplier Q
 - HTML5
 - CSS3 (CSS Variables for light/dark theming)
 - Vanilla JavaScript
-- Google Fonts
+- Self-hosted fonts (DM Sans, DM Serif Display; woff2 under `assets/fonts/`)
 - Vercel (hosting with automatic deployments)
 
 ## Features
@@ -18,10 +18,10 @@ A professional portfolio website showcasing my experience as a Senior Supplier Q
 - **Dark/Light Mode** - Follows system preference by default; manual toggle persists the choice
 - **Smooth Animations** - Scroll-triggered reveals and hover states, with reduced-motion support
 - **Accessibility** - WCAG compliant with ARIA labels, skip-to-content link, keyboard navigation
-- **Performance** - Inline SVG icons (no icon-font CDN), WebP images with JPEG fallback
-- **Security** - Strict Content-Security-Policy and hardening headers via vercel.json
+- **Performance** - Inline SVG icons (no icon-font CDN), WebP images with JPEG fallback, self-hosted preloaded fonts (no third-party requests)
+- **Security** - Strict Content-Security-Policy (fully self-contained: no external script, style, or font origins) and hardening headers via vercel.json
 - **Print Stylesheet** - Clean output for offline sharing
-- **SEO** - robots.txt, sitemap.xml, semantic HTML, JSON-LD, Open Graph image
+- **SEO** - robots.txt, image sitemap, semantic HTML, JSON-LD @graph (WebSite, ProfilePage, Person), Open Graph profile tags, canonical host redirect (www to apex)
 
 ## Sections
 
@@ -46,8 +46,10 @@ vishut-portfolio/
 ├── vishut-dhar-headshot.webp # Profile photo (WebP)
 ├── og-image.png             # Social sharing card (1200x630)
 ├── apple-touch-icon.png     # Home screen icon
-├── vercel.json              # Security headers
+├── icon.svg                 # Favicon (crawlable file)
+├── vercel.json              # Security headers, redirects, caching
 ├── assets/apps/             # Personal project app icons
+├── assets/fonts/            # Self-hosted woff2 fonts
 ├── robots.txt               # Search engine directives
 ├── sitemap.xml              # Page index
 └── README.md                # This file
@@ -69,3 +71,5 @@ Auto-deploys from `main` branch on GitHub to Vercel. Live at vishutdhar.com with
 ## License
 
 (c) 2026 Vishut Dhar. All rights reserved.
+
+Fonts (DM Sans, DM Serif Display) are licensed under the SIL Open Font License 1.1; see `assets/fonts/OFL-DM-Sans.txt` and `assets/fonts/OFL-DM-Serif-Display.txt`.
