@@ -32,7 +32,7 @@ A professional portfolio website showcasing my experience as a Senior Supplier Q
 - **Education** - Academic background
 - **Testimonials** - Professional recommendations
 - **Contact** - Email, LinkedIn, phone
-- **Personal Projects** - iOS apps, web apps, and automations shipped outside of work
+- **Personal Projects** - Freedom Terminal, the independent software studio, plus automations shipped outside of work
 
 ## Project Structure
 
