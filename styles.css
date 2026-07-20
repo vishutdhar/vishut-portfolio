@@ -844,6 +844,10 @@ section {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+.app-icon-round {
+    border-radius: 50%;
+}
+
 .app-icon-text {
     display: flex;
     align-items: center;
