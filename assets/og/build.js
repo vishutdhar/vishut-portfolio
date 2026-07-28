@@ -188,35 +188,49 @@ function readHeroContent(page) {
             // match on visible text rather than on incidental whitespace.
             const norm = (text) => text.replace(/\s+/g, ' ').trim();
 
-            const slots = [...document.querySelectorAll('.stat-value')];
+            const groups = [...document.querySelectorAll('.stats > div')];
             const wanted = Object.keys(c.stats);
 
-            if (slots.length !== wanted.length) {
-                return { error: `The card template has ${slots.length} stat slots but the page has ${wanted.length} stats` };
+            if (groups.length !== wanted.length) {
+                return { error: `The card template has ${groups.length} stat slots but the page has ${wanted.length} stats` };
             }
 
-            const claimed = slots.map(el => norm(el.dataset.pageLabel || ''));
-            if (claimed.some(label => !label)) {
-                return { error: 'A stat slot in the card template has no data-page-label' };
+            const slots = [];
+            for (const group of groups) {
+                const values = group.querySelectorAll('.stat-value');
+                const captions = group.querySelectorAll('.stat-label');
+                if (values.length !== 1 || captions.length !== 1) {
+                    return { error: 'A stat slot in the card template does not have exactly one value and one caption' };
+                }
+
+                const label = norm(values[0].dataset.pageLabel || '');
+                const caption = norm(captions[0].textContent);
+                if (!label) return { error: 'A stat slot in the card template has no data-page-label' };
+                if (!caption) return { error: `The card template caption for "${label}" is empty` };
+                if (!(label in c.stats)) {
+                    return {
+                        error: `index.html has no hero stat labelled "${label}". ` +
+                            `Found: ${wanted.map(l => `"${l}"`).join(', ')}`
+                    };
+                }
+                // The card shortens the page's wording rather than restating it,
+                // so a caption has to be the front of the label it draws from.
+                // Swap two labels and this is what notices.
+                if (!label.toLowerCase().startsWith(caption.toLowerCase())) {
+                    return { error: `The card caption "${caption}" does not match the hero stat "${label}" its figure comes from` };
+                }
+
+                slots.push({ el: values[0], label });
             }
+
+            const claimed = slots.map(s => s.label);
             if (new Set(claimed).size !== claimed.length) {
                 return { error: `The card template claims a hero stat twice: ${claimed.join(', ')}` };
             }
 
-            const missing = claimed.filter(label => !(label in c.stats));
-            if (missing.length) {
-                return {
-                    error: `index.html has no hero stat labelled ${missing.map(l => `"${l}"`).join(', ')}. ` +
-                        `Found: ${wanted.map(l => `"${l}"`).join(', ')}`
-                };
-            }
-
-            const blankCaption = [...document.querySelectorAll('.stat-label')].some(el => !norm(el.textContent));
-            if (blankCaption) return { error: 'A stat caption in the card template is empty' };
-
             document.querySelector('.name').textContent = c.name;
             document.querySelector('.role').textContent = c.role;
-            slots.forEach((el, i) => { el.textContent = c.stats[claimed[i]]; });
+            slots.forEach(({ el, label }) => { el.textContent = c.stats[label]; });
             return {};
         }, content);
 
