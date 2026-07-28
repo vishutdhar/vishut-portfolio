@@ -91,7 +91,10 @@ function decodeEntities(text) {
             const code = body[1] === 'x' || body[1] === 'X'
                 ? parseInt(body.slice(2), 16)
                 : parseInt(body.slice(1), 10);
-            return Number.isFinite(code) ? String.fromCodePoint(code) : whole;
+            // fromCodePoint throws outside the Unicode range, so leave anything
+            // that is not a real code point exactly as it was written.
+            if (!Number.isInteger(code) || code < 0 || code > 0x10FFFF) return whole;
+            return String.fromCodePoint(code);
         }
         const named = ENTITIES[body.toLowerCase()];
         return named === undefined ? whole : named;
