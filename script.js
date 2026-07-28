@@ -101,7 +101,10 @@ if (typeof prefersDark.addEventListener === 'function') {
 document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
     anchor.addEventListener('click', function (e) {
         var href = this.getAttribute('href');
-        var target = document.querySelector(href);
+        // getElementById for the same reason as the popstate handler below:
+        // the contact rows ship as href="#" until the obfuscation script
+        // rewrites them, and querySelector('#') throws on a bare hash.
+        var target = href.length > 1 ? document.getElementById(href.slice(1)) : null;
         if (!target) return;
         e.preventDefault();
         // Push the new entry BEFORE scrolling. The browser stores the current
