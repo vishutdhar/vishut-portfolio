@@ -119,31 +119,6 @@ document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
     });
 });
 
-// Calls back once the page has stopped scrolling. Polling frames rather than
-// listening for scrollend keeps this working on browsers that lack the event,
-// and the frame cap means a page that never settles still resolves.
-function whenScrollSettles(callback) {
-    var last = window.scrollY;
-    var stableFrames = 0;
-    var frames = 0;
-    var tick = function () {
-        frames++;
-        var y = window.scrollY;
-        if (y === last) {
-            stableFrames++;
-        } else {
-            stableFrames = 0;
-            last = y;
-        }
-        if (stableFrames >= 2 || frames > 90) {
-            callback();
-            return;
-        }
-        window.requestAnimationFrame(tick);
-    };
-    window.requestAnimationFrame(tick);
-}
-
 // Going Back restores the URL and scroll position, but focus would stay on
 // the section the visitor navigated away from, so the next Tab would resume
 // from off screen. Move it to match wherever Back landed.
@@ -162,24 +137,20 @@ window.addEventListener('popstate', function () {
         target = null;
     }
 
-    // Scroll restoration happens after popstate, and because html carries
-    // scroll-behavior: smooth the browser animates it over several hundred
-    // milliseconds. Wait for it to stop before judging what is on screen.
-    whenScrollSettles(function () {
-        if (target) {
-            var box = target.getBoundingClientRect();
-            // Claim focus only if the restored view actually shows the section.
-            // If the visitor had scrolled away, focusing its start would strand
-            // the focus ring above the viewport.
-            if (box.bottom > 0 && box.top < window.innerHeight) {
-                target.focus({ preventScroll: true });
-                return;
-            }
-        }
-        if (document.activeElement && document.activeElement !== document.body) {
-            document.activeElement.blur();
-        }
-    });
+    // Focus synchronously. Deferring this to measure what the restored
+    // viewport shows means racing the browser's scroll animation, which
+    // html's scroll-behavior: smooth turns into a several-hundred-millisecond
+    // affair: overlapping Back presses queue stale callbacks, and anything the
+    // visitor focuses meanwhile gets overridden. A deterministic move to the
+    // section the URL now names is worth more than a conditional one, even
+    // though a visitor who had scrolled away from that section lands with its
+    // start above the viewport.
+    // preventScroll leaves the browser's own restoration alone.
+    if (target) {
+        target.focus({ preventScroll: true });
+    } else if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
+    }
 });
 
 // Mobile menu toggle
