@@ -122,11 +122,17 @@ function readHeroContent() {
     // up by name instead of trusting the order they appear in.
     const stats = {};
     const pair = /<div class="stat-number"[^>]*>([^<]+)<\/div>\s*<div class="stat-label">([^<]+)<\/div>/g;
-    for (const match of source.matchAll(pair)) {
+    const found = [...source.matchAll(pair)];
+    for (const match of found) {
         stats[decodeEntities(match[2].trim())] = decodeEntities(match[1].trim());
     }
-    if (Object.keys(stats).length !== 3) {
-        throw new Error(`Expected 3 labelled hero stats in index.html, found ${Object.keys(stats).length}`);
+    if (found.length !== 3) {
+        throw new Error(`Expected 3 labelled hero stats in index.html, found ${found.length}`);
+    }
+    // Counting unique labels separately: two stats sharing a label would leave
+    // three pairs but only two keys, and the survivor would win silently.
+    if (Object.keys(stats).length !== found.length) {
+        throw new Error(`Hero stats in index.html do not have distinct labels: ${found.map(m => `"${m[2].trim()}"`).join(', ')}`);
     }
 
     return {
