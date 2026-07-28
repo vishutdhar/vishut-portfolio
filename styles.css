@@ -588,9 +588,17 @@ section {
    an arriving section come from half that depth, so the two movements read as
    one assembly seating rather than two competing slides.
    ============================================ */
+/* Scaled from the top edge, not the centre. A section is often many times the
+   height of the viewport, and a centre-origin scale moves its top edge by half
+   the height it loses: on the experience list that is 144px. Clicking a nav
+   link scrolls to wherever the top edge is at that moment, the reveal then
+   fires and puts it back, and the heading you asked for ends up behind the
+   fixed nav or above the viewport entirely. Anchored at the top, the edge the
+   browser scrolled to is the edge that stays. */
 .reveal {
     opacity: 0;
     transform: perspective(800px) translate3d(0, 10px, -30px);
+    transform-origin: top center;
     transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
 
@@ -602,6 +610,7 @@ section {
 .stagger-children > * {
     opacity: 0;
     transform: perspective(800px) translate3d(0, 8px, -16px);
+    transform-origin: top center;
     transition: opacity 0.4s ease-out, transform 0.4s ease-out;
 }
 
