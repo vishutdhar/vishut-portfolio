@@ -180,31 +180,47 @@ function readHeroContent(page) {
         if (read.error) throw new Error(read.error);
         const content = read.value;
 
-        const missingLabels = await page.evaluate((c) => {
+        // The template is checked as strictly as the page was: it has to claim
+        // every hero stat exactly once, or the card can be rendered complete
+        // while quietly missing or repeating a figure.
+        const injection = await page.evaluate((c) => {
             // Normalised the same way the page labels were, so the two sides
             // match on visible text rather than on incidental whitespace.
             const norm = (text) => text.replace(/\s+/g, ' ').trim();
 
+            const slots = [...document.querySelectorAll('.stat-value')];
+            const wanted = Object.keys(c.stats);
+
+            if (slots.length !== wanted.length) {
+                return { error: `The card template has ${slots.length} stat slots but the page has ${wanted.length} stats` };
+            }
+
+            const claimed = slots.map(el => norm(el.dataset.pageLabel || ''));
+            if (claimed.some(label => !label)) {
+                return { error: 'A stat slot in the card template has no data-page-label' };
+            }
+            if (new Set(claimed).size !== claimed.length) {
+                return { error: `The card template claims a hero stat twice: ${claimed.join(', ')}` };
+            }
+
+            const missing = claimed.filter(label => !(label in c.stats));
+            if (missing.length) {
+                return {
+                    error: `index.html has no hero stat labelled ${missing.map(l => `"${l}"`).join(', ')}. ` +
+                        `Found: ${wanted.map(l => `"${l}"`).join(', ')}`
+                };
+            }
+
+            const blankCaption = [...document.querySelectorAll('.stat-label')].some(el => !norm(el.textContent));
+            if (blankCaption) return { error: 'A stat caption in the card template is empty' };
+
             document.querySelector('.name').textContent = c.name;
             document.querySelector('.role').textContent = c.role;
-            const missing = [];
-            document.querySelectorAll('.stat-value').forEach((el) => {
-                const label = norm(el.dataset.pageLabel || '');
-                if (!(label in c.stats)) {
-                    missing.push(label);
-                    return;
-                }
-                el.textContent = c.stats[label];
-            });
-            return missing;
+            slots.forEach((el, i) => { el.textContent = c.stats[claimed[i]]; });
+            return {};
         }, content);
 
-        if (missingLabels.length) {
-            throw new Error(
-                `index.html has no hero stat labelled ${missingLabels.map(l => `"${l}"`).join(', ')}. ` +
-                `Found: ${Object.keys(content.stats).map(l => `"${l}"`).join(', ')}`
-            );
-        }
+        if (injection.error) throw new Error(injection.error);
 
         await page.evaluate(() => document.fonts.ready);
 
