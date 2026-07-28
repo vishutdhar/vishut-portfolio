@@ -48,33 +48,72 @@
     box-sizing: border-box;
 }
 
-/* --- Color System --- */
-:root {
-    --bg-primary: #FAFAF8;
-    --bg-alt: #F2F0EC;
-    --text-primary: #1C1C1C;
-    --text-secondary: #5C5C5C;
-    --text-tertiary: #8A8A8A;
-    --accent: #C45D3E;
-    --accent-hover: #A84E33;
-    --border: #E5E3DF;
-    --nav-bg: rgba(250, 250, 248, 0.95);
-    --card-bg: #FFFFFF;
-    --shadow-color: rgba(0, 0, 0, 0.06);
-}
+/* --- Color System ---
+   Three accent roles, split because one terracotta cannot clear WCAG AA
+   everywhere it is used:
+     --accent       decorative surfaces, borders, icons, and large text (>=24px)
+     --accent-text  accent-coloured text at normal sizes (needs 4.5:1)
+     --accent-solid a filled accent surface, always paired with --on-accent
+   Every pairing below is verified at 4.5:1 for text and 3:1 for UI. */
+/* Dark lives on :root, so it is what the document renders with no
+   data-theme attribute at all: JavaScript disabled, theme-init.js blocked, or
+   the instant before it runs. Light is the opt-in override. Putting light here
+   instead would make "dark by default" true only for visitors who run our JS.
 
-[data-theme="dark"] {
-    --bg-primary: #141413;
-    --bg-alt: #1C1C1A;
+   The dark surfaces form a real ladder -- page, alt band, card, hovered card --
+   so a card reads as raised without relying on its 1px border alone. */
+:root {
+    --bg-primary: #0F0F0E;
+    --bg-alt: #161615;
+    --card-bg: #1F1F1D;
+    --card-bg-hover: #262623;
     --text-primary: #EDEDEB;
     --text-secondary: #A0A09C;
-    --text-tertiary: #6E6E6A;
+    --text-tertiary: #90908A;
     --accent: #D4785E;
-    --accent-hover: #E08B6E;
-    --border: #2E2E2C;
-    --nav-bg: rgba(20, 20, 19, 0.95);
-    --card-bg: #1C1C1A;
+    --accent-text: #D4785E;
+    --accent-solid: #D4785E;
+    --accent-solid-hover: #E08B6E;
+    --on-accent: #0F0F0E;
+    --accent-wash: rgba(212, 120, 94, 0.1);
+    --accent-tap: rgba(212, 120, 94, 0.25);
+    --grid-line: rgba(212, 120, 94, 0.07);
+    --hero-glow-strong: rgba(212, 120, 94, 0.18);
+    --hero-glow-soft: rgba(212, 120, 94, 0.07);
+    --border: #33332F;
+    --nav-bg: rgba(15, 15, 14, 0.95);
     --shadow-color: rgba(0, 0, 0, 0.2);
+    --card-edge: rgba(255, 255, 255, 0.045);
+    --card-shadow-hover: 0 14px 36px rgba(0, 0, 0, 0.4);
+    --card-shadow-hover-sm: 0 14px 36px rgba(0, 0, 0, 0.4);
+    --github-hover-border: #f0f6fc;
+}
+
+[data-theme="light"] {
+    --bg-primary: #FAFAF8;
+    --bg-alt: #F2F0EC;
+    --card-bg: #FFFFFF;
+    --card-bg-hover: #FFFFFF;
+    --text-primary: #1C1C1C;
+    --text-secondary: #5C5C5C;
+    --text-tertiary: #6B6B6B;
+    --accent: #C45D3E;
+    --accent-text: #A84E33;
+    --accent-solid: #A84E33;
+    --accent-solid-hover: #8E4029;
+    --on-accent: #FFFFFF;
+    --accent-wash: rgba(196, 93, 62, 0.06);
+    --accent-tap: rgba(196, 93, 62, 0.2);
+    --grid-line: rgba(196, 93, 62, 0.045);
+    --hero-glow-strong: rgba(196, 93, 62, 0.12);
+    --hero-glow-soft: rgba(196, 93, 62, 0.05);
+    --border: #E5E3DF;
+    --nav-bg: rgba(250, 250, 248, 0.95);
+    --shadow-color: rgba(0, 0, 0, 0.06);
+    --card-edge: transparent;
+    --card-shadow-hover: 0 14px 36px rgba(0, 0, 0, 0.08);
+    --card-shadow-hover-sm: 0 10px 28px rgba(0, 0, 0, 0.06);
+    --github-hover-border: #181717;
 }
 
 html {
@@ -91,24 +130,22 @@ body {
     animation: fadeIn 0.6s ease forwards;
 }
 
-.hidden {
-    display: none !important;
-}
-
 @keyframes fadeIn {
     to { opacity: 1; }
 }
 
-/* --- Scroll Progress Indicator --- */
+/* --- Scroll Progress Indicator ---
+   Driven by transform, not width, so scrolling stays on the compositor. */
 .scroll-progress {
     position: fixed;
     top: 0;
     left: 0;
     height: 2px;
+    width: 100%;
     background: var(--accent);
     z-index: 2000;
-    transition: width 0.3s ease;
-    width: 0%;
+    transform: scaleX(0);
+    transform-origin: left center;
 }
 
 /* --- Skip Link for Accessibility --- */
@@ -116,8 +153,8 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    background: var(--accent);
-    color: #fff;
+    background: var(--accent-solid);
+    color: var(--on-accent);
     padding: 0.5rem 1rem;
     text-decoration: none;
     border-radius: 0 0 4px 0;
@@ -212,6 +249,30 @@ nav.scrolled {
 .theme-toggle .icon {
     width: 15px;
     height: 15px;
+    display: none;
+}
+
+/* Which icon shows is driven by data-theme-mode, which theme-init.js writes
+   before first paint. Doing this in CSS rather than in the deferred script
+   means a visitor whose saved mode is light never sees a dark control in the
+   first frame, and the control stays correct even if script.js never runs.
+
+   Written as "dark, unless another mode is named" rather than one rule per
+   mode, so that a missing or unrecognised attribute still yields exactly one
+   icon. Enumerating the three modes instead would render a blank button for
+   any value outside the set. */
+#themeIconDark {
+    display: block;
+}
+
+[data-theme-mode="light"] #themeIconDark,
+[data-theme-mode="system"] #themeIconDark {
+    display: none;
+}
+
+[data-theme-mode="light"] #themeIconLight,
+[data-theme-mode="system"] #themeIconSystem {
+    display: block;
 }
 
 .nav-links {
@@ -261,19 +322,24 @@ nav.scrolled {
    HERO SECTION - 2 Column Split
    ============================================ */
 .hero {
+    /* vh first as a fallback: svh is dropped whole where it is unsupported */
     min-height: 100vh;
+    min-height: 100svh;
     display: flex;
     align-items: center;
     background: var(--bg-primary);
     padding-top: 80px;
 }
 
+/* 1.1fr / 0.9fr is the 55/45 split the design calls for, expressed so the
+   4rem gap comes out of the track sizes. Percentages summed to 100% and then
+   added the gap on top, pushing the grid 64px past its own container. */
 .hero-grid {
     max-width: 1100px;
     margin: 0 auto;
     padding: 4rem 2rem;
     display: grid;
-    grid-template-columns: 55% 45%;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
     gap: 4rem;
     align-items: center;
     width: 100%;
@@ -285,7 +351,7 @@ nav.scrolled {
 
 .hero h1 {
     font-family: 'DM Serif Display', serif;
-    font-size: 3.8rem;
+    font-size: clamp(2.5rem, 6vw, 3.8rem);
     font-weight: 400;
     color: var(--text-primary);
     line-height: 1.1;
@@ -328,7 +394,7 @@ nav.scrolled {
 
 .stat-number {
     font-family: 'DM Serif Display', serif;
-    font-size: 3rem;
+    font-size: clamp(2.5rem, 4vw, 3rem);
     font-weight: 400;
     color: var(--accent);
     line-height: 1.1;
@@ -363,12 +429,12 @@ nav.scrolled {
 }
 
 .btn-primary {
-    background: var(--accent);
-    color: #fff;
+    background: var(--accent-solid);
+    color: var(--on-accent);
 }
 
 .btn-primary:hover {
-    background: var(--accent-hover);
+    background: var(--accent-solid-hover);
 }
 
 .btn-secondary {
@@ -379,7 +445,7 @@ nav.scrolled {
 
 .btn-secondary:hover {
     border-color: var(--accent);
-    color: var(--accent);
+    color: var(--accent-text);
 }
 
 /* Hero Social: Clean inline links */
@@ -439,11 +505,7 @@ nav.scrolled {
 }
 
 .brand-github:hover {
-    border-color: #181717;
-}
-
-[data-theme="dark"] .brand-github:hover {
-    border-color: #f0f6fc;
+    border-color: var(--github-hover-border);
 }
 
 .hero-social-link:not(.brand-linkedin):not(.brand-github) svg,
@@ -655,15 +717,11 @@ section {
 }
 
 .skill-tag:hover {
-    background: rgba(196, 93, 62, 0.06);
+    background: var(--accent-wash);
     border-right-color: var(--accent);
     border-top-color: var(--accent);
     border-bottom-color: var(--accent);
     transform: translateY(-2px);
-}
-
-[data-theme="dark"] .skill-tag:hover {
-    background: rgba(212, 120, 94, 0.1);
 }
 
 /* ============================================
@@ -757,7 +815,7 @@ section {
 }
 
 .company-name {
-    color: var(--accent);
+    color: var(--accent-text);
     font-weight: 500;
     font-size: 0.95rem;
     margin-bottom: 0.25rem;
@@ -852,8 +910,8 @@ section {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--accent);
-    color: #fff;
+    background: var(--accent-solid);
+    color: var(--on-accent);
     font-family: 'DM Serif Display', serif;
     font-size: 1.1rem;
     letter-spacing: 0.5px;
@@ -980,7 +1038,7 @@ section {
     border-radius: 8px;
     border: 1px solid var(--border);
     text-align: left;
-    transition: border-color 0.2s ease;
+    transition: background-color 0.25s ease, border-color 0.2s ease;
 }
 
 .education-card:hover {
@@ -996,7 +1054,7 @@ section {
 }
 
 .university-name {
-    color: var(--accent);
+    color: var(--accent-text);
     font-weight: 500;
     font-size: 0.95rem;
     margin-bottom: 0.25rem;
@@ -1126,7 +1184,7 @@ section {
 }
 
 .contact-item:hover {
-    color: var(--accent);
+    color: var(--accent-text);
 }
 
 .contact-item .icon {
@@ -1210,9 +1268,9 @@ footer {
 }
 
 .back-to-top:hover {
-    border-color: var(--accent);
-    background: var(--accent);
-    color: #fff;
+    border-color: var(--accent-solid);
+    background: var(--accent-solid);
+    color: var(--on-accent);
 }
 
 .back-to-top .icon {
@@ -1233,7 +1291,7 @@ footer {
     width: 44px;
     height: 44px;
     touch-action: manipulation;
-    -webkit-tap-highlight-color: rgba(196, 93, 62, 0.2);
+    -webkit-tap-highlight-color: var(--accent-tap);
 }
 
 .mobile-menu-toggle span {
@@ -1279,8 +1337,16 @@ footer {
 
 /* ============================================
    MOBILE RESPONSIVE
+   The eight-link nav wraps to a second row below ~960px, and the three-up
+   hero stat row cannot fit the narrower text column, so both collapse here
+   rather than at 768px.
+
+   Scoped to `screen` deliberately: a Letter page box is 816px and A4 is 794px,
+   so an unqualified max-width:960px query also matches printed pages and would
+   drag the stacked mobile layout onto paper. At the old 768px breakpoint this
+   was not possible, which is why print never had to guard against it.
    ============================================ */
-@media (max-width: 768px) {
+@media screen and (max-width: 960px) {
     .mobile-menu-toggle {
         display: block;
     }
@@ -1297,6 +1363,19 @@ footer {
         flex-direction: column;
         padding: 1.5rem 2rem;
         border-bottom: 1px solid var(--border);
+        /* The dropdown hangs off a fixed nav, so eight links run past the
+           bottom of a short viewport with no way to reach the last of them.
+           A phone in landscape is about 390px tall and the nav takes 76 of
+           that, so cap the panel just under the remaining space and scroll.
+           overscroll-behavior stops the page moving underneath it. */
+        /* vh first: a browser without svh drops that declaration entirely,
+           and losing the cap would put the lower links out of reach again */
+        max-height: calc(100vh - 5rem);
+        max-height: calc(100svh - 5rem);
+        overflow-y: auto;
+        /* y only: the panel never scrolls sideways, and containing the x axis
+           would also swallow horizontal swipe gestures */
+        overscroll-behavior-y: contain;
     }
 
     .nav-links.active {
@@ -1305,10 +1384,17 @@ footer {
 
     .nav-links a {
         padding: 0.75rem 0;
+    }
+
+    /* The separator belongs on the li, which is the full-width flex item.
+       On the anchor it underlines only the text, giving a ragged edge, and
+       `a:last-child` matched every anchor anyway since each is the only
+       child of its li, so every separator was removed rather than the last. */
+    .nav-links li {
         border-bottom: 1px solid var(--border);
     }
 
-    .nav-links a:last-child {
+    .nav-links li:last-child {
         border-bottom: none;
     }
 
@@ -1330,10 +1416,6 @@ footer {
         display: block;
     }
 
-    .hero h1 {
-        font-size: 2.5rem;
-    }
-
     .hero-title {
         font-size: 1rem;
     }
@@ -1353,10 +1435,6 @@ footer {
     .stat-separator {
         width: 40px;
         height: 1px;
-    }
-
-    .stat-number {
-        font-size: 2.5rem;
     }
 
     .cta-buttons {
@@ -1440,108 +1518,6 @@ footer {
     }
 }
 
-/* ============================================
-   PRINT STYLES
-   ============================================ */
-@media print {
-    nav,
-    .scroll-progress,
-    .skip-link,
-    .hero-social,
-    .social-links,
-    .theme-toggle,
-    .mobile-menu-toggle,
-    .back-to-top,
-    .cta-buttons {
-        display: none !important;
-    }
-
-    body {
-        color: #000;
-        background: #fff;
-        font-size: 11pt;
-        line-height: 1.5;
-        /* the fade-in animation never runs in print, so force the end state */
-        opacity: 1 !important;
-    }
-
-    .reveal,
-    .stagger-children > * {
-        opacity: 1 !important;
-        transform: none !important;
-    }
-
-    .hero {
-        min-height: auto;
-        background: none !important;
-        padding: 1rem 0;
-        page-break-after: always;
-    }
-
-    .hero-grid {
-        grid-template-columns: 2fr 1fr;
-        gap: 2rem;
-    }
-
-    .hero h1 {
-        font-size: 22pt;
-        color: #000;
-    }
-
-    .hero-title {
-        color: #333;
-    }
-
-    .stat-number,
-    .metric-value {
-        color: #000 !important;
-    }
-
-    section {
-        page-break-inside: avoid;
-        padding: 1rem 0;
-    }
-
-    .section-title {
-        font-size: 16pt;
-        color: #000;
-        page-break-after: avoid;
-    }
-
-    .section-title::before {
-        background: #000;
-    }
-
-    .experience-item,
-    .education-card,
-    .project-card,
-    .testimonial-card {
-        box-shadow: none !important;
-        border: 1px solid #ccc !important;
-        background: #fff !important;
-        page-break-inside: avoid;
-    }
-
-    a {
-        color: #000;
-        text-decoration: underline;
-    }
-
-    .contact-item[href^="mailto:"]:after {
-        content: " (" attr(href) ")";
-    }
-
-    * {
-        animation: none !important;
-        transition: none !important;
-    }
-
-    .about,
-    .projects,
-    .testimonials {
-        background: #fff !important;
-    }
-}
 
 /* ============================================
    POLISH PASS — borrowed from nateherk.com
@@ -1556,47 +1532,57 @@ footer {
 .testimonial-card {
     transition: transform .35s cubic-bezier(.2,.7,.2,1),
                 box-shadow .35s cubic-bezier(.2,.7,.2,1),
+                background-color .25s ease,
                 border-color .25s ease;
+}
+
+/* Scoped to hover: as a standing declaration this held a compositor layer for
+   all 17 cards for the life of the page. */
+.project-card:hover,
+.experience-item:hover,
+.testimonial-card:hover {
     will-change: transform;
+}
+
+/* A 1px top edge catches the light on the raised surfaces, which is what
+   separates a card from the page in dark mode. Transparent in light. */
+.project-card,
+.experience-item,
+.testimonial-card,
+.education-card {
+    box-shadow: inset 0 1px 0 var(--card-edge);
 }
 
 .project-card:hover,
 .app-card:hover,
 .testimonial-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.08);
+    box-shadow: inset 0 1px 0 var(--card-edge), var(--card-shadow-hover);
     border-color: var(--accent);
+    background: var(--card-bg-hover);
 }
 
 .experience-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+    box-shadow: inset 0 1px 0 var(--card-edge), var(--card-shadow-hover-sm);
+    background: var(--card-bg-hover);
 }
 
-[data-theme="dark"] .project-card:hover,
-[data-theme="dark"] .app-card:hover,
-[data-theme="dark"] .testimonial-card:hover,
-[data-theme="dark"] .experience-item:hover {
-    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.4);
+.education-card:hover {
+    background: var(--card-bg-hover);
 }
 
-/* (2) Subtle 1px grid background — uses accent at very low opacity */
+/* (2) Subtle 1px grid background: tracks the theme accent via --grid-line */
 body::before {
     content: '';
     position: fixed;
     inset: 0;
     background-image:
-        linear-gradient(rgba(196, 93, 62, 0.045) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(196, 93, 62, 0.045) 1px, transparent 1px);
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size: 56px 56px;
     pointer-events: none;
     z-index: 0;
-}
-
-[data-theme="dark"] body::before {
-    background-image:
-        linear-gradient(rgba(196, 93, 62, 0.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(196, 93, 62, 0.07) 1px, transparent 1px);
 }
 
 /* Keep section content above the grid layer.
@@ -1610,17 +1596,11 @@ footer {
     z-index: 1;
 }
 
-/* (4) Animated conic-gradient ring around headshot */
-@property --ang {
-    syntax: '<angle>';
-    initial-value: 0deg;
-    inherits: false;
-}
-
-@keyframes spin-ang {
-    to { --ang: 360deg; }
-}
-
+/* (4) Conic-gradient ring around the headshot.
+   Static: this ring wraps the LCP element, and rotating it through a
+   registered custom property repainted that element every frame for as long
+   as the page stayed open. The light now reads as coming from the upper
+   left, which is where the rest of the page's shadows fall. */
 .hero-profile {
     position: relative;
     width: fit-content;
@@ -1628,7 +1608,7 @@ footer {
     padding: 3px;
     border-radius: 16px;
     background: conic-gradient(
-        from var(--ang, 0deg),
+        from 315deg,
         var(--accent) 0deg,
         var(--accent) 25deg,
         transparent 110deg,
@@ -1636,19 +1616,12 @@ footer {
         var(--accent) 335deg,
         var(--accent) 360deg
     );
-    animation: spin-ang 7s linear infinite;
 }
 
 .hero-profile img {
     border: none;
     display: block;
     background: var(--bg-primary);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .hero-profile {
-        animation: none;
-    }
 }
 
 /* ============================================
@@ -1664,10 +1637,13 @@ footer {
     z-index: 1;
 }
 
+/* Static: seven of these ran an infinite background-position animation, one
+   per section boundary, none of which the reader ever looks at directly. */
 .section-divider span {
     display: block;
     height: 1px;
     width: 100%;
+    opacity: 0.6;
     background: linear-gradient(
         90deg,
         transparent 0%,
@@ -1676,26 +1652,6 @@ footer {
         var(--border) 85%,
         transparent 100%
     );
-    background-size: 200% 100%;
-    animation: pulse-line 6s ease-in-out infinite;
-}
-
-@keyframes pulse-line {
-    0%, 100% {
-        background-position: 200% 0;
-        opacity: 0.5;
-    }
-    50% {
-        background-position: 0 0;
-        opacity: 1;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .section-divider span {
-        animation: none;
-        opacity: 0.6;
-    }
 }
 
 /* ============================================
@@ -1714,20 +1670,11 @@ footer {
     transition: opacity 0.3s ease;
     background: radial-gradient(
         360px circle at var(--mx, 50%) var(--my, 50%),
-        rgba(196, 93, 62, 0.12) 0%,
-        rgba(196, 93, 62, 0.05) 40%,
+        var(--hero-glow-strong) 0%,
+        var(--hero-glow-soft) 40%,
         transparent 70%
     );
     z-index: 0;
-}
-
-[data-theme="dark"] .cursor-light {
-    background: radial-gradient(
-        360px circle at var(--mx, 50%) var(--my, 50%),
-        rgba(212, 120, 94, 0.18) 0%,
-        rgba(212, 120, 94, 0.07) 40%,
-        transparent 70%
-    );
 }
 
 .hero-grid {
@@ -1747,4 +1694,150 @@ a.app-card {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+}
+
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+    /* Paper is white in every theme. Re-point the tokens once here instead of
+       overriding each selector, so a section added later prints correctly
+       without anyone remembering to add it to a list below. Every block that
+       defines tokens is reset -- printing from dark must not carry #0F0F0E
+       backgrounds or pale grey body text onto the page, and :root is dark. */
+    :root,
+    [data-theme="light"],
+    [data-theme="dark"] {
+        --bg-primary: #fff;
+        --bg-alt: #fff;
+        --card-bg: #fff;
+        --card-bg-hover: #fff;
+        --text-primary: #000;
+        --text-secondary: #222;
+        --text-tertiary: #555;
+        --border: #ccc;
+        --accent: #000;
+        --accent-text: #000;
+        --accent-solid: #000;
+        --accent-solid-hover: #000;
+        --on-accent: #fff;
+        --accent-wash: transparent;
+        --grid-line: transparent;
+        --shadow-color: transparent;
+        --card-edge: transparent;
+        --nav-bg: #fff;
+        /* these sit inside a box-shadow list, so they need a valid
+           shadow value rather than `none` */
+        --card-shadow-hover: 0 0 0 transparent;
+        --card-shadow-hover-sm: 0 0 0 transparent;
+    }
+
+    nav,
+    .scroll-progress,
+    .skip-link,
+    .hero-social,
+    .social-links,
+    .theme-toggle,
+    .mobile-menu-toggle,
+    .back-to-top,
+    .cta-buttons,
+    .section-divider,
+    .cursor-light,
+    body::before {
+        display: none !important;
+    }
+
+    body {
+        font-size: 11pt;
+        line-height: 1.5;
+        /* the fade-in animation never runs in print, so force the end state */
+        opacity: 1 !important;
+    }
+
+    .reveal,
+    .stagger-children > * {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .hero {
+        min-height: auto;
+        padding: 1rem 0;
+        page-break-after: always;
+    }
+
+    /* Zero the padding as well: 4rem/2rem is a screen gutter, and leaving it
+       set indents the resume header 32px from the section titles below it. */
+    .hero-grid {
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        padding: 0;
+    }
+
+    .hero h1 {
+        font-size: 22pt;
+    }
+
+    /* the accent ring is a screen flourish; on paper it prints as a black arc */
+    .hero-profile {
+        background: none;
+        padding: 0;
+    }
+
+    /* The class selectors are listed alongside the element one because
+       `.about` and friends set `padding: 6rem 2rem` at higher specificity;
+       a bare `section` rule loses to them and leaves roughly 640px of screen
+       whitespace spread through the printed pages. */
+    section,
+    .about,
+    .apps,
+    .projects,
+    .testimonials {
+        page-break-inside: avoid;
+        padding: 1rem 0;
+    }
+
+    .section-title {
+        font-size: 16pt;
+        page-break-after: avoid;
+    }
+
+    .experience-item,
+    .education-card,
+    .project-card,
+    .testimonial-card {
+        box-shadow: none !important;
+        page-break-inside: avoid;
+    }
+
+    /* a.contact-item, not .contact-item: the class is also on the location
+       row, which is a div and not a link. The anchor form is listed because
+       it sets its own colour, so the bare `a` rule loses to it and the phone
+       and email rows print without the underline that marks them as links. */
+    a,
+    a.contact-item {
+        color: #000;
+        text-decoration: underline;
+    }
+
+    .contact-item {
+        color: #000;
+    }
+
+    /* Card-shaped links are block surfaces, not inline links. Underlining
+       every line of a card's title and description is noise on paper. */
+    a.project-card,
+    a.app-card {
+        text-decoration: none;
+    }
+
+    .contact-item[href^="mailto:"]:after {
+        content: " (" attr(href) ")";
+    }
+
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
 }
