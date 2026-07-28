@@ -607,10 +607,16 @@ section {
     transform: none;
 }
 
+/* No top origin here, unlike .reveal above. That anchoring exists because a
+   section is tall enough for a centre-origin scale to move its top edge out
+   from under the browser's scroll destination; a card is not, and it would
+   cost something real. These same cards tilt on hover about offsets measured
+   from their centre, and transform-origin is not part of the transition, so a
+   top edge left standing here would still be the pivot hours later: the card
+   would hinge from its top while the numbers driving it said centre. */
 .stagger-children > * {
     opacity: 0;
     transform: perspective(800px) translate3d(0, 8px, -16px);
-    transform-origin: top center;
     transition: opacity 0.4s ease-out, transform 0.4s ease-out;
 }
 
