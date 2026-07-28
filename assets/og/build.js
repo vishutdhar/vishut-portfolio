@@ -67,7 +67,8 @@ function serveRepo() {
         const server = http.createServer((req, res) => {
             const rel = decodeURIComponent(req.url.split('?')[0]).replace(/^\/+/, '');
             const filePath = path.join(REPO_ROOT, rel);
-            if (!filePath.startsWith(REPO_ROOT) || !fs.existsSync(filePath)) {
+            const inRepo = filePath === REPO_ROOT || filePath.startsWith(REPO_ROOT + path.sep);
+            if (!inRepo || !fs.existsSync(filePath)) {
                 res.writeHead(404);
                 res.end('not found');
                 return;
@@ -80,70 +81,58 @@ function serveRepo() {
 }
 
 // Read the figures the card advertises straight out of the page it advertises,
-// so the two cannot drift apart. This parses the file rather than querying a
-// live DOM because the hero stats animate on screen, and a rendered page would
-// hand back whatever mid-animation value happened to be showing.
-const ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
-
-function decodeEntities(text) {
-    return text.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (whole, body) => {
-        if (body[0] === '#') {
-            const code = body[1] === 'x' || body[1] === 'X'
-                ? parseInt(body.slice(2), 16)
-                : parseInt(body.slice(1), 10);
-            // fromCodePoint throws outside the Unicode range, so leave anything
-            // that is not a real code point exactly as it was written.
-            if (!Number.isInteger(code) || code < 0 || code > 0x10FFFF) return whole;
-            return String.fromCodePoint(code);
-        }
-        const named = ENTITIES[body.toLowerCase()];
-        return named === undefined ? whole : named;
-    });
-}
-
-function readHeroContent() {
+// so the two cannot drift apart.
+//
+// This hands index.html to a real HTML parser rather than matching it with
+// regexes, so attribute order, extra classes, comments and character references
+// all behave the way a browser says they do. DOMParser runs no scripts and
+// fetches nothing, so unlike loading the page for real it returns the authored
+// figures rather than whatever frame the stat animation happens to be on.
+function readHeroContent(page) {
     const html = fs.readFileSync(path.join(REPO_ROOT, 'index.html'), 'utf8');
 
-    // Match only inside the hero, so an <h1> or stat anywhere else on the page
-    // cannot be picked up instead.
-    const hero = html.match(/<section id="home"[^>]*>([\s\S]*?)<\/section>/);
-    if (!hero) throw new Error('Could not find the hero section in index.html');
-    const source = hero[1];
+    return page.evaluate((src) => {
+        const doc = new DOMParser().parseFromString(src, 'text/html');
+        const hero = doc.querySelector('#home');
+        if (!hero) return { error: 'Could not find the hero section (#home) in index.html' };
 
-    const one = (pattern, label) => {
-        const matches = [...source.matchAll(pattern)];
-        if (matches.length !== 1) {
-            throw new Error(`Expected exactly 1 ${label} in the hero of index.html, found ${matches.length}`);
+        const only = (selector, label) => {
+            const found = hero.querySelectorAll(selector);
+            if (found.length !== 1) {
+                return { error: 'Expected exactly 1 ' + label + ' in the hero of index.html, found ' + found.length };
+            }
+            return { value: found[0].textContent.trim() };
+        };
+
+        const name = only('h1', 'name');
+        if (name.error) return name;
+        const role = only('.hero-title', 'role');
+        if (role.error) return role;
+
+        // Keep each figure with the label it sits under, so the card can match
+        // them up by name instead of trusting the order they appear in.
+        const pairs = [];
+        hero.querySelectorAll('.stat-item').forEach((item) => {
+            const value = item.querySelector('.stat-number');
+            const label = item.querySelector('.stat-label');
+            if (value && label) pairs.push([label.textContent.trim(), value.textContent.trim()]);
+        });
+
+        if (pairs.length !== 3) {
+            return { error: 'Expected 3 labelled hero stats in index.html, found ' + pairs.length };
         }
-        return decodeEntities(matches[0][1].trim());
-    };
+        // Distinct labels are checked separately: two stats sharing one would
+        // collapse into a single entry and the survivor would win silently.
+        const labels = pairs.map(p => p[0]);
+        if (new Set(labels).size !== labels.length) {
+            return { error: 'Hero stats in index.html do not have distinct labels: ' + labels.join(', ') };
+        }
 
-    // Keep each figure with the label it sits under, so the card can match them
-    // up by name instead of trusting the order they appear in.
-    const stats = {};
-    const pair = /<div class="stat-number"[^>]*>([^<]+)<\/div>\s*<div class="stat-label">([^<]+)<\/div>/g;
-    const found = [...source.matchAll(pair)];
-    for (const match of found) {
-        stats[decodeEntities(match[2].trim())] = decodeEntities(match[1].trim());
-    }
-    if (found.length !== 3) {
-        throw new Error(`Expected 3 labelled hero stats in index.html, found ${found.length}`);
-    }
-    // Counting unique labels separately: two stats sharing a label would leave
-    // three pairs but only two keys, and the survivor would win silently.
-    if (Object.keys(stats).length !== found.length) {
-        throw new Error(`Hero stats in index.html do not have distinct labels: ${found.map(m => `"${m[2].trim()}"`).join(', ')}`);
-    }
-
-    return {
-        name: one(/<h1>([^<]+)<\/h1>/g, 'name'),
-        role: one(/<p class="hero-title">([^<]+)<\/p>/g, 'role'),
-        stats
-    };
+        return { value: { name: name.value, role: role.value, stats: Object.fromEntries(pairs) } };
+    }, html);
 }
 
 (async () => {
-    const content = readHeroContent();
     const { chromium } = loadPlaywright();
     const server = await serveRepo();
     const port = server.address().port;
@@ -162,6 +151,10 @@ function readHeroContent() {
         });
 
         await page.goto(`http://127.0.0.1:${port}${TEMPLATE_URL_PATH}`, { waitUntil: 'networkidle' });
+
+        const read = await readHeroContent(page);
+        if (read.error) throw new Error(read.error);
+        const content = read.value;
 
         const missingLabels = await page.evaluate((c) => {
             document.querySelector('.name').textContent = c.name;
@@ -211,7 +204,13 @@ function readHeroContent() {
             await page.screenshot({ path: pending, type: 'png' });
             fs.renameSync(pending, OUTPUT);
         } finally {
-            fs.rmSync(pending, { force: true });
+            // Swallowed deliberately: a cleanup failure here would otherwise
+            // replace the real reason the render failed.
+            try {
+                fs.rmSync(pending, { force: true });
+            } catch (err) {
+                // leave the stray file rather than lose the original error
+            }
         }
 
         const summary = Object.entries(content.stats).map(([label, value]) => `${value} ${label}`).join(', ');
