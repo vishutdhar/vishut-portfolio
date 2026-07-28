@@ -1796,13 +1796,18 @@ a.app-card {
         page-break-inside: avoid;
     }
 
-    /* .contact-item is listed explicitly: it is an anchor that sets its own
-       colour, so the bare `a` rule loses to it and the phone and email rows
-       print without the underline that marks them as links on paper. */
+    /* a.contact-item, not .contact-item: the class is also on the location
+       row, which is a div and not a link. The anchor form is listed because
+       it sets its own colour, so the bare `a` rule loses to it and the phone
+       and email rows print without the underline that marks them as links. */
     a,
-    .contact-item {
+    a.contact-item {
         color: #000;
         text-decoration: underline;
+    }
+
+    .contact-item {
+        color: #000;
     }
 
     /* Card-shaped links are block surfaces, not inline links. Underlining

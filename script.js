@@ -119,10 +119,38 @@ document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
     });
 });
 
+// Calls back once the page has stopped scrolling. Polling frames rather than
+// listening for scrollend keeps this working on browsers that lack the event,
+// and the frame cap means a page that never settles still resolves.
+function whenScrollSettles(callback) {
+    var last = window.scrollY;
+    var stableFrames = 0;
+    var frames = 0;
+    var tick = function () {
+        frames++;
+        var y = window.scrollY;
+        if (y === last) {
+            stableFrames++;
+        } else {
+            stableFrames = 0;
+            last = y;
+        }
+        if (stableFrames >= 2 || frames > 90) {
+            callback();
+            return;
+        }
+        window.requestAnimationFrame(tick);
+    };
+    window.requestAnimationFrame(tick);
+}
+
 // Going Back restores the URL and scroll position, but focus would stay on
 // the section the visitor navigated away from, so the next Tab would resume
 // from off screen. Move it to match wherever Back landed.
 window.addEventListener('popstate', function () {
+    // An open dropdown would otherwise stay up, covering whatever Back landed on
+    setMobileMenu(false);
+
     // getElementById, not querySelector: a fragment like "#1" is a perfectly
     // legal URL but an invalid CSS selector, and querySelector throws on it.
     var id = window.location.hash.slice(1);
@@ -133,11 +161,25 @@ window.addEventListener('popstate', function () {
     if (target && !target.matches('section[id], main[id]')) {
         target = null;
     }
-    if (target) {
-        target.focus({ preventScroll: true });
-    } else if (document.activeElement && document.activeElement !== document.body) {
-        document.activeElement.blur();
-    }
+
+    // Scroll restoration happens after popstate, and because html carries
+    // scroll-behavior: smooth the browser animates it over several hundred
+    // milliseconds. Wait for it to stop before judging what is on screen.
+    whenScrollSettles(function () {
+        if (target) {
+            var box = target.getBoundingClientRect();
+            // Claim focus only if the restored view actually shows the section.
+            // If the visitor had scrolled away, focusing its start would strand
+            // the focus ring above the viewport.
+            if (box.bottom > 0 && box.top < window.innerHeight) {
+                target.focus({ preventScroll: true });
+                return;
+            }
+        }
+        if (document.activeElement && document.activeElement !== document.body) {
+            document.activeElement.blur();
+        }
+    });
 });
 
 // Mobile menu toggle
@@ -151,7 +193,17 @@ function setMobileMenu(open) {
 }
 
 mobileMenuToggle.addEventListener('click', function () {
-    setMobileMenu(!mobileMenuToggle.classList.contains('active'));
+    var open = !mobileMenuToggle.classList.contains('active');
+    setMobileMenu(open);
+    // The list sits before the toggle in the document, so a keyboard user who
+    // opens the menu and presses Tab would move past it into the page instead
+    // of into it. Hand focus to the first link so the menu is reachable.
+    if (open) {
+        var first = navLinks.querySelector('a');
+        if (first) {
+            first.focus();
+        }
+    }
 });
 
 // Close mobile menu when clicking on a link
