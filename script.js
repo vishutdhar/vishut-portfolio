@@ -32,15 +32,9 @@ var THEME_BAR = { dark: '#0F0F0E', light: '#FAFAF8' };
 // The button shows the mode it is currently in and names the mode one press
 // away, because no single icon can imply the next state in a three-way cycle.
 var THEME_UI = {
-    dark: { icon: 'themeIconDark', label: 'Theme: dark. Switch to light theme.' },
-    light: { icon: 'themeIconLight', label: 'Theme: light. Switch to system theme.' },
-    system: { icon: 'themeIconSystem', label: 'Theme: system. Switch to dark theme.' }
-};
-
-var themeIcons = {
-    themeIconDark: document.getElementById('themeIconDark'),
-    themeIconLight: document.getElementById('themeIconLight'),
-    themeIconSystem: document.getElementById('themeIconSystem')
+    dark: { label: 'Theme: dark. Switch to light theme.' },
+    light: { label: 'Theme: light. Switch to system theme.' },
+    system: { label: 'Theme: system. Switch to dark theme.' }
 };
 
 function resolveTheme(mode) {
@@ -53,16 +47,12 @@ function resolveTheme(mode) {
 function applyThemeMode(mode) {
     var theme = resolveTheme(mode);
     html.setAttribute('data-theme', theme);
+    // styles.css keys the visible icon off this attribute, so the control is
+    // right from the first frame rather than after this deferred script runs
     html.setAttribute('data-theme-mode', mode);
 
-    var ui = THEME_UI[mode];
-    Object.keys(themeIcons).forEach(function (id) {
-        if (themeIcons[id]) {
-            themeIcons[id].classList.toggle('hidden', id !== ui.icon);
-        }
-    });
-    themeToggle.setAttribute('aria-label', ui.label);
-    themeToggle.setAttribute('title', ui.label);
+    themeToggle.setAttribute('aria-label', THEME_UI[mode].label);
+    themeToggle.setAttribute('title', THEME_UI[mode].label);
 
     var meta = document.querySelector('meta[name="theme-color"]:not([media])');
     if (meta) {
@@ -70,8 +60,14 @@ function applyThemeMode(mode) {
     }
 }
 
+// theme-init.js normally leaves the mode on the root element. If it was
+// blocked or failed to load, fall back to storage rather than silently
+// forcing dark on someone who saved light or system.
 function currentThemeMode() {
     var mode = html.getAttribute('data-theme-mode');
+    if (THEME_MODES.indexOf(mode) === -1) {
+        try { mode = localStorage.getItem('theme'); } catch (e) { mode = null; }
+    }
     return THEME_MODES.indexOf(mode) === -1 ? 'dark' : mode;
 }
 
@@ -116,6 +112,18 @@ document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
     });
 });
 
+// Going Back restores the URL and scroll position, but focus would stay on
+// the section the visitor navigated away from, so the next Tab would resume
+// from off screen. Move it to match wherever Back landed.
+window.addEventListener('popstate', function () {
+    var target = window.location.hash ? document.querySelector(window.location.hash) : null;
+    if (target) {
+        target.focus({ preventScroll: true });
+    } else if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
+    }
+});
+
 // Mobile menu toggle
 var mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
 var navLinks = document.querySelector('.nav-links');
@@ -150,6 +158,24 @@ document.addEventListener('click', function (e) {
         setMobileMenu(false);
     }
 });
+
+// The open state lives only in these classes, so widening past the breakpoint
+// leaves it set: the menu would spring back open on returning to a narrow
+// viewport, which a tablet does simply by rotating. Must match the breakpoint
+// in styles.css.
+var mobileMenuQuery = window.matchMedia('(max-width: 960px)');
+
+function onMobileMenuBreakpoint(event) {
+    if (!event.matches) {
+        setMobileMenu(false);
+    }
+}
+
+if (typeof mobileMenuQuery.addEventListener === 'function') {
+    mobileMenuQuery.addEventListener('change', onMobileMenuBreakpoint);
+} else if (typeof mobileMenuQuery.addListener === 'function') {
+    mobileMenuQuery.addListener(onMobileMenuBreakpoint);
+}
 
 // Nav shadow, scroll progress, and back-to-top visibility (rAF-throttled)
 var nav = document.querySelector('nav');

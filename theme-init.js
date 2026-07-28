@@ -23,4 +23,13 @@
     var root = document.documentElement;
     root.setAttribute('data-theme', theme);
     root.setAttribute('data-theme-mode', mode);
+
+    // The meta tag is declared above this script, so it already exists. Point
+    // it at the resolved theme now rather than leaving the markup's dark value
+    // for the deferred script to correct, which would flash dark browser
+    // chrome at every visitor whose saved mode is light.
+    var meta = document.querySelector('meta[name="theme-color"]:not([media])');
+    if (meta) {
+        meta.setAttribute('content', theme === 'dark' ? '#0F0F0E' : '#FAFAF8');
+    }
 })();
