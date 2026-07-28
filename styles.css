@@ -1747,9 +1747,12 @@ a.app-card {
         page-break-after: always;
     }
 
+    /* Zero the padding as well: 4rem/2rem is a screen gutter, and leaving it
+       set indents the resume header 32px from the section titles below it. */
     .hero-grid {
         grid-template-columns: 2fr 1fr;
         gap: 2rem;
+        padding: 0;
     }
 
     .hero h1 {
