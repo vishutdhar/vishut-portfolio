@@ -1941,11 +1941,17 @@ a.app-card {
         padding: 0;
     }
 
-    /* Printing does not flip the interaction media features -- a browser
-       printing from a laptop still reports hover and a fine pointer -- and
-       the pointer's last position is still sitting in the element's inline
-       style. Without this, printing while the pointer rests anywhere in the
-       hero puts the portrait on paper rotated by up to 4 degrees. */
+    /* Printing does not flip the interaction media features: a browser
+       printing from a laptop still reports hover and a fine pointer, so the
+       rules that tilt these surfaces still match on paper, and the pointer's
+       last position is still sitting in their inline style.
+
+       The portrait is the one that actually reaches paper crooked, because
+       its tilt is not scoped to :hover -- the pointer only has to be
+       somewhere in the hero. The cards are listed because the only thing
+       nulling their transform today is the reveal reset above, which is
+       there for a different reason and would take this protection with it if
+       it ever moved. */
     .hero-frame,
     .project-card,
     .education-card {
