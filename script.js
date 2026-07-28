@@ -116,7 +116,10 @@ document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
 // the section the visitor navigated away from, so the next Tab would resume
 // from off screen. Move it to match wherever Back landed.
 window.addEventListener('popstate', function () {
-    var target = window.location.hash ? document.querySelector(window.location.hash) : null;
+    // getElementById, not querySelector: a fragment like "#1" is a perfectly
+    // legal URL but an invalid CSS selector, and querySelector throws on it.
+    var id = window.location.hash.slice(1);
+    var target = id ? document.getElementById(id) : null;
     if (target) {
         target.focus({ preventScroll: true });
     } else if (document.activeElement && document.activeElement !== document.body) {
