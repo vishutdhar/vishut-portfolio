@@ -129,6 +129,12 @@ window.addEventListener('popstate', function () {
     // getElementById, not querySelector: a fragment like "#1" is a perfectly
     // legal URL but an invalid CSS selector, and querySelector throws on it.
     var id = window.location.hash.slice(1);
+    // location.hash keeps percent-encoding, so "#%68ome" arrives as "%68ome"
+    // while it identifies the element with id "home". decodeURIComponent
+    // throws on a malformed sequence, so fall back to the raw value.
+    if (id) {
+        try { id = decodeURIComponent(id); } catch (e) {}
+    }
     var target = id ? document.getElementById(id) : null;
     // Only the page's own landmarks are focus destinations. A fragment can
     // name any element, and moving focus to something like the theme toggle
