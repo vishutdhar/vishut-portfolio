@@ -393,6 +393,22 @@ document.querySelectorAll('.project-card').forEach(function (card) {
     statsObserver.observe(card);
 });
 
+// Pointer offsets are held to -1..1 so the tilt ceilings in the stylesheet
+// mean what they say: whatever produces the numbers, the rotation they drive
+// cannot exceed the degrees the rule multiplies them by.
+function clampUnit(n) {
+    return n < -1 ? -1 : (n > 1 ? 1 : n);
+}
+
+// Older Safari only implements addListener on MediaQueryList
+function onMediaChange(query, handler) {
+    if (typeof query.addEventListener === 'function') {
+        query.addEventListener('change', handler);
+    } else if (typeof query.addListener === 'function') {
+        query.addListener(handler);
+    }
+}
+
 // Hero lighting: the glow on the page, the lit arc of the ring around the
 // portrait, and the portrait's own tilt are all the same light source, so one
 // listener and one frame produce all three. Idle cost is nil -- nothing here
@@ -411,10 +427,6 @@ document.querySelectorAll('.project-card').forEach(function (card) {
     var ticking = false;
     var inside = false;
 
-    function clamp(n) {
-        return n < -1 ? -1 : (n > 1 ? 1 : n);
-    }
-
     function paint() {
         ticking = false;
         // A move and the leave that follows it are dispatched before the frame
@@ -422,6 +434,14 @@ document.querySelectorAll('.project-card').forEach(function (card) {
         // pointer's last position back over everything the leave just cleared,
         // and the portrait would stay lit and tilted with nothing on it.
         if (!inside) return;
+        // The preference can be turned on with the page already open. The
+        // stylesheet stops the tilt on its own, but the ring's lit arc is not
+        // behind a media query -- it has to render at rest with or without a
+        // pointer -- so only this check stops it still following the cursor.
+        if (prefersReducedMotion.matches) {
+            rest();
+            return;
+        }
 
         // Both measurements before any write: reading a box after touching a
         // style forces the pending recalculation to flush mid-frame.
@@ -459,8 +479,8 @@ document.querySelectorAll('.project-card').forEach(function (card) {
         // Normalised against the hero, not the portrait, so the tilt opens up
         // gradually across the whole section instead of pinning to its limit
         // the moment the pointer clears the photo.
-        frame.style.setProperty('--fx', clamp(dx / (rect.width / 2)).toFixed(3));
-        frame.style.setProperty('--fy', clamp(dy / (rect.height / 2)).toFixed(3));
+        frame.style.setProperty('--fx', clampUnit(dx / (rect.width / 2)).toFixed(3));
+        frame.style.setProperty('--fy', clampUnit(dy / (rect.height / 2)).toFixed(3));
     }
 
     function schedule() {
@@ -468,6 +488,20 @@ document.querySelectorAll('.project-card').forEach(function (card) {
             ticking = true;
             window.requestAnimationFrame(paint);
         }
+    }
+
+    // Hand everything back to the stylesheet: glow out, properties gone, and
+    // the longer transition in force so the arc eases to 315deg rather than
+    // jumping there. Landing the class and the removals in one style
+    // recalculation is what makes that transition apply.
+    function rest() {
+        inside = false;
+        light.style.opacity = '0';
+        if (!profile || !frame) return;
+        profile.classList.add('settling');
+        frame.style.removeProperty('--ring-ang');
+        frame.style.removeProperty('--fx');
+        frame.style.removeProperty('--fy');
     }
 
     hero.addEventListener('pointermove', function (e) {
@@ -488,16 +522,15 @@ document.querySelectorAll('.project-card').forEach(function (card) {
         }
     }, { passive: true });
 
-    hero.addEventListener('pointerleave', function () {
-        inside = false;
-        light.style.opacity = '0';
-        if (!profile || !frame) return;
-        // Class and removals land in the same style recalculation, so the
-        // longer transition is already in force when the values drop away.
-        profile.classList.add('settling');
-        frame.style.removeProperty('--ring-ang');
-        frame.style.removeProperty('--fx');
-        frame.style.removeProperty('--fy');
+    hero.addEventListener('pointerleave', rest);
+
+    // Turning the preference on mid-visit puts the portrait back at rest
+    // straight away, rather than at whatever angle the next pointer move
+    // happens to notice it at.
+    onMediaChange(prefersReducedMotion, function () {
+        if (prefersReducedMotion.matches) {
+            rest();
+        }
     });
 })();
 
@@ -528,13 +561,19 @@ document.querySelectorAll('.project-card').forEach(function (card) {
     function paint() {
         ticking = false;
         if (!active) return;
+        // The preference can be turned on with the page already open, and the
+        // startup guard above only ran once.
+        if (prefersReducedMotion.matches) {
+            release();
+            return;
+        }
         // Measured fresh each frame rather than cached on entry: the page can
         // scroll under a resting pointer, and a cached rectangle would leave
         // the card's centre wherever it used to be.
         var rect = active.getBoundingClientRect();
         if (!rect.width || !rect.height) return;
-        active.style.setProperty('--px', ((pointerX - rect.left) / rect.width * 2 - 1).toFixed(3));
-        active.style.setProperty('--py', ((pointerY - rect.top) / rect.height * 2 - 1).toFixed(3));
+        active.style.setProperty('--px', clampUnit((pointerX - rect.left) / rect.width * 2 - 1).toFixed(3));
+        active.style.setProperty('--py', clampUnit((pointerY - rect.top) / rect.height * 2 - 1).toFixed(3));
     }
 
     function schedule() {
@@ -567,13 +606,31 @@ document.querySelectorAll('.project-card').forEach(function (card) {
         grid.addEventListener('pointercancel', release);
     });
 
-    // Scrolling slides the card under a pointer that has not moved, and sends
-    // no pointermove to say so. Left alone the card holds the tilt it had
-    // several hundred pixels ago, which is the one thing this whole system is
-    // not allowed to do: face somewhere the pointer is not.
+    // Scrolling slides a card under a pointer that has not moved, and sends no
+    // pointermove to say so. Left alone the card holds the tilt it had several
+    // hundred pixels ago, which is the one thing this whole system is not
+    // allowed to do: face somewhere the pointer is not.
+    //
+    // Scrolling can also put a different card under that pointer, which in the
+    // single-column layout below 960px is the ordinary case rather than the
+    // edge one. The pointer's coordinates still say which card it is over, so
+    // ask the document instead of trusting the one the last move named.
     window.addEventListener('scroll', function () {
+        if (!active) return;
+        var under = document.elementFromPoint(pointerX, pointerY);
+        var card = under ? under.closest(CARD) : null;
+        if (card !== active) {
+            clear(active);
+            active = card;
+        }
         if (active) {
             schedule();
         }
     }, { passive: true });
+
+    onMediaChange(prefersReducedMotion, function () {
+        if (prefersReducedMotion.matches) {
+            release();
+        }
+    });
 })();
