@@ -81,11 +81,18 @@
     --hero-glow-strong: rgba(212, 120, 94, 0.18);
     --hero-glow-soft: rgba(212, 120, 94, 0.07);
     --border: #33332F;
-    --nav-bg: rgba(15, 15, 14, 0.95);
+    /* At 0.95 the 12px backdrop-filter under this bar was doing invisible
+       work. 0.88 is as far down as it can go: the nav crosses the headshot on
+       the way past the hero, and the wall behind the head is the brightest
+       thing on the page. Measured on the composited strip at that crossing,
+       0.88 holds the links at 5.5:1 and the logo at 4.6:1, while 0.80 drops
+       them to 4.3:1 and 3.5:1 -- under the 4.5:1 body text needs. */
+    --nav-bg: rgba(15, 15, 14, 0.88);
     --shadow-color: rgba(0, 0, 0, 0.2);
     --card-edge: rgba(255, 255, 255, 0.045);
-    --card-shadow-hover: 0 14px 36px rgba(0, 0, 0, 0.4);
-    --card-shadow-hover-sm: 0 14px 36px rgba(0, 0, 0, 0.4);
+    --cast-color: rgba(0, 0, 0, 0.4);
+    --card-shadow-hover: 6px 14px 36px var(--cast-color);
+    --card-shadow-hover-sm: 4px 14px 36px var(--cast-color);
     --github-hover-border: #f0f6fc;
 }
 
@@ -108,11 +115,15 @@
     --hero-glow-strong: rgba(196, 93, 62, 0.12);
     --hero-glow-soft: rgba(196, 93, 62, 0.05);
     --border: #E5E3DF;
-    --nav-bg: rgba(250, 250, 248, 0.95);
+    /* Same measurement, opposite content: in light the dark jacket below the
+       face is what the nav has to stay legible over. 4.96:1 links, 3.12:1
+       logo at 0.88; 0.80 gives 4.14:1 and 2.61:1. */
+    --nav-bg: rgba(250, 250, 248, 0.88);
     --shadow-color: rgba(0, 0, 0, 0.06);
     --card-edge: transparent;
-    --card-shadow-hover: 0 14px 36px rgba(0, 0, 0, 0.08);
-    --card-shadow-hover-sm: 0 10px 28px rgba(0, 0, 0, 0.06);
+    --cast-color: rgba(0, 0, 0, 0.08);
+    --card-shadow-hover: 6px 14px 36px var(--cast-color);
+    --card-shadow-hover-sm: 4px 10px 28px rgba(0, 0, 0, 0.06);
     --github-hover-border: #181717;
 }
 
@@ -571,22 +582,41 @@ section {
 }
 
 /* ============================================
-   SCROLL REVEAL ANIMATIONS (reduced to 12px)
+   SCROLL REVEAL ANIMATIONS
+   Content arrives along the z axis: a section starts 30px behind the page and
+   settles onto it, which the perspective renders as a 3.6% grow. Cards inside
+   an arriving section come from half that depth, so the two movements read as
+   one assembly seating rather than two competing slides.
    ============================================ */
+/* Scaled from the top edge, not the centre. A section is often many times the
+   height of the viewport, and a centre-origin scale moves its top edge by half
+   the height it loses: on the experience list that is 144px. Clicking a nav
+   link scrolls to wherever the top edge is at that moment, the reveal then
+   fires and puts it back, and the heading you asked for ends up behind the
+   fixed nav or above the viewport entirely. Anchored at the top, the edge the
+   browser scrolled to is the edge that stays. */
 .reveal {
     opacity: 0;
-    transform: translateY(12px);
+    transform: perspective(800px) translate3d(0, 10px, -30px);
+    transform-origin: top center;
     transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
 
 .reveal.active {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
 }
 
+/* No top origin here, unlike .reveal above. That anchoring exists because a
+   section is tall enough for a centre-origin scale to move its top edge out
+   from under the browser's scroll destination; a card is not, and it would
+   cost something real. These same cards tilt on hover about offsets measured
+   from their centre, and transform-origin is not part of the transition, so a
+   top edge left standing here would still be the pivot hours later: the card
+   would hinge from its top while the numbers driving it said centre. */
 .stagger-children > * {
     opacity: 0;
-    transform: translateY(12px);
+    transform: perspective(800px) translate3d(0, 8px, -16px);
     transition: opacity 0.4s ease-out, transform 0.4s ease-out;
 }
 
@@ -607,7 +637,7 @@ section {
 
 .stagger-children.active > * {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
 }
 
 /* Prefers reduced motion */
@@ -1032,13 +1062,15 @@ section {
     gap: 1.5rem;
 }
 
+/* The transition list lives with the other card surfaces in the depth block
+   below: naming it here as well left transform out, so an education card
+   jumped to its revealed position while its neighbours eased into theirs. */
 .education-card {
     background: var(--card-bg);
     padding: 2rem;
     border-radius: 8px;
     border: 1px solid var(--border);
     text-align: left;
-    transition: background-color 0.25s ease, border-color 0.2s ease;
 }
 
 .education-card:hover {
@@ -1108,15 +1140,23 @@ section {
     border: 1px solid var(--border);
 }
 
-/* Serif italic quotes */
+/* DM Serif Display ships one face, upright. `font-style: italic` asked for an
+   italic that does not exist, so all eight quotes were a slanted roman the
+   browser drew itself: uneven stems, no true italic letterforms.
+
+   Upright instead, and the quotes are set apart from the surrounding sans by
+   size and leading rather than by slant -- a step up from the 0.95rem body
+   copy, with the leading opened to carry the extra x-height. The opening
+   quotation mark hangs into the padding so the words still start on the same
+   vertical as the author's name below them. */
 .testimonial-text {
     font-family: 'DM Serif Display', serif;
-    font-style: italic;
     font-weight: 400;
     color: var(--text-secondary);
-    line-height: 1.7;
+    line-height: 1.75;
     margin-bottom: 1.5rem;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
+    text-indent: -0.42em;
 }
 
 /* Small accent line above author name */
@@ -1529,7 +1569,8 @@ footer {
 /* (1) Card hover physics — applies to project cards, app cards, experience items, testimonials */
 .project-card,
 .experience-item,
-.testimonial-card {
+.testimonial-card,
+.education-card {
     transition: transform .35s cubic-bezier(.2,.7,.2,1),
                 box-shadow .35s cubic-bezier(.2,.7,.2,1),
                 background-color .25s ease,
@@ -1540,7 +1581,8 @@ footer {
    all 17 cards for the life of the page. */
 .project-card:hover,
 .experience-item:hover,
-.testimonial-card:hover {
+.testimonial-card:hover,
+.education-card:hover {
     will-change: transform;
 }
 
@@ -1597,18 +1639,21 @@ footer {
 }
 
 /* (4) Conic-gradient ring around the headshot.
-   Static: this ring wraps the LCP element, and rotating it through a
-   registered custom property repainted that element every frame for as long
-   as the page stayed open. The light now reads as coming from the upper
-   left, which is where the rest of the page's shadows fall. */
-.hero-profile {
+   315deg puts the lit arc at the upper left, which is where every cast shadow
+   on this page falls from. It is the resting position: with a pointer in the
+   hero the arc follows it instead, because in the hero the pointer *is* the
+   lamp -- the cursor light below is the same light source seen on the page
+   behind the portrait. It never animates on its own; this ring wraps the LCP
+   element, and rotating it on a keyframe loop repainted that element every
+   frame for as long as the page stayed open. */
+.hero-frame {
     position: relative;
     width: fit-content;
     margin: 0 auto;
     padding: 3px;
     border-radius: 16px;
     background: conic-gradient(
-        from 315deg,
+        from var(--ring-ang, 315deg),
         var(--accent) 0deg,
         var(--accent) 25deg,
         transparent 110deg,
@@ -1698,6 +1743,146 @@ a.app-card {
 
 
 /* ============================================
+   DEPTH: ONE FIXED LIGHT, MEASURED RELIEF
+
+   Three rules hold the whole system together:
+     - a surface turns to face the pointer, so the edge nearest it sits back
+       and the far edge lifts off the page;
+     - its cast shadow swings the other way, out from under the lifted edge,
+       because the lamp does not move when the part does;
+     - nothing exceeds 4deg, and nothing runs unless a pointer is driving it.
+
+   No transform-style: preserve-3d anywhere. Every surface is a flat plane
+   carrying its own perspective(), which is what keeps Safari clipping a
+   card's children to its border radius; under preserve-3d it stops doing
+   that and the corners square off behind their own content.
+   ============================================ */
+
+/* Registered so the arc can be interpolated on the way home. An unregistered
+   custom property is a plain token substitution and transition has nothing to
+   interpolate between, so the ring would jump back to rest. */
+@property --ring-ang {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 315deg;
+}
+
+.hero-profile {
+    perspective: 900px;
+}
+
+/* Relief is a pointer affordance, so it is gated on having a pointer to drive
+   it, and on the visitor not having asked for less movement. script.js
+   applies both gates again before it writes a single custom property: a media
+   query can stop a transform, but it cannot un-write the value behind it, so
+   each layer has to hold on its own.
+
+   any-hover and any-pointer rather than the unprefixed pair, which describe
+   only the primary input: a tablet with a mouse attached still calls its
+   touchscreen primary, and gating on that would leave a visitor holding a
+   cursor with no relief under it. What has to be true is that something on
+   the device can hover, and script.js turns away finger events one by one, so
+   a device with both inputs is answered correctly whichever one is in use. */
+@media (any-hover: hover) and (any-pointer: fine) {
+    @media (prefers-reduced-motion: no-preference) {
+        /* --fx/--fy are the pointer's offset from the portrait centre, -1 to 1
+           across the hero. The portrait turns to face it; the ring's lit arc
+           follows the same pointer, one angle written per frame. */
+        .hero-frame {
+            transform: rotateX(calc(var(--fy, 0) * -4deg)) rotateY(calc(var(--fx, 0) * 4deg));
+            transition: transform 0.16s ease-out;
+        }
+
+        /* Leaving the hero is the one moment the ring angle is interpolated.
+           While it tracks, every frame is a fresh value and a transition would
+           only add lag. script.js keeps the tracked angle within half a turn of
+           315deg, so this eases the short way round rather than unwinding. */
+        .hero-profile.settling .hero-frame {
+            transition: transform 0.5s ease, --ring-ang 0.5s ease;
+        }
+
+        /* Cards use the same scheme: --px/--py are the pointer's offset from
+           the card centre. Rotation and shadow are both derived from that one
+           pair, so the tilt and the light can never disagree.
+
+           Only short-copy surfaces tilt. Rotating a plane re-rasterises the
+           text on it, which a heading and two lines survive and the experience
+           entries -- six bullets of body copy each -- do not. */
+        /* :not(a) is the whole point of the selector, not a tidy-up. Rotating
+           an element rotates the quad the browser hit-tests, and the far edge
+           of a wide card pulls inward by about 12px at the single-column width.
+           On a link that band is dead: the pointer enters it, the card turns
+           away under the press, and the click lands on nothing. Measured at
+           960px, clicks 4px and 10px inside both side edges of a personal
+           project card were lost. Those cards still lift and still cast the
+           shadow; they just do not turn. */
+        .projects-grid .project-card:not(a) {
+            --tilt: 3;
+        }
+
+        .education-grid .education-card {
+            --tilt: 4;
+        }
+
+        .projects-grid .project-card:not(a):hover,
+        .education-grid .education-card:hover {
+            transform:
+                perspective(900px)
+                rotateX(calc(var(--py, 0) * var(--tilt) * -1deg))
+                rotateY(calc(var(--px, 0) * var(--tilt) * 1deg))
+                translateY(-4px);
+            /* 6px/14px is the fixed lamp, above and to the left. The swing is
+               the tilt negated, so the shadow appears from under the raised
+               edge rather than following the pointer around. */
+            box-shadow:
+                inset 0 1px 0 var(--card-edge),
+                calc(6px - var(--px, 0) * 5px) calc(14px - var(--py, 0) * 5px) 36px var(--cast-color);
+            /* Short while tracking, so the card reads as answering the pointer
+               rather than chasing it. Releasing hands it back to the 0.35s ease
+               on the resting rule, which is the unhurried half of the move. */
+            transition: transform 0.12s ease-out,
+                        box-shadow 0.12s ease-out,
+                        background-color .25s ease,
+                        border-color .25s ease;
+        }
+    }
+}
+
+/* Differential drift as the hero leaves: the portrait travels further than
+   the text beside it, which is how two planes at different depths read
+   without anything moving along z. translateZ is not an option in here --
+   .hero is overflow: hidden, which clips 3D children, and the fixed nav
+   crosses in front of the same space.
+
+   The reduced-motion guard has to be its own query. The global block only
+   collapses animation-duration, and a scroll-progress timeline has no
+   duration to collapse. */
+@supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .hero-text {
+            animation: hero-drift-text linear both;
+            animation-timeline: scroll(root block);
+            animation-range: 0px 100vh;
+        }
+
+        .hero-profile {
+            animation: hero-drift-portrait linear both;
+            animation-timeline: scroll(root block);
+            animation-range: 0px 100vh;
+        }
+    }
+}
+
+@keyframes hero-drift-text {
+    to { transform: translateY(-8px); }
+}
+
+@keyframes hero-drift-portrait {
+    to { transform: translateY(-20px); }
+}
+
+
+/* ============================================
    PRINT STYLES
    ============================================ */
 @media print {
@@ -1726,6 +1911,7 @@ a.app-card {
         --grid-line: transparent;
         --shadow-color: transparent;
         --card-edge: transparent;
+        --cast-color: transparent;
         --nav-bg: #fff;
         /* these sit inside a box-shadow list, so they need a valid
            shadow value rather than `none` */
@@ -1780,9 +1966,26 @@ a.app-card {
     }
 
     /* the accent ring is a screen flourish; on paper it prints as a black arc */
-    .hero-profile {
+    .hero-frame {
         background: none;
         padding: 0;
+    }
+
+    /* Printing does not flip the interaction media features: a browser
+       printing from a laptop still reports hover and a fine pointer, so the
+       rules that tilt these surfaces still match on paper, and the pointer's
+       last position is still sitting in their inline style.
+
+       The portrait is the one that actually reaches paper crooked, because
+       its tilt is not scoped to :hover -- the pointer only has to be
+       somewhere in the hero. The cards are listed because the only thing
+       nulling their transform today is the reveal reset above, which is
+       there for a different reason and would take this protection with it if
+       it ever moved. */
+    .hero-frame,
+    .project-card,
+    .education-card {
+        transform: none !important;
     }
 
     /* The class selectors are listed alongside the element one because

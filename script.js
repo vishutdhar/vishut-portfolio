@@ -272,7 +272,19 @@ backToTopButton.addEventListener('click', function () {
     });
 });
 
-// Scroll Reveal Animation
+// Scroll Reveal Animation.
+//
+// threshold: 0, not a fraction. These targets are whole sections, and a
+// section can be many times the height of the phone reading it: on a 320x568
+// screen the experience list is 8,000px tall, so no more than 6.6% of it can
+// ever be on screen at once. Any fractional threshold is therefore a height
+// limit in disguise -- ask for 10% and every section taller than ten viewports
+// stays at opacity 0 for the whole visit, with no error and nothing to see.
+// The experience section was already over that line, and the testimonials were
+// 0.16 of a percentage point from it.
+//
+// Intersecting at all is the honest question, and rootMargin still holds the
+// reveal until the section is 20px onto the screen.
 var revealObserver = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
         if (entry.isIntersecting) {
@@ -280,7 +292,7 @@ var revealObserver = new IntersectionObserver(function (entries) {
         }
     });
 }, {
-    threshold: 0.1,
+    threshold: 0,
     rootMargin: '0px 0px -20px 0px'
 });
 
@@ -393,20 +405,337 @@ document.querySelectorAll('.project-card').forEach(function (card) {
     statsObserver.observe(card);
 });
 
-// Cursor light effect on hero
+// Pointer offsets are held to -1..1 so the tilt ceilings in the stylesheet
+// mean what they say: whatever produces the numbers, the rotation they drive
+// cannot exceed the degrees the rule multiplies them by.
+function clampUnit(n) {
+    return n < -1 ? -1 : (n > 1 ? 1 : n);
+}
+
+// Older Safari only implements addListener on MediaQueryList
+function onMediaChange(query, handler) {
+    if (typeof query.addEventListener === 'function') {
+        query.addEventListener('change', handler);
+    } else if (typeof query.addListener === 'function') {
+        query.addListener(handler);
+    }
+}
+
+// Hero lighting: the glow on the page, the lit arc of the ring around the
+// portrait, and the portrait's own tilt are all the same light source, so one
+// listener and one frame produce all three. Idle cost is nil -- nothing here
+// runs until a pointer moves, and nothing schedules a frame after it leaves.
 (function () {
     var hero = document.querySelector('.hero');
     var light = document.querySelector('.cursor-light');
     if (!hero || !light) return;
-    if (prefersReducedMotion.matches) return;
-    if (window.matchMedia('(pointer: coarse)').matches) return;
-    hero.addEventListener('pointermove', function (e) {
+
+    // Both of these can change with the page already open: a tablet gains a
+    // mouse, a visitor turns motion down. Neither is settled once at startup.
+    // The pointer question decides whether the listeners exist at all, which
+    // keeps them off touch devices entirely rather than firing on every
+    // finger-drag only to return; the motion question is asked inside them.
+    //
+    // any-hover and any-pointer, not the unprefixed pair: those two describe
+    // only the primary input, and a tablet with a mouse attached still calls
+    // its touchscreen primary. Asking whether the visitor has anything that
+    // can hover is the real question, and the handlers filter out fingers
+    // themselves, so a device that has both is served correctly either way.
+    var cursor = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');
+    var listening = false;
+
+    var profile = document.querySelector('.hero-profile');
+    var frame = document.querySelector('.hero-frame');
+    var pointerX = 0;
+    var pointerY = 0;
+    var ticking = false;
+    var inside = false;
+
+    function paint() {
+        ticking = false;
+        // A move and the leave that follows it are dispatched before the frame
+        // they scheduled. Without this the queued frame would write the
+        // pointer's last position back over everything the leave just cleared,
+        // and the portrait would stay lit and tilted with nothing on it.
+        if (!inside) return;
+        // The preference can be turned on with the page already open. The
+        // stylesheet stops the tilt on its own, but the ring's lit arc is not
+        // behind a media query -- it has to render at rest with or without a
+        // pointer -- so only this check stops it still following the cursor.
+        if (prefersReducedMotion.matches) {
+            rest();
+            return;
+        }
+
+        // Both measurements before any write: reading a box after touching a
+        // style forces the pending recalculation to flush mid-frame.
         var rect = hero.getBoundingClientRect();
-        light.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
-        light.style.setProperty('--my', (e.clientY - rect.top) + 'px');
+        // Measure the wrapper rather than the frame inside it: the frame
+        // carries the tilt, so its own box already reflects what the last
+        // frame wrote to it.
+        var box = profile ? profile.getBoundingClientRect() : null;
+
+        light.style.setProperty('--mx', (pointerX - rect.left) + 'px');
+        light.style.setProperty('--my', (pointerY - rect.top) + 'px');
         light.style.opacity = '1';
-    });
-    hero.addEventListener('pointerleave', function () {
+
+        if (!box || !frame) return;
+
+        // Dropped here rather than in the listener so that every style write
+        // this feature makes happens inside the frame it was scheduled for.
+        if (profile.classList.contains('settling')) {
+            profile.classList.remove('settling');
+        }
+
+        var dx = pointerX - (box.left + box.width / 2);
+        var dy = pointerY - (box.top + box.height / 2);
+
+        // Conic angles run clockwise from twelve o'clock, which puts the lit
+        // arc on whichever side of the portrait the pointer is on.
+        var angle = Math.atan2(dx, -dy) * 180 / Math.PI;
+        // Fold into the half turn either side of the 315deg resting angle.
+        // Written once per frame with no transition behind it the fold is
+        // invisible; what it buys is a settle that can never unwind a whole
+        // rotation on the way back to rest.
+        angle = ((angle - 135) % 360 + 360) % 360 + 135;
+        frame.style.setProperty('--ring-ang', angle.toFixed(1) + 'deg');
+
+        // Normalised against the hero, not the portrait, so the tilt opens up
+        // gradually across the whole section instead of pinning to its limit
+        // the moment the pointer clears the photo.
+        frame.style.setProperty('--fx', clampUnit(dx / (rect.width / 2)).toFixed(3));
+        frame.style.setProperty('--fy', clampUnit(dy / (rect.height / 2)).toFixed(3));
+    }
+
+    function schedule() {
+        if (!ticking) {
+            ticking = true;
+            window.requestAnimationFrame(paint);
+        }
+    }
+
+    // Hand everything back to the stylesheet: glow out, properties gone, and
+    // the longer transition in force so the arc eases to 315deg rather than
+    // jumping there. Landing the class and the removals in one style
+    // recalculation is what makes that transition apply.
+    // The event argument is optional: this is also the way the feature stands
+    // down when a preference or a capability changes. When there is one, a
+    // touch pointer leaving is not the cursor leaving -- a finger scrolling
+    // past sends its own pointerleave, and acting on it would put out a light
+    // the mouse is still holding.
+    function rest(e) {
+        if (e && e.pointerType === 'touch') return;
+        inside = false;
         light.style.opacity = '0';
+        if (!profile || !frame) return;
+        profile.classList.add('settling');
+        frame.style.removeProperty('--ring-ang');
+        frame.style.removeProperty('--fx');
+        frame.style.removeProperty('--fy');
+    }
+
+    function track(e) {
+        // A laptop with a touchscreen reports a fine pointer and a hovering
+        // one, both true, and still sends finger events to these handlers. A
+        // finger is not a cursor -- it has no position between contacts -- so
+        // letting one drive a light that is meant to sit where the cursor is
+        // would light the portrait for a scroll gesture. Pens pass: a stylus
+        // that hovers is a cursor.
+        if (e.pointerType === 'touch') return;
+        if (prefersReducedMotion.matches) return;
+        pointerX = e.clientX;
+        pointerY = e.clientY;
+        inside = true;
+        schedule();
+    }
+
+    // Scrolling moves the portrait without moving the pointer, and no
+    // pointermove is sent for it. The pointer's viewport coordinates are still
+    // correct, so re-measuring against the new position is all it takes to
+    // keep the light where the cursor actually is; without this the glow
+    // slides away from the cursor and the lit arc aims at where it used to be.
+    function onScroll() {
+        if (inside) {
+            schedule();
+        }
+    }
+
+    // pointerover as well as pointermove: scrolling can carry the hero up to a
+    // cursor that never moved, and the browser announces that with boundary
+    // events only. Waiting for a move would leave the glow off under a pointer
+    // that is plainly sitting on the section.
+    function sync() {
+        var wanted = cursor.matches;
+        if (wanted === listening) return;
+        listening = wanted;
+        var bind = wanted ? 'addEventListener' : 'removeEventListener';
+        hero[bind]('pointerover', track);
+        hero[bind]('pointermove', track);
+        hero[bind]('pointerleave', rest);
+        window[bind]('scroll', onScroll, { passive: true });
+        if (!wanted) {
+            rest();
+        }
+    }
+
+    sync();
+    onMediaChange(cursor, sync);
+
+    // Turning the preference on mid-visit puts the portrait back at rest
+    // straight away, rather than at whatever angle the next pointer move
+    // happens to notice it at.
+    onMediaChange(prefersReducedMotion, function () {
+        if (prefersReducedMotion.matches) {
+            rest();
+        }
+    });
+})();
+
+// Card relief. One listener per grid rather than one per card: three grids
+// hold every tilting surface on the page, so delegating to them halves the
+// listener count today and keeps it flat as cards are added.
+(function () {
+    // As above: the pointer question decides whether these listeners exist,
+    // and it is re-asked whenever the answer changes.
+    var cursor = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');
+    var listening = false;
+    var grids = document.querySelectorAll('.projects-grid, .education-grid');
+
+    // Mirrors the stylesheet's own exclusion: a card that is a link is not
+    // rotated, because rotating it moves the quad the browser hit-tests and
+    // clicks near its side edges are lost. Writing offsets nothing reads would
+    // be work for no picture.
+    var CARD = '.project-card:not(a), .education-card';
+    // One pointer means one addressed card, whichever grid it is in, so the
+    // state is held once rather than per grid.
+    var active = null;
+    // Whether the pointer is over a grid at all, which is not the same
+    // question as whether it is over a card: the gutters belong to the grid
+    // too, and a pointer resting in one is still a pointer the next scroll
+    // has to account for.
+    var within = false;
+    var pointerX = 0;
+    var pointerY = 0;
+    var ticking = false;
+
+    // Removing the properties rather than zeroing them hands the card back to
+    // the stylesheet's own defaults, and stops a stale offset from the last
+    // visit applying for a frame on the next one.
+    function clear(card) {
+        if (!card) return;
+        card.style.removeProperty('--px');
+        card.style.removeProperty('--py');
+    }
+
+    function paint() {
+        ticking = false;
+        if (!active) return;
+        // The preference can be turned on with the page already open, and the
+        // startup guard above only ran once.
+        if (prefersReducedMotion.matches) {
+            release();
+            return;
+        }
+        // Measured fresh each frame rather than cached on entry: the page can
+        // scroll under a resting pointer, and a cached rectangle would leave
+        // the card's centre wherever it used to be.
+        var rect = active.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        active.style.setProperty('--px', clampUnit((pointerX - rect.left) / rect.width * 2 - 1).toFixed(3));
+        active.style.setProperty('--py', clampUnit((pointerY - rect.top) / rect.height * 2 - 1).toFixed(3));
+    }
+
+    function schedule() {
+        if (!ticking) {
+            ticking = true;
+            window.requestAnimationFrame(paint);
+        }
+    }
+
+    // Optional event argument, same as the hero's rest(): a finger leaving is
+    // not the cursor leaving, and clearing on it would flatten a card the
+    // mouse is still sitting on, which stays lifted and hovered meanwhile.
+    function release(e) {
+        if (e && e.pointerType === 'touch') return;
+        within = false;
+        clear(active);
+        active = null;
+    }
+
+    // Whatever the pointer is over, record where it is: a position taken in a
+    // gutter is what lets the scroll handler below recognise the next card
+    // that arrives under a pointer which never moved again.
+    function aim(x, y, card) {
+        if (prefersReducedMotion.matches) {
+            release();
+            return;
+        }
+        within = true;
+        pointerX = x;
+        pointerY = y;
+        if (card !== active) {
+            // crossing the gutter between two cards counts as leaving one
+            clear(active);
+            active = card;
+        }
+        if (active) {
+            schedule();
+        }
+    }
+
+    // Same reason as the hero: a touchscreen laptop reports a fine hovering
+    // pointer and still delivers finger events here, and a card tilting under
+    // a finger that is trying to scroll past it is not the affordance.
+    function onPointer(e) {
+        if (e.pointerType === 'touch') return;
+        aim(e.clientX, e.clientY, e.target.closest(CARD));
+    }
+
+    // Scrolling slides a card under a pointer that has not moved, and sends no
+    // pointermove to say so. Left alone the card holds the tilt it had several
+    // hundred pixels ago, which is the one thing this whole system is not
+    // allowed to do: face somewhere the pointer is not.
+    //
+    // Scrolling can also put a different card under that pointer, which in the
+    // single-column layout below 960px is the ordinary case rather than the
+    // edge one. The pointer's coordinates still say which card it is over, so
+    // ask the document instead of trusting the one the last move named. Keyed
+    // on the pointer being over a grid rather than over a card: keyed on the
+    // card, a single scroll that carried the pointer across a gutter would
+    // clear it and stop every hit test after that.
+    function onScroll() {
+        if (!within) return;
+        var under = document.elementFromPoint(pointerX, pointerY);
+        aim(pointerX, pointerY, under ? under.closest(CARD) : null);
+    }
+
+    // pointerover as well as pointermove: a card can arrive under a cursor
+    // parked outside the grid entirely, and scrolling it there announces
+    // itself with boundary events and a :hover change but no move. The card
+    // would otherwise rise with no tilt until the pointer twitched.
+    function sync() {
+        var wanted = cursor.matches;
+        if (wanted === listening) return;
+        listening = wanted;
+        var bind = wanted ? 'addEventListener' : 'removeEventListener';
+        grids.forEach(function (grid) {
+            grid[bind]('pointerover', onPointer);
+            grid[bind]('pointermove', onPointer);
+            grid[bind]('pointerleave', release);
+            grid[bind]('pointercancel', release);
+        });
+        window[bind]('scroll', onScroll, { passive: true });
+        if (!wanted) {
+            release();
+        }
+    }
+
+    sync();
+    onMediaChange(cursor, sync);
+
+    onMediaChange(prefersReducedMotion, function () {
+        if (prefersReducedMotion.matches) {
+            release();
+        }
     });
 })();
