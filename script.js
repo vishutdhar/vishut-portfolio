@@ -435,7 +435,13 @@ function onMediaChange(query, handler) {
     // The pointer question decides whether the listeners exist at all, which
     // keeps them off touch devices entirely rather than firing on every
     // finger-drag only to return; the motion question is asked inside them.
-    var coarse = window.matchMedia('(pointer: coarse)');
+    //
+    // any-hover and any-pointer, not the unprefixed pair: those two describe
+    // only the primary input, and a tablet with a mouse attached still calls
+    // its touchscreen primary. Asking whether the visitor has anything that
+    // can hover is the real question, and the handlers filter out fingers
+    // themselves, so a device that has both is served correctly either way.
+    var cursor = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');
     var listening = false;
 
     var profile = document.querySelector('.hero-profile');
@@ -512,7 +518,13 @@ function onMediaChange(query, handler) {
     // the longer transition in force so the arc eases to 315deg rather than
     // jumping there. Landing the class and the removals in one style
     // recalculation is what makes that transition apply.
-    function rest() {
+    // The event argument is optional: this is also the way the feature stands
+    // down when a preference or a capability changes. When there is one, a
+    // touch pointer leaving is not the cursor leaving -- a finger scrolling
+    // past sends its own pointerleave, and acting on it would put out a light
+    // the mouse is still holding.
+    function rest(e) {
+        if (e && e.pointerType === 'touch') return;
         inside = false;
         light.style.opacity = '0';
         if (!profile || !frame) return;
@@ -553,7 +565,7 @@ function onMediaChange(query, handler) {
     // events only. Waiting for a move would leave the glow off under a pointer
     // that is plainly sitting on the section.
     function sync() {
-        var wanted = !coarse.matches;
+        var wanted = cursor.matches;
         if (wanted === listening) return;
         listening = wanted;
         var bind = wanted ? 'addEventListener' : 'removeEventListener';
@@ -567,7 +579,7 @@ function onMediaChange(query, handler) {
     }
 
     sync();
-    onMediaChange(coarse, sync);
+    onMediaChange(cursor, sync);
 
     // Turning the preference on mid-visit puts the portrait back at rest
     // straight away, rather than at whatever angle the next pointer move
@@ -585,7 +597,7 @@ function onMediaChange(query, handler) {
 (function () {
     // As above: the pointer question decides whether these listeners exist,
     // and it is re-asked whenever the answer changes.
-    var fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+    var cursor = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');
     var listening = false;
     var grids = document.querySelectorAll('.projects-grid, .education-grid');
 
@@ -636,7 +648,11 @@ function onMediaChange(query, handler) {
         }
     }
 
-    function release() {
+    // Optional event argument, same as the hero's rest(): a finger leaving is
+    // not the cursor leaving, and clearing on it would flatten a card the
+    // mouse is still sitting on, which stays lifted and hovered meanwhile.
+    function release(e) {
+        if (e && e.pointerType === 'touch') return;
         within = false;
         clear(active);
         active = null;
@@ -694,7 +710,7 @@ function onMediaChange(query, handler) {
     // itself with boundary events and a :hover change but no move. The card
     // would otherwise rise with no tilt until the pointer twitched.
     function sync() {
-        var wanted = fine.matches;
+        var wanted = cursor.matches;
         if (wanted === listening) return;
         listening = wanted;
         var bind = wanted ? 'addEventListener' : 'removeEventListener';
@@ -711,7 +727,7 @@ function onMediaChange(query, handler) {
     }
 
     sync();
-    onMediaChange(fine, sync);
+    onMediaChange(cursor, sync);
 
     onMediaChange(prefersReducedMotion, function () {
         if (prefersReducedMotion.matches) {

@@ -1760,8 +1760,15 @@ a.app-card {
    it, and on the visitor not having asked for less movement. script.js
    applies both gates again before it writes a single custom property: a media
    query can stop a transform, but it cannot un-write the value behind it, so
-   each layer has to hold on its own. */
-@media (hover: hover) and (pointer: fine) {
+   each layer has to hold on its own.
+
+   any-hover and any-pointer rather than the unprefixed pair, which describe
+   only the primary input: a tablet with a mouse attached still calls its
+   touchscreen primary, and gating on that would leave a visitor holding a
+   cursor with no relief under it. What has to be true is that something on
+   the device can hover, and script.js turns away finger events one by one, so
+   a device with both inputs is answered correctly whichever one is in use. */
+@media (any-hover: hover) and (any-pointer: fine) {
     @media (prefers-reduced-motion: no-preference) {
         /* --fx/--fy are the pointer's offset from the portrait centre, -1 to 1
            across the hero. The portrait turns to face it; the ring's lit arc
