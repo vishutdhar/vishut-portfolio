@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OG card source</title>
+<!--
+  Source for og-image.png (1200x630 social share card).
+  Render with: node assets/og/build.js
+  Geometry and colors mirror the live site so the card stays on brand.
+-->
+<style>
+@font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 300 700;
+    src: url('../fonts/dm-sans-v17-latin-300-700.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'DM Serif Display';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/dm-serif-display-v17-latin.woff2') format('woff2');
+}
+
+:root {
+    --bg-primary: #FAFAF8;
+    --text-primary: #1C1C1C;
+    --text-secondary: #5C5C5C;
+    --text-tertiary: #8A8A8A;
+    --accent: #C45D3E;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+    width: 1200px;
+    height: 630px;
+    background: var(--bg-primary);
+    overflow: hidden;
+}
+
+body {
+    position: relative;
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.top-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 10px;
+    background: var(--accent);
+}
+
+/*
+ * headshot.png is the photo exactly as it was framed on the previous card,
+ * rounded corners already baked in. The full-size headshot in the repo root is
+ * a tighter crop whose subject sits centred, which pushes his shoulder into the
+ * text column, so it is deliberately not used here.
+ */
+.headshot {
+    position: absolute;
+    left: 90px;
+    top: 127px;
+    width: 370px;
+    height: 376px;
+}
+
+.content {
+    position: absolute;
+    left: 460px;
+}
+
+.name {
+    top: 189px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 76px;
+    line-height: 1;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+}
+
+.role {
+    top: 281px;
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.stats {
+    top: 361px;
+    display: flex;
+    gap: 60px;
+    align-items: flex-start;
+}
+
+.stat-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 53px;
+    line-height: 1;
+    color: var(--accent);
+}
+
+.stat-label {
+    margin-top: 6px;
+    font-size: 16.5px;
+    font-weight: 400;
+    letter-spacing: 1.19px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.domain {
+    position: absolute;
+    right: 90px;
+    top: 564px;
+    font-size: 21px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+}
+</style>
+</head>
+<body>
+    <div class="top-bar"></div>
+
+    <img class="headshot" src="headshot.png" alt="">
+
+    <div class="content name">Vishut Dhar</div>
+    <div class="content role">Senior Supplier Quality Engineer</div>
+
+    <!--
+      data-page-label names the hero stat on index.html each figure is taken
+      from, so the build matches them up by name rather than by position and a
+      reordered or renamed hero cannot quietly put a value under the wrong
+      caption. The captions below stay short because the page spells them out
+      at widths this layout has no room for.
+    -->
+    <div class="content stats">
+        <div>
+            <div class="stat-value" data-page-label="Years Experience">7+</div>
+            <div class="stat-label">Years Experience</div>
+        </div>
+        <div>
+            <div class="stat-value" data-page-label="Annual Savings">$15M</div>
+            <div class="stat-label">Annual Savings</div>
+        </div>
+        <div>
+            <div class="stat-value" data-page-label="Scrap Rate Achievement">0.5%</div>
+            <div class="stat-label">Scrap Rate</div>
+        </div>
+    </div>
+
+    <div class="domain">vishutdhar.com</div>
+</body>
+</html>
