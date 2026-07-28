@@ -1941,6 +1941,17 @@ a.app-card {
         padding: 0;
     }
 
+    /* Printing does not flip the interaction media features -- a browser
+       printing from a laptop still reports hover and a fine pointer -- and
+       the pointer's last position is still sitting in the element's inline
+       style. Without this, printing while the pointer rests anywhere in the
+       hero puts the portrait on paper rotated by up to 4 degrees. */
+    .hero-frame,
+    .project-card,
+    .education-card {
+        transform: none !important;
+    }
+
     /* The class selectors are listed alongside the element one because
        `.about` and friends set `padding: 6rem 2rem` at higher specificity;
        a bare `section` rule loses to them and leaves roughly 640px of screen
