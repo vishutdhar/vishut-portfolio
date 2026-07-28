@@ -202,6 +202,11 @@ function readHeroContent(page) {
                 if (values.length !== 1 || captions.length !== 1) {
                     return { error: 'A stat slot in the card template does not have exactly one value and one caption' };
                 }
+                // Writing the figure replaces everything inside the value, so a
+                // caption nested in there would be erased as the card renders.
+                if (values[0].contains(captions[0])) {
+                    return { error: 'A stat caption in the card template sits inside the value and would be overwritten' };
+                }
 
                 const label = norm(values[0].dataset.pageLabel || '');
                 const caption = norm(captions[0].textContent);
