@@ -322,6 +322,8 @@ nav.scrolled {
    HERO SECTION - 2 Column Split
    ============================================ */
 .hero {
+    /* vh first as a fallback: svh is dropped whole where it is unsupported */
+    min-height: 100vh;
     min-height: 100svh;
     display: flex;
     align-items: center;
@@ -1366,6 +1368,9 @@ footer {
            A phone in landscape is about 390px tall and the nav takes 76 of
            that, so cap the panel just under the remaining space and scroll.
            overscroll-behavior stops the page moving underneath it. */
+        /* vh first: a browser without svh drops that declaration entirely,
+           and losing the cap would put the lower links out of reach again */
+        max-height: calc(100vh - 5rem);
         max-height: calc(100svh - 5rem);
         overflow-y: auto;
         overscroll-behavior: contain;
