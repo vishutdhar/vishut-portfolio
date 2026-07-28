@@ -463,15 +463,30 @@ document.querySelectorAll('.project-card').forEach(function (card) {
         frame.style.setProperty('--fy', clamp(dy / (rect.height / 2)).toFixed(3));
     }
 
-    hero.addEventListener('pointermove', function (e) {
-        pointerX = e.clientX;
-        pointerY = e.clientY;
-        inside = true;
+    function schedule() {
         if (!ticking) {
             ticking = true;
             window.requestAnimationFrame(paint);
         }
+    }
+
+    hero.addEventListener('pointermove', function (e) {
+        pointerX = e.clientX;
+        pointerY = e.clientY;
+        inside = true;
+        schedule();
     });
+
+    // Scrolling moves the portrait without moving the pointer, and no
+    // pointermove is sent for it. The pointer's viewport coordinates are still
+    // correct, so re-measuring against the new position is all it takes to
+    // keep the light where the cursor actually is; without this the glow
+    // slides away from the cursor and the lit arc aims at where it used to be.
+    window.addEventListener('scroll', function () {
+        if (inside) {
+            schedule();
+        }
+    }, { passive: true });
 
     hero.addEventListener('pointerleave', function () {
         inside = false;
@@ -494,6 +509,12 @@ document.querySelectorAll('.project-card').forEach(function (card) {
     if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
     var CARD = '.project-card, .education-card';
+    // One pointer means one addressed card, whichever grid it is in, so the
+    // state is held once rather than per grid.
+    var active = null;
+    var pointerX = 0;
+    var pointerY = 0;
+    var ticking = false;
 
     // Removing the properties rather than zeroing them hands the card back to
     // the stylesheet's own defaults, and stops a stale offset from the last
@@ -504,29 +525,31 @@ document.querySelectorAll('.project-card').forEach(function (card) {
         card.style.removeProperty('--py');
     }
 
+    function paint() {
+        ticking = false;
+        if (!active) return;
+        // Measured fresh each frame rather than cached on entry: the page can
+        // scroll under a resting pointer, and a cached rectangle would leave
+        // the card's centre wherever it used to be.
+        var rect = active.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        active.style.setProperty('--px', ((pointerX - rect.left) / rect.width * 2 - 1).toFixed(3));
+        active.style.setProperty('--py', ((pointerY - rect.top) / rect.height * 2 - 1).toFixed(3));
+    }
+
+    function schedule() {
+        if (!ticking) {
+            ticking = true;
+            window.requestAnimationFrame(paint);
+        }
+    }
+
+    function release() {
+        clear(active);
+        active = null;
+    }
+
     document.querySelectorAll('.projects-grid, .education-grid').forEach(function (grid) {
-        var active = null;
-        var pointerX = 0;
-        var pointerY = 0;
-        var ticking = false;
-
-        function paint() {
-            ticking = false;
-            if (!active) return;
-            // Measured fresh each frame rather than cached on entry: the page
-            // can scroll under a resting pointer, and a cached rectangle would
-            // leave the card's centre wherever it used to be.
-            var rect = active.getBoundingClientRect();
-            if (!rect.width || !rect.height) return;
-            active.style.setProperty('--px', ((pointerX - rect.left) / rect.width * 2 - 1).toFixed(3));
-            active.style.setProperty('--py', ((pointerY - rect.top) / rect.height * 2 - 1).toFixed(3));
-        }
-
-        function release() {
-            clear(active);
-            active = null;
-        }
-
         grid.addEventListener('pointermove', function (e) {
             var card = e.target.closest(CARD);
             if (card !== active) {
@@ -537,13 +560,20 @@ document.querySelectorAll('.project-card').forEach(function (card) {
             if (!active) return;
             pointerX = e.clientX;
             pointerY = e.clientY;
-            if (!ticking) {
-                ticking = true;
-                window.requestAnimationFrame(paint);
-            }
+            schedule();
         });
 
         grid.addEventListener('pointerleave', release);
         grid.addEventListener('pointercancel', release);
     });
+
+    // Scrolling slides the card under a pointer that has not moved, and sends
+    // no pointermove to say so. Left alone the card holds the tilt it had
+    // several hundred pixels ago, which is the one thing this whole system is
+    // not allowed to do: face somewhere the pointer is not.
+    window.addEventListener('scroll', function () {
+        if (active) {
+            schedule();
+        }
+    }, { passive: true });
 })();
