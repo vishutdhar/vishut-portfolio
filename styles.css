@@ -1361,6 +1361,14 @@ footer {
         flex-direction: column;
         padding: 1.5rem 2rem;
         border-bottom: 1px solid var(--border);
+        /* The dropdown hangs off a fixed nav, so eight links run past the
+           bottom of a short viewport with no way to reach the last of them.
+           A phone in landscape is about 390px tall and the nav takes 76 of
+           that, so cap the panel just under the remaining space and scroll.
+           overscroll-behavior stops the page moving underneath it. */
+        max-height: calc(100svh - 5rem);
+        overflow-y: auto;
+        overscroll-behavior: contain;
     }
 
     .nav-links.active {
