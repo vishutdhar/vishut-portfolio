@@ -18,40 +18,76 @@
     }
 })();
 
-// Dark Mode Toggle
+// Theme toggle. Cycles dark -> light -> system -> dark.
+// The site is dark by default; 'system' is an opt-in the visitor selects,
+// not the fallback. See theme-init.js for the pre-paint half of this.
 var themeToggle = document.getElementById('themeToggle');
-var darkIcon = document.getElementById('darkIcon');
-var lightIcon = document.getElementById('lightIcon');
 var html = document.documentElement;
 var prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
 var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-function applyTheme(theme) {
+var THEME_MODES = ['dark', 'light', 'system'];
+var THEME_BAR = { dark: '#0F0F0E', light: '#FAFAF8' };
+
+// The button shows the mode it is currently in and names the mode one press
+// away, because no single icon can imply the next state in a three-way cycle.
+var THEME_UI = {
+    dark: { icon: 'themeIconDark', label: 'Theme: dark. Switch to light theme.' },
+    light: { icon: 'themeIconLight', label: 'Theme: light. Switch to system theme.' },
+    system: { icon: 'themeIconSystem', label: 'Theme: system. Switch to dark theme.' }
+};
+
+var themeIcons = {
+    themeIconDark: document.getElementById('themeIconDark'),
+    themeIconLight: document.getElementById('themeIconLight'),
+    themeIconSystem: document.getElementById('themeIconSystem')
+};
+
+function resolveTheme(mode) {
+    if (mode === 'system') {
+        return prefersDark.matches ? 'dark' : 'light';
+    }
+    return mode;
+}
+
+function applyThemeMode(mode) {
+    var theme = resolveTheme(mode);
     html.setAttribute('data-theme', theme);
-    darkIcon.classList.toggle('hidden', theme === 'dark');
-    lightIcon.classList.toggle('hidden', theme !== 'dark');
-    themeToggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    html.setAttribute('data-theme-mode', mode);
+
+    var ui = THEME_UI[mode];
+    Object.keys(themeIcons).forEach(function (id) {
+        if (themeIcons[id]) {
+            themeIcons[id].classList.toggle('hidden', id !== ui.icon);
+        }
+    });
+    themeToggle.setAttribute('aria-label', ui.label);
+    themeToggle.setAttribute('title', ui.label);
+
     var meta = document.querySelector('meta[name="theme-color"]:not([media])');
     if (meta) {
-        meta.setAttribute('content', theme === 'dark' ? '#141413' : '#FAFAF8');
+        meta.setAttribute('content', THEME_BAR[theme]);
     }
 }
 
-// theme-init.js already set the attribute before paint; sync the toggle UI to it
-applyTheme(html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+function currentThemeMode() {
+    var mode = html.getAttribute('data-theme-mode');
+    return THEME_MODES.indexOf(mode) === -1 ? 'dark' : mode;
+}
+
+// theme-init.js already set the attributes before paint; sync the toggle UI to them
+applyThemeMode(currentThemeMode());
 
 themeToggle.addEventListener('click', function () {
-    var newTheme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-    applyTheme(newTheme);
-    try { localStorage.setItem('theme', newTheme); } catch (e) {}
+    var next = THEME_MODES[(THEME_MODES.indexOf(currentThemeMode()) + 1) % THEME_MODES.length];
+    applyThemeMode(next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
 });
 
-// Follow system theme changes while the visitor has not chosen one explicitly
-function onSystemThemeChange(event) {
-    var stored = null;
-    try { stored = localStorage.getItem('theme'); } catch (e) {}
-    if (stored !== 'light' && stored !== 'dark') {
-        applyTheme(event.matches ? 'dark' : 'light');
+// Follow the operating system only while the visitor has chosen 'system'
+function onSystemThemeChange() {
+    if (currentThemeMode() === 'system') {
+        applyThemeMode('system');
     }
 }
 
@@ -62,14 +98,20 @@ if (typeof prefersDark.addEventListener === 'function') {
     prefersDark.addListener(onSystemThemeChange);
 }
 
-// Smooth scrolling for navigation links
+// Smooth scrolling for navigation links.
+// preventDefault suppresses the browser's own hash update, so push it back on
+// afterwards: without this the address bar never changes and Back leaves the
+// page instead of returning to the previous section.
 document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
     anchor.addEventListener('click', function (e) {
+        var href = this.getAttribute('href');
+        var target = document.querySelector(href);
+        if (!target) return;
         e.preventDefault();
-        var target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({ behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' });
-            target.focus({ preventScroll: true });
+        target.scrollIntoView({ behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' });
+        target.focus({ preventScroll: true });
+        if (window.history && window.history.pushState && window.location.hash !== href) {
+            window.history.pushState(null, '', href);
         }
     });
 });
@@ -120,7 +162,8 @@ function updateScrollUI() {
     var y = window.scrollY;
     nav.classList.toggle('scrolled', y > 50);
     var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    scrollProgress.style.width = (maxScroll > 0 ? (y / maxScroll) * 100 : 0) + '%';
+    var progress = maxScroll > 0 ? Math.min(Math.max(y / maxScroll, 0), 1) : 0;
+    scrollProgress.style.transform = 'scaleX(' + progress + ')';
     backToTopButton.classList.toggle('visible', y > 500);
 }
 
