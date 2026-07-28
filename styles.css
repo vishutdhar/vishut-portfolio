@@ -1373,7 +1373,9 @@ footer {
         max-height: calc(100vh - 5rem);
         max-height: calc(100svh - 5rem);
         overflow-y: auto;
-        overscroll-behavior: contain;
+        /* y only: the panel never scrolls sideways, and containing the x axis
+           would also swallow horizontal swipe gestures */
+        overscroll-behavior-y: contain;
     }
 
     .nav-links.active {
