@@ -222,14 +222,17 @@ var statsObserver = new IntersectionObserver(function (entries) {
             var statNumbers = entry.target.querySelectorAll('.stat-number');
             statNumbers.forEach(function (stat) {
                 var text = stat.textContent;
+                var target = parseFloat(text.replace(/[^0-9.]/g, ''));
+                if (isNaN(target)) return;
                 if (text.includes('$')) {
                     stat.dataset.isMoney = 'true';
-                    animateValue(stat, 0, 15, 800);
+                    animateValue(stat, 0, target, 800);
                 } else if (text.includes('%')) {
                     stat.dataset.isPercentage = 'true';
-                    animateValue(stat, 5, 0.5, 800);
+                    // Counts down from the 5% pre-improvement scrap rate, which appears nowhere in the markup
+                    animateValue(stat, 5, target, 800);
                 } else {
-                    animateValue(stat, 0, 6, 600);
+                    animateValue(stat, 0, target, 600);
                 }
             });
             // Project metric values
