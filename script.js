@@ -523,6 +523,13 @@ function onMediaChange(query, handler) {
     }
 
     function track(e) {
+        // A laptop with a touchscreen reports a fine pointer and a hovering
+        // one, both true, and still sends finger events to these handlers. A
+        // finger is not a cursor -- it has no position between contacts -- so
+        // letting one drive a light that is meant to sit where the cursor is
+        // would light the portrait for a scroll gesture. Pens pass: a stylus
+        // that hovers is a cursor.
+        if (e.pointerType === 'touch') return;
         if (prefersReducedMotion.matches) return;
         pointerX = e.clientX;
         pointerY = e.clientY;
@@ -656,7 +663,11 @@ function onMediaChange(query, handler) {
         }
     }
 
+    // Same reason as the hero: a touchscreen laptop reports a fine hovering
+    // pointer and still delivers finger events here, and a card tilting under
+    // a finger that is trying to scroll past it is not the affordance.
     function onPointer(e) {
+        if (e.pointerType === 'touch') return;
         aim(e.clientX, e.clientY, e.target.closest(CARD));
     }
 
