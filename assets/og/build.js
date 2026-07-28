@@ -19,6 +19,8 @@ const OUTPUT = path.join(REPO_ROOT, 'og-image.png');
 const TEMPLATE_URL_PATH = '/assets/og/template.html';
 const WIDTH = 1200;
 const HEIGHT = 630;
+// The template's own left and right gutter, reused to check the content fits.
+const MARGIN = 90;
 
 // This repo has no package.json, so Playwright is usually not installed
 // alongside it. Fall back to the global npm root, including one level down,
@@ -195,6 +197,21 @@ function readHeroContent(page) {
         if (!ready.headshotLoaded) throw new Error('Headshot did not load; refusing to overwrite the card');
         if (ready.missingFonts.length) {
             throw new Error(`Fonts unavailable (${ready.missingFonts.join(', ')}); refusing to overwrite the card`);
+        }
+
+        // Now that the page's text is in, check it still fits. Copy long enough
+        // to run past the edge would otherwise be cropped silently by the
+        // screenshot, and the card is only ever seen at this fixed size.
+        const overflowing = await page.evaluate((margin) => {
+            const limit = document.documentElement.clientWidth - margin;
+            return [...document.querySelectorAll('.name, .role, .stats, .domain')]
+                .map(el => ({ el, right: el.getBoundingClientRect().right }))
+                .filter(({ right }) => right > limit)
+                .map(({ el, right }) => `${el.className.replace('content ', '')} reaches ${Math.round(right)}px, past ${limit}px`);
+        }, MARGIN);
+
+        if (overflowing.length) {
+            throw new Error(`Card content does not fit:\n  ${overflowing.join('\n  ')}`);
         }
 
         // Render aside first so a failed run cannot leave a broken card behind.
