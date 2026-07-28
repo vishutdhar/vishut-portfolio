@@ -1369,12 +1369,17 @@ footer {
 
     .nav-links a {
         padding: 0.75rem 0;
+    }
+
+    /* The separator belongs on the li, which is the full-width flex item.
+       On the anchor it underlines only the text, giving a ragged edge, and
+       `a:last-child` matched every anchor anyway since each is the only
+       child of its li, so every separator was removed rather than the last. */
+    .nav-links li {
         border-bottom: 1px solid var(--border);
     }
 
-    /* Each anchor is the only child of its <li>, so `a:last-child` matched
-       every link and removed every separator instead of just the last one. */
-    .nav-links li:last-child a {
+    .nav-links li:last-child {
         border-bottom: none;
     }
 
