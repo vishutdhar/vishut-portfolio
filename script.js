@@ -104,11 +104,15 @@ document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
         var target = document.querySelector(href);
         if (!target) return;
         e.preventDefault();
-        target.scrollIntoView({ behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' });
-        target.focus({ preventScroll: true });
+        // Push the new entry BEFORE scrolling. The browser stores the current
+        // scroll offset on the entry being left, so scrolling first would
+        // record the destination on the outgoing entry and Back would leave
+        // the visitor exactly where they pressed it.
         if (window.history && window.history.pushState && window.location.hash !== href) {
             window.history.pushState(null, '', href);
         }
+        target.scrollIntoView({ behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' });
+        target.focus({ preventScroll: true });
     });
 });
 
@@ -120,6 +124,12 @@ window.addEventListener('popstate', function () {
     // legal URL but an invalid CSS selector, and querySelector throws on it.
     var id = window.location.hash.slice(1);
     var target = id ? document.getElementById(id) : null;
+    // Only the page's own landmarks are focus destinations. A fragment can
+    // name any element, and moving focus to something like the theme toggle
+    // because a URL said so is not what "go back to that section" means.
+    if (target && !target.matches('section[id], main[id]')) {
+        target = null;
+    }
     if (target) {
         target.focus({ preventScroll: true });
     } else if (document.activeElement && document.activeElement !== document.body) {

@@ -130,10 +130,6 @@ body {
     animation: fadeIn 0.6s ease forwards;
 }
 
-.hidden {
-    display: none !important;
-}
-
 @keyframes fadeIn {
     to { opacity: 1; }
 }
@@ -260,9 +256,20 @@ nav.scrolled {
    before first paint. Doing this in CSS rather than in the deferred script
    means a visitor whose saved mode is light never sees a dark control in the
    first frame, and the control stays correct even if script.js never runs.
-   No attribute at all is the dark default. */
-:root:not([data-theme-mode]) #themeIconDark,
-[data-theme-mode="dark"] #themeIconDark,
+
+   Written as "dark, unless another mode is named" rather than one rule per
+   mode, so that a missing or unrecognised attribute still yields exactly one
+   icon. Enumerating the three modes instead would render a blank button for
+   any value outside the set. */
+#themeIconDark {
+    display: block;
+}
+
+[data-theme-mode="light"] #themeIconDark,
+[data-theme-mode="system"] #themeIconDark {
+    display: none;
+}
+
 [data-theme-mode="light"] #themeIconLight,
 [data-theme-mode="system"] #themeIconSystem {
     display: block;
@@ -1755,7 +1762,15 @@ a.app-card {
         padding: 0;
     }
 
-    section {
+    /* The class selectors are listed alongside the element one because
+       `.about` and friends set `padding: 6rem 2rem` at higher specificity;
+       a bare `section` rule loses to them and leaves roughly 640px of screen
+       whitespace spread through the printed pages. */
+    section,
+    .about,
+    .apps,
+    .projects,
+    .testimonials {
         page-break-inside: avoid;
         padding: 1rem 0;
     }
@@ -1773,9 +1788,20 @@ a.app-card {
         page-break-inside: avoid;
     }
 
-    a {
+    /* .contact-item is listed explicitly: it is an anchor that sets its own
+       colour, so the bare `a` rule loses to it and the phone and email rows
+       print without the underline that marks them as links on paper. */
+    a,
+    .contact-item {
         color: #000;
         text-decoration: underline;
+    }
+
+    /* Card-shaped links are block surfaces, not inline links. Underlining
+       every line of a card's title and description is noise on paper. */
+    a.project-card,
+    a.app-card {
+        text-decoration: none;
     }
 
     .contact-item[href^="mailto:"]:after {
