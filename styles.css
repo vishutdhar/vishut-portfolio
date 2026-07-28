@@ -1808,7 +1808,15 @@ a.app-card {
            Only short-copy surfaces tilt. Rotating a plane re-rasterises the
            text on it, which a heading and two lines survive and the experience
            entries -- six bullets of body copy each -- do not. */
-        .projects-grid .project-card {
+        /* :not(a) is the whole point of the selector, not a tidy-up. Rotating
+           an element rotates the quad the browser hit-tests, and the far edge
+           of a wide card pulls inward by about 12px at the single-column width.
+           On a link that band is dead: the pointer enters it, the card turns
+           away under the press, and the click lands on nothing. Measured at
+           960px, clicks 4px and 10px inside both side edges of a personal
+           project card were lost. Those cards still lift and still cast the
+           shadow; they just do not turn. */
+        .projects-grid .project-card:not(a) {
             --tilt: 3;
         }
 
@@ -1816,7 +1824,7 @@ a.app-card {
             --tilt: 4;
         }
 
-        .projects-grid .project-card:hover,
+        .projects-grid .project-card:not(a):hover,
         .education-grid .education-card:hover {
             transform:
                 perspective(900px)

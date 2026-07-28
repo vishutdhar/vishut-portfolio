@@ -601,7 +601,11 @@ function onMediaChange(query, handler) {
     var listening = false;
     var grids = document.querySelectorAll('.projects-grid, .education-grid');
 
-    var CARD = '.project-card, .education-card';
+    // Mirrors the stylesheet's own exclusion: a card that is a link is not
+    // rotated, because rotating it moves the quad the browser hit-tests and
+    // clicks near its side edges are lost. Writing offsets nothing reads would
+    // be work for no picture.
+    var CARD = '.project-card:not(a), .education-card';
     // One pointer means one addressed card, whichever grid it is in, so the
     // state is held once rather than per grid.
     var active = null;
