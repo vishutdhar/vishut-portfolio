@@ -49,7 +49,7 @@
             ]
         },
         {
-            "source": "/assets/(.*)",
+            "source": "/assets/og/(.*)",
             "headers": [
                 {
                     "key": "X-Robots-Tag",

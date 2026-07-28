@@ -5,7 +5,7 @@
 <title>OG card source</title>
 <!--
   Source for og-image.png (1200x630 social share card).
-  Render with: node assets/build-og-image.js
+  Render with: node assets/og/build.js
   Geometry and colors mirror the live site so the card stays on brand.
 -->
 <style>
@@ -13,13 +13,13 @@
     font-family: 'DM Sans';
     font-style: normal;
     font-weight: 300 700;
-    src: url('fonts/dm-sans-v17-latin-300-700.woff2') format('woff2');
+    src: url('../fonts/dm-sans-v17-latin-300-700.woff2') format('woff2');
 }
 @font-face {
     font-family: 'DM Serif Display';
     font-style: normal;
     font-weight: 400;
-    src: url('fonts/dm-serif-display-v17-latin.woff2') format('woff2');
+    src: url('../fonts/dm-serif-display-v17-latin.woff2') format('woff2');
 }
 
 :root {
@@ -53,7 +53,7 @@ body {
 }
 
 /*
- * og-headshot.png is the photo exactly as it was framed on the previous card,
+ * headshot.png is the photo exactly as it was framed on the previous card,
  * rounded corners already baked in. The full-size headshot in the repo root is
  * a tighter crop whose subject sits centred, which pushes his shoulder into the
  * text column, so it is deliberately not used here.
@@ -126,22 +126,29 @@ body {
 <body>
     <div class="top-bar"></div>
 
-    <img class="headshot" src="og-headshot.png" alt="">
+    <img class="headshot" src="headshot.png" alt="">
 
     <div class="content name">Vishut Dhar</div>
     <div class="content role">Senior Supplier Quality Engineer</div>
 
+    <!--
+      data-page-label names the hero stat on index.html each figure is taken
+      from, so the build matches them up by name rather than by position and a
+      reordered or renamed hero cannot quietly put a value under the wrong
+      caption. The captions below stay short because the page spells them out
+      at widths this layout has no room for.
+    -->
     <div class="content stats">
         <div>
-            <div class="stat-value">7+</div>
+            <div class="stat-value" data-page-label="Years Experience">7+</div>
             <div class="stat-label">Years Experience</div>
         </div>
         <div>
-            <div class="stat-value">$15M</div>
+            <div class="stat-value" data-page-label="Annual Savings">$15M</div>
             <div class="stat-label">Annual Savings</div>
         </div>
         <div>
-            <div class="stat-value">0.5%</div>
+            <div class="stat-value" data-page-label="Scrap Rate Achievement">0.5%</div>
             <div class="stat-label">Scrap Rate</div>
         </div>
     </div>

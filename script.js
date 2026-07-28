@@ -202,7 +202,8 @@ function animateValue(element, start, end, duration) {
 
     var prefix = text.slice(0, match.index);
     var suffix = text.slice(match.index + match[0].length);
-    // toFixed only accepts up to 100 decimals and throws beyond that.
+    // Capped at 20: a double carries no meaningful precision past that, and
+    // toFixed throws once asked for more than 100.
     var decimals = Math.min((match[0].split('.')[1] || '').length, 20);
 
     var startTimestamp = null;
