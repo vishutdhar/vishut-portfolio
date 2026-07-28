@@ -19,13 +19,38 @@ const OUTPUT = path.join(REPO_ROOT, 'og-image.png');
 const WIDTH = 1200;
 const HEIGHT = 630;
 
+// This repo has no package.json, so Playwright is usually not installed
+// alongside it. Fall back to the global npm root, including one level down,
+// since Playwright is often present only as a dependency of a global tool.
 function loadPlaywright() {
     try {
         return require('playwright');
     } catch (err) {
-        const globalRoot = execFileSync('npm', ['root', '-g'], { encoding: 'utf8' }).trim();
-        return require(path.join(globalRoot, 'mcp-supabase-db', 'node_modules', 'playwright'));
+        // Not installed locally; keep looking.
     }
+
+    let globalRoot;
+    try {
+        globalRoot = execFileSync('npm', ['root', '-g'], { encoding: 'utf8' }).trim();
+    } catch (err) {
+        globalRoot = null;
+    }
+
+    const candidates = [];
+    if (globalRoot && fs.existsSync(globalRoot)) {
+        candidates.push(path.join(globalRoot, 'playwright'));
+        for (const entry of fs.readdirSync(globalRoot)) {
+            candidates.push(path.join(globalRoot, entry, 'node_modules', 'playwright'));
+        }
+    }
+
+    for (const candidate of candidates) {
+        if (fs.existsSync(candidate)) {
+            return require(candidate);
+        }
+    }
+
+    throw new Error('Playwright not found. Install it with: npm install playwright');
 }
 
 const MIME = {
