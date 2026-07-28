@@ -429,10 +429,14 @@ function onMediaChange(query, handler) {
     var hero = document.querySelector('.hero');
     var light = document.querySelector('.cursor-light');
     if (!hero || !light) return;
-    // A pointer's kind does not change under a visitor, so this one is settled
-    // here for good. The motion preference can change at any moment, so it is
-    // asked about at the moment of use instead.
-    if (window.matchMedia('(pointer: coarse)').matches) return;
+
+    // Both of these can change with the page already open: a tablet gains a
+    // mouse, a visitor turns motion down. Neither is settled once at startup.
+    // The pointer question decides whether the listeners exist at all, which
+    // keeps them off touch devices entirely rather than firing on every
+    // finger-drag only to return; the motion question is asked inside them.
+    var coarse = window.matchMedia('(pointer: coarse)');
+    var listening = false;
 
     var profile = document.querySelector('.hero-profile');
     var frame = document.querySelector('.hero-frame');
@@ -526,25 +530,37 @@ function onMediaChange(query, handler) {
         schedule();
     }
 
-    // pointerover as well as pointermove: scrolling can carry the hero up to a
-    // cursor that never moved, and the browser announces that with boundary
-    // events only. Waiting for a move would leave the glow off under a pointer
-    // that is plainly sitting on the section.
-    hero.addEventListener('pointerover', track);
-    hero.addEventListener('pointermove', track);
-
     // Scrolling moves the portrait without moving the pointer, and no
     // pointermove is sent for it. The pointer's viewport coordinates are still
     // correct, so re-measuring against the new position is all it takes to
     // keep the light where the cursor actually is; without this the glow
     // slides away from the cursor and the lit arc aims at where it used to be.
-    window.addEventListener('scroll', function () {
+    function onScroll() {
         if (inside) {
             schedule();
         }
-    }, { passive: true });
+    }
 
-    hero.addEventListener('pointerleave', rest);
+    // pointerover as well as pointermove: scrolling can carry the hero up to a
+    // cursor that never moved, and the browser announces that with boundary
+    // events only. Waiting for a move would leave the glow off under a pointer
+    // that is plainly sitting on the section.
+    function sync() {
+        var wanted = !coarse.matches;
+        if (wanted === listening) return;
+        listening = wanted;
+        var bind = wanted ? 'addEventListener' : 'removeEventListener';
+        hero[bind]('pointerover', track);
+        hero[bind]('pointermove', track);
+        hero[bind]('pointerleave', rest);
+        window[bind]('scroll', onScroll, { passive: true });
+        if (!wanted) {
+            rest();
+        }
+    }
+
+    sync();
+    onMediaChange(coarse, sync);
 
     // Turning the preference on mid-visit puts the portrait back at rest
     // straight away, rather than at whatever angle the next pointer move
@@ -560,9 +576,11 @@ function onMediaChange(query, handler) {
 // hold every tilting surface on the page, so delegating to them halves the
 // listener count today and keeps it flat as cards are added.
 (function () {
-    // As above: the pointer's kind is settled once, the motion preference is
-    // asked about every time it matters.
-    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    // As above: the pointer question decides whether these listeners exist,
+    // and it is re-asked whenever the answer changes.
+    var fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+    var listening = false;
+    var grids = document.querySelectorAll('.projects-grid, .education-grid');
 
     var CARD = '.project-card, .education-card';
     // One pointer means one addressed card, whichever grid it is in, so the
@@ -642,18 +660,6 @@ function onMediaChange(query, handler) {
         aim(e.clientX, e.clientY, e.target.closest(CARD));
     }
 
-    document.querySelectorAll('.projects-grid, .education-grid').forEach(function (grid) {
-        // pointerover as well as pointermove: a card can arrive under a cursor
-        // parked outside the grid entirely, and scrolling it there announces
-        // itself with boundary events and a :hover change but no move. The
-        // card would otherwise rise with no tilt until the pointer twitched.
-        grid.addEventListener('pointerover', onPointer);
-        grid.addEventListener('pointermove', onPointer);
-
-        grid.addEventListener('pointerleave', release);
-        grid.addEventListener('pointercancel', release);
-    });
-
     // Scrolling slides a card under a pointer that has not moved, and sends no
     // pointermove to say so. Left alone the card holds the tilt it had several
     // hundred pixels ago, which is the one thing this whole system is not
@@ -662,16 +668,39 @@ function onMediaChange(query, handler) {
     // Scrolling can also put a different card under that pointer, which in the
     // single-column layout below 960px is the ordinary case rather than the
     // edge one. The pointer's coordinates still say which card it is over, so
-    // ask the document instead of trusting the one the last move named.
-    // Keyed on the pointer being over a grid rather than over a card. Keyed on
-    // the card, a single scroll that carried the pointer across a gutter would
-    // clear it and stop every hit test after that, so the next card to arrive
-    // under the pointer would lift with no tilt at all.
-    window.addEventListener('scroll', function () {
+    // ask the document instead of trusting the one the last move named. Keyed
+    // on the pointer being over a grid rather than over a card: keyed on the
+    // card, a single scroll that carried the pointer across a gutter would
+    // clear it and stop every hit test after that.
+    function onScroll() {
         if (!within) return;
         var under = document.elementFromPoint(pointerX, pointerY);
         aim(pointerX, pointerY, under ? under.closest(CARD) : null);
-    }, { passive: true });
+    }
+
+    // pointerover as well as pointermove: a card can arrive under a cursor
+    // parked outside the grid entirely, and scrolling it there announces
+    // itself with boundary events and a :hover change but no move. The card
+    // would otherwise rise with no tilt until the pointer twitched.
+    function sync() {
+        var wanted = fine.matches;
+        if (wanted === listening) return;
+        listening = wanted;
+        var bind = wanted ? 'addEventListener' : 'removeEventListener';
+        grids.forEach(function (grid) {
+            grid[bind]('pointerover', onPointer);
+            grid[bind]('pointermove', onPointer);
+            grid[bind]('pointerleave', release);
+            grid[bind]('pointercancel', release);
+        });
+        window[bind]('scroll', onScroll, { passive: true });
+        if (!wanted) {
+            release();
+        }
+    }
+
+    sync();
+    onMediaChange(fine, sync);
 
     onMediaChange(prefersReducedMotion, function () {
         if (prefersReducedMotion.matches) {
