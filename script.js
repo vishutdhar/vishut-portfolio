@@ -545,6 +545,11 @@ function onMediaChange(query, handler) {
     // One pointer means one addressed card, whichever grid it is in, so the
     // state is held once rather than per grid.
     var active = null;
+    // Whether the pointer is over a grid at all, which is not the same
+    // question as whether it is over a card: the gutters belong to the grid
+    // too, and a pointer resting in one is still a pointer the next scroll
+    // has to account for.
+    var within = false;
     var pointerX = 0;
     var pointerY = 0;
     var ticking = false;
@@ -584,22 +589,31 @@ function onMediaChange(query, handler) {
     }
 
     function release() {
+        within = false;
         clear(active);
         active = null;
     }
 
+    // Whatever the pointer is over, record where it is: a position taken in a
+    // gutter is what lets the scroll handler below recognise the next card
+    // that arrives under a pointer which never moved again.
+    function aim(x, y, card) {
+        within = true;
+        pointerX = x;
+        pointerY = y;
+        if (card !== active) {
+            // crossing the gutter between two cards counts as leaving one
+            clear(active);
+            active = card;
+        }
+        if (active) {
+            schedule();
+        }
+    }
+
     document.querySelectorAll('.projects-grid, .education-grid').forEach(function (grid) {
         grid.addEventListener('pointermove', function (e) {
-            var card = e.target.closest(CARD);
-            if (card !== active) {
-                // crossing the gutter between two cards counts as leaving one
-                clear(active);
-                active = card;
-            }
-            if (!active) return;
-            pointerX = e.clientX;
-            pointerY = e.clientY;
-            schedule();
+            aim(e.clientX, e.clientY, e.target.closest(CARD));
         });
 
         grid.addEventListener('pointerleave', release);
@@ -615,17 +629,14 @@ function onMediaChange(query, handler) {
     // single-column layout below 960px is the ordinary case rather than the
     // edge one. The pointer's coordinates still say which card it is over, so
     // ask the document instead of trusting the one the last move named.
+    // Keyed on the pointer being over a grid rather than over a card. Keyed on
+    // the card, a single scroll that carried the pointer across a gutter would
+    // clear it and stop every hit test after that, so the next card to arrive
+    // under the pointer would lift with no tilt at all.
     window.addEventListener('scroll', function () {
-        if (!active) return;
+        if (!within) return;
         var under = document.elementFromPoint(pointerX, pointerY);
-        var card = under ? under.closest(CARD) : null;
-        if (card !== active) {
-            clear(active);
-            active = card;
-        }
-        if (active) {
-            schedule();
-        }
+        aim(pointerX, pointerY, under ? under.closest(CARD) : null);
     }, { passive: true });
 
     onMediaChange(prefersReducedMotion, function () {
