@@ -55,34 +55,14 @@
      --accent-text  accent-coloured text at normal sizes (needs 4.5:1)
      --accent-solid a filled accent surface, always paired with --on-accent
    Every pairing below is verified at 4.5:1 for text and 3:1 for UI. */
-:root {
-    --bg-primary: #FAFAF8;
-    --bg-alt: #F2F0EC;
-    --card-bg: #FFFFFF;
-    --card-bg-hover: #FFFFFF;
-    --text-primary: #1C1C1C;
-    --text-secondary: #5C5C5C;
-    --text-tertiary: #6B6B6B;
-    --accent: #C45D3E;
-    --accent-text: #A84E33;
-    --accent-solid: #A84E33;
-    --accent-solid-hover: #8E4029;
-    --on-accent: #FFFFFF;
-    --accent-wash: rgba(196, 93, 62, 0.06);
-    --accent-tap: rgba(196, 93, 62, 0.2);
-    --grid-line: rgba(196, 93, 62, 0.045);
-    --hero-glow-strong: rgba(196, 93, 62, 0.12);
-    --hero-glow-soft: rgba(196, 93, 62, 0.05);
-    --border: #E5E3DF;
-    --nav-bg: rgba(250, 250, 248, 0.95);
-    --shadow-color: rgba(0, 0, 0, 0.06);
-    --card-edge: transparent;
-}
+/* Dark lives on :root, so it is what the document renders with no
+   data-theme attribute at all: JavaScript disabled, theme-init.js blocked, or
+   the instant before it runs. Light is the opt-in override. Putting light here
+   instead would make "dark by default" true only for visitors who run our JS.
 
-/* Dark is the default theme. The surfaces form a real ladder -- page, alt
-   band, card, hovered card -- so a card reads as raised without relying on
-   its 1px border alone. */
-[data-theme="dark"] {
+   The dark surfaces form a real ladder -- page, alt band, card, hovered card --
+   so a card reads as raised without relying on its 1px border alone. */
+:root {
     --bg-primary: #0F0F0E;
     --bg-alt: #161615;
     --card-bg: #1F1F1D;
@@ -104,6 +84,36 @@
     --nav-bg: rgba(15, 15, 14, 0.95);
     --shadow-color: rgba(0, 0, 0, 0.2);
     --card-edge: rgba(255, 255, 255, 0.045);
+    --card-shadow-hover: 0 14px 36px rgba(0, 0, 0, 0.4);
+    --card-shadow-hover-sm: 0 14px 36px rgba(0, 0, 0, 0.4);
+    --github-hover-border: #f0f6fc;
+}
+
+[data-theme="light"] {
+    --bg-primary: #FAFAF8;
+    --bg-alt: #F2F0EC;
+    --card-bg: #FFFFFF;
+    --card-bg-hover: #FFFFFF;
+    --text-primary: #1C1C1C;
+    --text-secondary: #5C5C5C;
+    --text-tertiary: #6B6B6B;
+    --accent: #C45D3E;
+    --accent-text: #A84E33;
+    --accent-solid: #A84E33;
+    --accent-solid-hover: #8E4029;
+    --on-accent: #FFFFFF;
+    --accent-wash: rgba(196, 93, 62, 0.06);
+    --accent-tap: rgba(196, 93, 62, 0.2);
+    --grid-line: rgba(196, 93, 62, 0.045);
+    --hero-glow-strong: rgba(196, 93, 62, 0.12);
+    --hero-glow-soft: rgba(196, 93, 62, 0.05);
+    --border: #E5E3DF;
+    --nav-bg: rgba(250, 250, 248, 0.95);
+    --shadow-color: rgba(0, 0, 0, 0.06);
+    --card-edge: transparent;
+    --card-shadow-hover: 0 14px 36px rgba(0, 0, 0, 0.08);
+    --card-shadow-hover-sm: 0 10px 28px rgba(0, 0, 0, 0.06);
+    --github-hover-border: #181717;
 }
 
 html {
@@ -473,11 +483,7 @@ nav.scrolled {
 }
 
 .brand-github:hover {
-    border-color: #181717;
-}
-
-[data-theme="dark"] .brand-github:hover {
-    border-color: #f0f6fc;
+    border-color: var(--github-hover-border);
 }
 
 .hero-social-link:not(.brand-linkedin):not(.brand-github) svg,
@@ -1010,7 +1016,7 @@ section {
     border-radius: 8px;
     border: 1px solid var(--border);
     text-align: left;
-    transition: border-color 0.2s ease;
+    transition: background-color 0.25s ease, border-color 0.2s ease;
 }
 
 .education-card:hover {
@@ -1471,10 +1477,11 @@ footer {
 @media print {
     /* Paper is white in every theme. Re-point the tokens once here instead of
        overriding each selector, so a section added later prints correctly
-       without anyone remembering to add it to a list below. Both theme blocks
-       are reset -- printing from dark must not carry #0F0F0E backgrounds or
-       pale grey body text onto the page. */
+       without anyone remembering to add it to a list below. Every block that
+       defines tokens is reset -- printing from dark must not carry #0F0F0E
+       backgrounds or pale grey body text onto the page, and :root is dark. */
     :root,
+    [data-theme="light"],
     [data-theme="dark"] {
         --bg-primary: #fff;
         --bg-alt: #fff;
@@ -1494,6 +1501,10 @@ footer {
         --shadow-color: transparent;
         --card-edge: transparent;
         --nav-bg: #fff;
+        /* these sit inside a box-shadow list, so they need a valid
+           shadow value rather than `none` */
+        --card-shadow-hover: 0 0 0 transparent;
+        --card-shadow-hover-sm: 0 0 0 transparent;
     }
 
     nav,
@@ -1616,26 +1627,19 @@ footer {
 .app-card:hover,
 .testimonial-card:hover {
     transform: translateY(-4px);
-    box-shadow: inset 0 1px 0 var(--card-edge), 0 14px 36px rgba(0, 0, 0, 0.08);
+    box-shadow: inset 0 1px 0 var(--card-edge), var(--card-shadow-hover);
     border-color: var(--accent);
     background: var(--card-bg-hover);
 }
 
 .experience-item:hover {
     transform: translateY(-2px);
-    box-shadow: inset 0 1px 0 var(--card-edge), 0 10px 28px rgba(0, 0, 0, 0.06);
+    box-shadow: inset 0 1px 0 var(--card-edge), var(--card-shadow-hover-sm);
     background: var(--card-bg-hover);
 }
 
 .education-card:hover {
     background: var(--card-bg-hover);
-}
-
-[data-theme="dark"] .project-card:hover,
-[data-theme="dark"] .app-card:hover,
-[data-theme="dark"] .testimonial-card:hover,
-[data-theme="dark"] .experience-item:hover {
-    box-shadow: inset 0 1px 0 var(--card-edge), 0 14px 36px rgba(0, 0, 0, 0.4);
 }
 
 /* (2) Subtle 1px grid background: tracks the theme accent via --grid-line */
