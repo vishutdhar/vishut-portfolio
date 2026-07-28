@@ -393,20 +393,142 @@ document.querySelectorAll('.project-card').forEach(function (card) {
     statsObserver.observe(card);
 });
 
-// Cursor light effect on hero
+// Hero lighting: the glow on the page, the lit arc of the ring around the
+// portrait, and the portrait's own tilt are all the same light source, so one
+// listener and one frame produce all three. Idle cost is nil -- nothing here
+// runs until a pointer moves, and nothing schedules a frame after it leaves.
 (function () {
     var hero = document.querySelector('.hero');
     var light = document.querySelector('.cursor-light');
     if (!hero || !light) return;
     if (prefersReducedMotion.matches) return;
     if (window.matchMedia('(pointer: coarse)').matches) return;
-    hero.addEventListener('pointermove', function (e) {
+
+    var profile = document.querySelector('.hero-profile');
+    var frame = document.querySelector('.hero-frame');
+    var pointerX = 0;
+    var pointerY = 0;
+    var ticking = false;
+
+    function clamp(n) {
+        return n < -1 ? -1 : (n > 1 ? 1 : n);
+    }
+
+    function paint() {
+        ticking = false;
         var rect = hero.getBoundingClientRect();
-        light.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
-        light.style.setProperty('--my', (e.clientY - rect.top) + 'px');
+        light.style.setProperty('--mx', (pointerX - rect.left) + 'px');
+        light.style.setProperty('--my', (pointerY - rect.top) + 'px');
         light.style.opacity = '1';
+
+        if (!profile || !frame) return;
+
+        // Measure the wrapper rather than the frame inside it: the frame
+        // carries the tilt, so its own box already reflects what the last
+        // frame wrote to it.
+        var box = profile.getBoundingClientRect();
+        var dx = pointerX - (box.left + box.width / 2);
+        var dy = pointerY - (box.top + box.height / 2);
+
+        // Conic angles run clockwise from twelve o'clock, which puts the lit
+        // arc on whichever side of the portrait the pointer is on.
+        var angle = Math.atan2(dx, -dy) * 180 / Math.PI;
+        // Fold into the half turn either side of the 315deg resting angle.
+        // Written once per frame with no transition behind it the fold is
+        // invisible; what it buys is a settle that can never unwind a whole
+        // rotation on the way back to rest.
+        angle = ((angle - 135) % 360 + 360) % 360 + 135;
+        frame.style.setProperty('--ring-ang', angle.toFixed(1) + 'deg');
+
+        // Normalised against the hero, not the portrait, so the tilt opens up
+        // gradually across the whole section instead of pinning to its limit
+        // the moment the pointer clears the photo.
+        frame.style.setProperty('--fx', clamp(dx / (rect.width / 2)).toFixed(3));
+        frame.style.setProperty('--fy', clamp(dy / (rect.height / 2)).toFixed(3));
+    }
+
+    hero.addEventListener('pointermove', function (e) {
+        pointerX = e.clientX;
+        pointerY = e.clientY;
+        if (profile) {
+            profile.classList.remove('settling');
+        }
+        if (!ticking) {
+            ticking = true;
+            window.requestAnimationFrame(paint);
+        }
     });
+
     hero.addEventListener('pointerleave', function () {
         light.style.opacity = '0';
+        if (!profile || !frame) return;
+        // Class and removals land in the same style recalculation, so the
+        // longer transition is already in force when the values drop away.
+        profile.classList.add('settling');
+        frame.style.removeProperty('--ring-ang');
+        frame.style.removeProperty('--fx');
+        frame.style.removeProperty('--fy');
+    });
+})();
+
+// Card relief. One listener per grid rather than one per card: three grids
+// hold every tilting surface on the page, so delegating to them halves the
+// listener count today and keeps it flat as cards are added.
+(function () {
+    if (prefersReducedMotion.matches) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    var CARD = '.project-card, .education-card';
+
+    // Removing the properties rather than zeroing them hands the card back to
+    // the stylesheet's own defaults, and stops a stale offset from the last
+    // visit applying for a frame on the next one.
+    function clear(card) {
+        if (!card) return;
+        card.style.removeProperty('--px');
+        card.style.removeProperty('--py');
+    }
+
+    document.querySelectorAll('.projects-grid, .education-grid').forEach(function (grid) {
+        var active = null;
+        var pointerX = 0;
+        var pointerY = 0;
+        var ticking = false;
+
+        function paint() {
+            ticking = false;
+            if (!active) return;
+            // Measured fresh each frame rather than cached on entry: the page
+            // can scroll under a resting pointer, and a cached rectangle would
+            // leave the card's centre wherever it used to be.
+            var rect = active.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+            active.style.setProperty('--px', ((pointerX - rect.left) / rect.width * 2 - 1).toFixed(3));
+            active.style.setProperty('--py', ((pointerY - rect.top) / rect.height * 2 - 1).toFixed(3));
+        }
+
+        function release() {
+            clear(active);
+            active = null;
+        }
+
+        grid.addEventListener('pointermove', function (e) {
+            var card = e.target.closest(CARD);
+            if (card !== active) {
+                // crossing the gutter between two cards counts as leaving one
+                clear(active);
+                active = card;
+            }
+            if (!active) return;
+            pointerX = e.clientX;
+            pointerY = e.clientY;
+            if (!ticking) {
+                ticking = true;
+                window.requestAnimationFrame(paint);
+            }
+        });
+
+        grid.addEventListener('pointerleave', release);
+        grid.addEventListener('pointercancel', release);
     });
 })();
