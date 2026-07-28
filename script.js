@@ -409,6 +409,7 @@ document.querySelectorAll('.project-card').forEach(function (card) {
     var pointerX = 0;
     var pointerY = 0;
     var ticking = false;
+    var inside = false;
 
     function clamp(n) {
         return n < -1 ? -1 : (n > 1 ? 1 : n);
@@ -416,17 +417,32 @@ document.querySelectorAll('.project-card').forEach(function (card) {
 
     function paint() {
         ticking = false;
+        // A move and the leave that follows it are dispatched before the frame
+        // they scheduled. Without this the queued frame would write the
+        // pointer's last position back over everything the leave just cleared,
+        // and the portrait would stay lit and tilted with nothing on it.
+        if (!inside) return;
+
+        // Both measurements before any write: reading a box after touching a
+        // style forces the pending recalculation to flush mid-frame.
         var rect = hero.getBoundingClientRect();
+        // Measure the wrapper rather than the frame inside it: the frame
+        // carries the tilt, so its own box already reflects what the last
+        // frame wrote to it.
+        var box = profile ? profile.getBoundingClientRect() : null;
+
         light.style.setProperty('--mx', (pointerX - rect.left) + 'px');
         light.style.setProperty('--my', (pointerY - rect.top) + 'px');
         light.style.opacity = '1';
 
-        if (!profile || !frame) return;
+        if (!box || !frame) return;
 
-        // Measure the wrapper rather than the frame inside it: the frame
-        // carries the tilt, so its own box already reflects what the last
-        // frame wrote to it.
-        var box = profile.getBoundingClientRect();
+        // Dropped here rather than in the listener so that every style write
+        // this feature makes happens inside the frame it was scheduled for.
+        if (profile.classList.contains('settling')) {
+            profile.classList.remove('settling');
+        }
+
         var dx = pointerX - (box.left + box.width / 2);
         var dy = pointerY - (box.top + box.height / 2);
 
@@ -450,9 +466,7 @@ document.querySelectorAll('.project-card').forEach(function (card) {
     hero.addEventListener('pointermove', function (e) {
         pointerX = e.clientX;
         pointerY = e.clientY;
-        if (profile) {
-            profile.classList.remove('settling');
-        }
+        inside = true;
         if (!ticking) {
             ticking = true;
             window.requestAnimationFrame(paint);
@@ -460,6 +474,7 @@ document.querySelectorAll('.project-card').forEach(function (card) {
     });
 
     hero.addEventListener('pointerleave', function () {
+        inside = false;
         light.style.opacity = '0';
         if (!profile || !frame) return;
         // Class and removals land in the same style recalculation, so the
