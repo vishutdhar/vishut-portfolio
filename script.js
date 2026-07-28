@@ -202,7 +202,8 @@ function animateValue(element, start, end, duration) {
 
     var prefix = text.slice(0, match.index);
     var suffix = text.slice(match.index + match[0].length);
-    var decimals = (match[0].split('.')[1] || '').length;
+    // toFixed only accepts up to 100 decimals and throws beyond that.
+    var decimals = Math.min((match[0].split('.')[1] || '').length, 20);
 
     var startTimestamp = null;
     var step = function (timestamp) {
@@ -234,7 +235,7 @@ var statsObserver = new IntersectionObserver(function (entries) {
                 // Stats count up from zero unless the markup names a starting
                 // value, which the scrap rate does so it counts down instead.
                 var from = parseFloat(stat.dataset.countFrom);
-                animateValue(stat, isNaN(from) ? 0 : from, parseFloat(match[0]), 800);
+                animateValue(stat, isFinite(from) ? from : 0, parseFloat(match[0]), 800);
             });
             // Project metric values
             var metricValues = entry.target.querySelectorAll('.metric-value');

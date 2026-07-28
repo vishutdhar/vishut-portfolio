@@ -78,7 +78,33 @@ function serveRepo() {
     });
 }
 
+// Read the figures the card advertises straight out of the page it advertises,
+// so the two cannot drift apart. This parses the file rather than querying a
+// live DOM because the hero stats animate on screen, and a rendered page would
+// hand back whatever mid-animation value happened to be showing.
+function readHeroContent() {
+    const html = fs.readFileSync(path.join(REPO_ROOT, 'index.html'), 'utf8');
+
+    const one = (pattern, label) => {
+        const match = html.match(pattern);
+        if (!match) throw new Error(`Could not read ${label} from index.html`);
+        return match[1].trim();
+    };
+
+    const stats = [...html.matchAll(/<div class="stat-number"[^>]*>([^<]+)<\/div>/g)].map(m => m[1].trim());
+    if (stats.length !== 3) {
+        throw new Error(`Expected 3 hero stats in index.html, found ${stats.length}`);
+    }
+
+    return {
+        name: one(/<h1>([^<]+)<\/h1>/, 'name'),
+        role: one(/<p class="hero-title">([^<]+)<\/p>/, 'role'),
+        stats
+    };
+}
+
 (async () => {
+    const content = readHeroContent();
     const { chromium } = loadPlaywright();
     const server = await serveRepo();
     const port = server.address().port;
@@ -89,10 +115,43 @@ function serveRepo() {
             viewport: { width: WIDTH, height: HEIGHT },
             deviceScaleFactor: 1
         });
+
+        const failures = [];
+        page.on('requestfailed', req => failures.push(`${req.url()} (${req.failure().errorText})`));
+        page.on('response', res => {
+            if (!res.ok()) failures.push(`${res.url()} (HTTP ${res.status()})`);
+        });
+
         await page.goto(`http://127.0.0.1:${port}/assets/og-template.html`, { waitUntil: 'networkidle' });
+
+        // The stat labels stay in the template: the page spells them out at
+        // widths this layout has no room for.
+        await page.evaluate((c) => {
+            document.querySelector('.name').textContent = c.name;
+            document.querySelector('.role').textContent = c.role;
+            document.querySelectorAll('.stat-value').forEach((el, i) => { el.textContent = c.stats[i]; });
+        }, content);
+
         await page.evaluate(() => document.fonts.ready);
-        await page.screenshot({ path: OUTPUT, type: 'png' });
-        console.log(`Wrote ${OUTPUT} (${WIDTH}x${HEIGHT})`);
+
+        const ready = await page.evaluate(() => {
+            const img = document.querySelector('.headshot');
+            return {
+                headshotLoaded: img.complete && img.naturalWidth > 0,
+                fontsLoaded: document.fonts.status === 'loaded'
+            };
+        });
+
+        if (failures.length) throw new Error(`Assets failed to load:\n  ${failures.join('\n  ')}`);
+        if (!ready.headshotLoaded) throw new Error('Headshot did not load; refusing to overwrite the card');
+        if (!ready.fontsLoaded) throw new Error('Fonts did not load; refusing to overwrite the card');
+
+        // Render aside first so a failed run cannot leave a broken card behind.
+        const pending = `${OUTPUT}.pending`;
+        await page.screenshot({ path: pending, type: 'png' });
+        fs.renameSync(pending, OUTPUT);
+
+        console.log(`Wrote ${OUTPUT} (${WIDTH}x${HEIGHT}) with ${content.stats.join(', ')}`);
     } finally {
         await browser.close();
         server.close();
