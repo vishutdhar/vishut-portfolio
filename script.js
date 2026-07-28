@@ -189,20 +189,28 @@ document.querySelectorAll('.experience-item').forEach(function (item, index) {
     revealObserver.observe(item);
 });
 
-// Animate statistics numbers
+// Matches the number inside a stat, keeping whatever wraps it ($, %, +).
+var STAT_NUMBER = /-?\d+(?:\.\d+)?/;
+
+// Animate a statistic from start to end, rebuilding the element's text each
+// frame from the markup's own prefix, suffix, and decimal places so the last
+// frame lands exactly on the value the page was authored with.
 function animateValue(element, start, end, duration) {
+    var text = element.textContent;
+    var match = text.match(STAT_NUMBER);
+    if (!match) return;
+
+    var prefix = text.slice(0, match.index);
+    var suffix = text.slice(match.index + match[0].length);
+    var decimals = (match[0].split('.')[1] || '').length;
+
     var startTimestamp = null;
     var step = function (timestamp) {
         if (!startTimestamp) startTimestamp = timestamp;
         var progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        var value = progress * (end - start) + start;
 
-        if (element.dataset.isPercentage) {
-            element.textContent = (progress * (end - start) + start).toFixed(1) + '%';
-        } else if (element.dataset.isMoney) {
-            element.textContent = '$' + Math.floor(progress * (end - start) + start) + 'M';
-        } else {
-            element.textContent = Math.floor(progress * (end - start) + start) + '+';
-        }
+        element.textContent = prefix + value.toFixed(decimals) + suffix;
 
         if (progress < 1) {
             window.requestAnimationFrame(step);
@@ -221,19 +229,12 @@ var statsObserver = new IntersectionObserver(function (entries) {
             // Hero stat numbers
             var statNumbers = entry.target.querySelectorAll('.stat-number');
             statNumbers.forEach(function (stat) {
-                var text = stat.textContent;
-                var target = parseFloat(text.replace(/[^0-9.]/g, ''));
-                if (isNaN(target)) return;
-                if (text.includes('$')) {
-                    stat.dataset.isMoney = 'true';
-                    animateValue(stat, 0, target, 800);
-                } else if (text.includes('%')) {
-                    stat.dataset.isPercentage = 'true';
-                    // Counts down from the 5% pre-improvement scrap rate, which appears nowhere in the markup
-                    animateValue(stat, 5, target, 800);
-                } else {
-                    animateValue(stat, 0, target, 600);
-                }
+                var match = stat.textContent.match(STAT_NUMBER);
+                if (!match) return;
+                // Stats count up from zero unless the markup names a starting
+                // value, which the scrap rate does so it counts down instead.
+                var from = parseFloat(stat.dataset.countFrom);
+                animateValue(stat, isNaN(from) ? 0 : from, parseFloat(match[0]), 800);
             });
             // Project metric values
             var metricValues = entry.target.querySelectorAll('.metric-value');
