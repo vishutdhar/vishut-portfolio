@@ -87,13 +87,18 @@ function serveRepo() {
 //
 // This hands index.html to a real HTML parser rather than matching it with
 // regexes, so attribute order, extra classes, comments and character references
-// all behave the way a browser says they do. DOMParser runs no scripts and
-// fetches nothing, so unlike loading the page for real it returns the authored
-// figures rather than whatever frame the stat animation happens to be on.
+// all behave the way a browser says they do. The parsed document is inert: no
+// scripts run and no subresources load, so unlike loading the page for real
+// this returns the authored figures rather than whatever frame the stat
+// animation happens to be on.
 function readHeroContent(page) {
     const html = fs.readFileSync(path.join(REPO_ROOT, 'index.html'), 'utf8');
 
     return page.evaluate((src) => {
+        // Labels are matched across two files, so compare them by their visible
+        // text: collapse runs of any whitespace, including non-breaking spaces.
+        const norm = (text) => text.replace(/\s+/g, ' ').trim();
+
         const doc = new DOMParser().parseFromString(src, 'text/html');
         const hero = doc.querySelector('#home');
         if (!hero) return { error: 'Could not find the hero section (#home) in index.html' };
@@ -103,7 +108,9 @@ function readHeroContent(page) {
             if (found.length !== 1) {
                 return { error: 'Expected exactly 1 ' + label + ' in the hero of index.html, found ' + found.length };
             }
-            return { value: found[0].textContent.trim() };
+            const value = norm(found[0].textContent);
+            if (!value) return { error: 'The hero ' + label + ' in index.html is empty' };
+            return { value };
         };
 
         const name = only('h1', 'name');
@@ -111,18 +118,33 @@ function readHeroContent(page) {
         const role = only('.hero-title', 'role');
         if (role.error) return role;
 
-        // Keep each figure with the label it sits under, so the card can match
-        // them up by name instead of trusting the order they appear in.
-        const pairs = [];
-        hero.querySelectorAll('.stat-item').forEach((item) => {
-            const value = item.querySelector('.stat-number');
-            const label = item.querySelector('.stat-label');
-            if (value && label) pairs.push([label.textContent.trim(), value.textContent.trim()]);
-        });
-
-        if (pairs.length !== 3) {
-            return { error: 'Expected 3 labelled hero stats in index.html, found ' + pairs.length };
+        // Every stat must sit in its own item with exactly one value and one
+        // label, so a nested or orphaned element cannot be paired up wrongly.
+        const items = [...hero.querySelectorAll('.stat-item')];
+        const totalValues = hero.querySelectorAll('.stat-number').length;
+        const totalLabels = hero.querySelectorAll('.stat-label').length;
+        if (items.length !== 3 || totalValues !== 3 || totalLabels !== 3) {
+            return {
+                error: 'Expected 3 hero stats in index.html, each one value and one label. Found ' +
+                    items.length + ' items, ' + totalValues + ' values, ' + totalLabels + ' labels'
+            };
         }
+
+        const pairs = [];
+        for (const item of items) {
+            const values = item.querySelectorAll('.stat-number');
+            const labels = item.querySelectorAll('.stat-label');
+            if (values.length !== 1 || labels.length !== 1) {
+                return { error: 'A hero stat in index.html does not have exactly one value and one label' };
+            }
+            const value = norm(values[0].textContent);
+            const label = norm(labels[0].textContent);
+            if (!value || !label) {
+                return { error: 'A hero stat in index.html has an empty value or label' };
+            }
+            pairs.push([label, value]);
+        }
+
         // Distinct labels are checked separately: two stats sharing one would
         // collapse into a single entry and the survivor would win silently.
         const labels = pairs.map(p => p[0]);
@@ -159,11 +181,15 @@ function readHeroContent(page) {
         const content = read.value;
 
         const missingLabels = await page.evaluate((c) => {
+            // Normalised the same way the page labels were, so the two sides
+            // match on visible text rather than on incidental whitespace.
+            const norm = (text) => text.replace(/\s+/g, ' ').trim();
+
             document.querySelector('.name').textContent = c.name;
             document.querySelector('.role').textContent = c.role;
             const missing = [];
             document.querySelectorAll('.stat-value').forEach((el) => {
-                const label = el.dataset.pageLabel;
+                const label = norm(el.dataset.pageLabel || '');
                 if (!(label in c.stats)) {
                     missing.push(label);
                     return;
@@ -233,7 +259,13 @@ function readHeroContent(page) {
         const summary = Object.entries(content.stats).map(([label, value]) => `${value} ${label}`).join(', ');
         console.log(`Wrote ${OUTPUT} (${WIDTH}x${HEIGHT}) with ${summary}`);
     } finally {
-        await browser.close();
+        // Shutting down must not throw over the failure that brought us here,
+        // and the server has to close even if the browser will not.
+        try {
+            await browser.close();
+        } catch (err) {
+            // nothing useful to do; the real error is already on its way out
+        }
         server.close();
     }
 })();
