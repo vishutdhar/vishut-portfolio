@@ -272,7 +272,19 @@ backToTopButton.addEventListener('click', function () {
     });
 });
 
-// Scroll Reveal Animation
+// Scroll Reveal Animation.
+//
+// threshold: 0, not a fraction. These targets are whole sections, and a
+// section can be many times the height of the phone reading it: on a 320x568
+// screen the experience list is 8,000px tall, so no more than 6.6% of it can
+// ever be on screen at once. Any fractional threshold is therefore a height
+// limit in disguise -- ask for 10% and every section taller than ten viewports
+// stays at opacity 0 for the whole visit, with no error and nothing to see.
+// The experience section was already over that line, and the testimonials were
+// 0.16 of a percentage point from it.
+//
+// Intersecting at all is the honest question, and rootMargin still holds the
+// reveal until the section is 20px onto the screen.
 var revealObserver = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
         if (entry.isIntersecting) {
@@ -280,7 +292,7 @@ var revealObserver = new IntersectionObserver(function (entries) {
         }
     });
 }, {
-    threshold: 0.1,
+    threshold: 0,
     rootMargin: '0px 0px -20px 0px'
 });
 
