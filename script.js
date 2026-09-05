@@ -222,47 +222,48 @@ if (typeof mobileMenuQuery.addEventListener === 'function') {
     mobileMenuQuery.addListener(onMobileMenuBreakpoint);
 }
 
-// Nav shadow, scroll progress, and back-to-top visibility (rAF-throttled)
+// Navigation state, scroll progress, and back-to-top visibility share one frame.
 var nav = document.querySelector('nav');
 var scrollProgress = document.getElementById('scrollProgress');
 var backToTopButton = document.getElementById('backToTop');
+var navLinkElements = document.querySelectorAll('.nav-links a');
+var navSections = document.querySelectorAll('main > section[id]');
 var scrollTicking = false;
 
 function updateScrollUI() {
     scrollTicking = false;
     var y = window.scrollY;
-    nav.classList.toggle('scrolled', y > 50);
     var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    var activeId = '';
+    navSections.forEach(function (section) {
+        if (section.getBoundingClientRect().top <= window.innerHeight * 0.3) {
+            activeId = section.id;
+        }
+    });
+    // The final section can be too short to reach the reading line above.
+    // At the end of the document, its navigation item must still be selected.
+    if (maxScroll > 0 && y >= maxScroll - 2 && navSections.length) {
+        activeId = navSections[navSections.length - 1].id;
+    }
+    if (activeId === 'apps') activeId = 'projects';
+    navLinkElements.forEach(function (link) {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + activeId);
+    });
+    nav.classList.toggle('scrolled', y > 50);
     var progress = maxScroll > 0 ? Math.min(Math.max(y / maxScroll, 0), 1) : 0;
     scrollProgress.style.transform = 'scaleX(' + progress + ')';
     backToTopButton.classList.toggle('visible', y > 500);
 }
 
-window.addEventListener('scroll', function () {
+function scheduleScrollUI() {
     if (!scrollTicking) {
         scrollTicking = true;
         window.requestAnimationFrame(updateScrollUI);
     }
-}, { passive: true });
+}
+window.addEventListener('scroll', scheduleScrollUI, { passive: true });
+window.addEventListener('resize', scheduleScrollUI);
 updateScrollUI();
-
-// Active navigation highlighting via IntersectionObserver
-var navLinkElements = document.querySelectorAll('.nav-links a');
-
-var navObserver = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-            var id = entry.target.getAttribute('id');
-            navLinkElements.forEach(function (link) {
-                link.classList.toggle('active', link.getAttribute('href') === '#' + id);
-            });
-        }
-    });
-}, { rootMargin: '-30% 0px -60% 0px' });
-
-document.querySelectorAll('section[id]').forEach(function (section) {
-    navObserver.observe(section);
-});
 
 // Back to top button click handler
 backToTopButton.addEventListener('click', function () {
@@ -591,21 +592,20 @@ function onMediaChange(query, handler) {
     });
 })();
 
-// Card relief. One listener per grid rather than one per card: three grids
-// hold every tilting surface on the page, so delegating to them halves the
-// listener count today and keeps it flat as cards are added.
+// Project relief is delegated to project grids. Open education and
+// experience entries are reading surfaces and do not rotate.
 (function () {
     // As above: the pointer question decides whether these listeners exist,
     // and it is re-asked whenever the answer changes.
     var cursor = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');
     var listening = false;
-    var grids = document.querySelectorAll('.projects-grid, .education-grid');
+    var grids = document.querySelectorAll('.projects-grid');
 
     // Mirrors the stylesheet's own exclusion: a card that is a link is not
     // rotated, because rotating it moves the quad the browser hit-tests and
     // clicks near its side edges are lost. Writing offsets nothing reads would
     // be work for no picture.
-    var CARD = '.project-card:not(a), .education-card';
+    var CARD = '.project-card:not(a)';
     // One pointer means one addressed card, whichever grid it is in, so the
     // state is held once rather than per grid.
     var active = null;

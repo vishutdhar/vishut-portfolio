@@ -68,8 +68,8 @@
     --card-bg: #1F1F1D;
     --card-bg-hover: #262623;
     --text-primary: #EDEDEB;
-    --text-secondary: #A0A09C;
-    --text-tertiary: #90908A;
+    --text-secondary: #B5B5AE;
+    --text-tertiary: #9B9B94;
     --accent: #D4785E;
     --accent-text: #D4785E;
     --accent-solid: #D4785E;
@@ -214,20 +214,26 @@ nav.scrolled {
 }
 
 .nav-container {
-    max-width: 1100px;
+    max-width: 1184px;
     margin: 0 auto;
     padding: 1rem 2rem;
     display: flex;
-    justify-content: space-between;
+    gap: 2rem;
     align-items: center;
 }
 
 .nav-logo {
     font-family: 'DM Serif Display', serif;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 400;
-    color: var(--accent);
-    letter-spacing: 1px;
+    color: var(--text-primary);
+    text-decoration: none;
+    letter-spacing: -0.04em;
+    margin-right: auto;
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
 }
 
 .nav-actions {
@@ -241,15 +247,14 @@ nav.scrolled {
     border: 1px solid var(--border);
     color: var(--text-secondary);
     cursor: pointer;
-    font-size: 0.85rem;
-    padding: 0.4rem;
-    border-radius: 6px;
-    width: 34px;
-    height: 34px;
+    padding: 0.6rem;
+    border-radius: 8px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .theme-toggle:hover {
@@ -288,6 +293,7 @@ nav.scrolled {
 
 .nav-links {
     display: flex;
+    align-items: center;
     gap: 2rem;
     list-style: none;
 }
@@ -329,29 +335,45 @@ nav.scrolled {
     width: 100%;
 }
 
+.nav-links a.nav-contact {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.55rem 1.2rem;
+    background: var(--accent-solid);
+    color: var(--on-accent);
+    border-radius: 6px;
+}
+
+.nav-links .nav-contact:hover {
+    background: var(--accent-solid-hover);
+}
+
+.nav-links .nav-contact::after {
+    display: none;
+}
+
 /* ============================================
    HERO SECTION - 2 Column Split
    ============================================ */
 .hero {
-    /* vh first as a fallback: svh is dropped whole where it is unsupported */
-    min-height: 100vh;
-    min-height: 100svh;
+    min-height: 680px;
+    min-height: min(85svh, 880px);
     display: flex;
     align-items: center;
     background: var(--bg-primary);
-    padding-top: 80px;
+    padding: 100px 0 48px;
 }
 
-/* 1.1fr / 0.9fr is the 55/45 split the design calls for, expressed so the
-   4rem gap comes out of the track sizes. Percentages summed to 100% and then
-   added the gap on top, pushing the grid 64px past its own container. */
+/* Flexible tracks reserve more room for the name while including the gap. */
 .hero-grid {
-    max-width: 1100px;
+    max-width: 1184px;
     margin: 0 auto;
-    padding: 4rem 2rem;
+    padding: 3rem 2rem;
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-    gap: 4rem;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    gap: 5rem;
     align-items: center;
     width: 100%;
 }
@@ -362,68 +384,59 @@ nav.scrolled {
 
 .hero h1 {
     font-family: 'DM Serif Display', serif;
-    font-size: clamp(2.5rem, 6vw, 3.8rem);
+    font-size: clamp(3.5rem, 7vw, 6rem);
     font-weight: 400;
     color: var(--text-primary);
-    line-height: 1.1;
-    margin-bottom: 0.75rem;
-    letter-spacing: -0.5px;
+    line-height: 1.05;
+    margin-bottom: 1rem;
+    letter-spacing: -0.045em;
 }
 
 .hero-title {
     font-size: 1.15rem;
     color: var(--text-secondary);
     font-weight: 400;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
     margin-bottom: 2.5rem;
 }
 
-/* Stats: Large serif numbers with vertical separators */
+/* Three metrics share one compact row, including on phones. */
 .hero-stats {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    margin-bottom: 2.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+    max-width: 520px;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    margin-bottom: 2rem;
 }
 
 .stat-item {
     text-align: left;
-    padding: 0 2rem;
-}
-
-.stat-item:first-child {
-    padding-left: 0;
-}
-
-.stat-separator {
-    width: 1px;
-    height: 48px;
-    background: var(--border);
-    flex-shrink: 0;
+    min-width: 0;
 }
 
 .stat-number {
     font-family: 'DM Serif Display', serif;
-    font-size: clamp(2.5rem, 4vw, 3rem);
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
     font-weight: 400;
     color: var(--accent);
     line-height: 1.1;
+    font-variant-numeric: tabular-nums;
 }
 
 .stat-label {
     font-size: 0.8rem;
-    color: var(--text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-top: 0.25rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-top: 0.4rem;
 }
 
 /* Buttons: Small rounded-rectangle, understated */
 .cta-buttons {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
 }
 
 .btn {
@@ -536,49 +549,33 @@ nav.scrolled {
 
 .hero-profile img {
     width: 100%;
-    max-width: 380px;
+    max-width: 330px;
     height: auto;
     aspect-ratio: 4 / 5;
     object-fit: cover;
     border-radius: 12px;
-    border: 1px solid var(--border);
 }
 
 /* ============================================
    SECTION STYLES
    ============================================ */
 section {
-    padding: 6rem 2rem;
-    max-width: 1100px;
+    padding: 5rem 2rem;
+    max-width: 1184px;
     margin: 0 auto;
+    scroll-margin-top: 92px;
 }
 
-/* Section title: Left-aligned with accent line */
+/* Section headings share a quiet, unadorned left edge. */
 .section-title {
     font-family: 'DM Serif Display', serif;
-    font-size: 2.2rem;
+    font-size: clamp(2rem, 3.4vw, 2.8rem);
     font-weight: 400;
     color: var(--text-primary);
+    line-height: 1.2;
+    letter-spacing: -0.025em;
     text-align: left;
-    margin-bottom: 3rem;
-    position: relative;
-    padding-left: 1.25rem;
-}
-
-.section-title::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.25rem;
-    bottom: 0.25rem;
-    width: 3px;
-    background: var(--accent);
-    border-radius: 2px;
-}
-
-/* Remove old centered underline */
-.section-title::after {
-    display: none;
+    margin-bottom: 2.5rem;
 }
 
 /* ============================================
@@ -667,96 +664,69 @@ section {
 .about {
     background: var(--bg-alt);
     max-width: 100%;
-    padding: 6rem 2rem;
+    padding: 5rem 2rem;
 }
 
 .about .section-title {
-    max-width: 1100px;
+    max-width: 1120px;
     margin-left: auto;
     margin-right: auto;
 }
 
 .about-content {
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 4rem;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 5rem;
     align-items: start;
-    max-width: 1100px;
+    max-width: 1120px;
     margin: 0 auto;
 }
 
-.about-image {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-}
-
-.profile-photo {
-    width: 100%;
-    max-width: 280px;
-    height: auto;
-    aspect-ratio: 4 / 5;
-    border-radius: 10px;
-    object-fit: cover;
-    border: 1px solid var(--border);
-}
-
 .about-heading {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.5rem;
-    font-weight: 400;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 500;
     color: var(--text-primary);
     margin-bottom: 1rem;
 }
 
 .about-text p {
     color: var(--text-secondary);
-    line-height: 1.8;
-    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.85;
+    max-width: 62ch;
 }
 
 .skills-heading {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-top: 2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
     margin-bottom: 1rem;
 }
 
-/* Skills: accent-bordered list items */
+/* Quiet labels keep the skills scannable without repeated accent bars. */
 .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
 }
 
 .skill-tag {
-    padding: 0.5rem 0.75rem;
-    border-left: 2px solid var(--accent);
-    border-right: 1px solid transparent;
-    border-top: 1px solid transparent;
-    border-bottom: 1px solid transparent;
-    border-radius: 0 4px 4px 0;
-    font-size: 0.9rem;
-    color: var(--text-primary);
-    font-weight: 500;
-    transition: none;
-}
-
-.skill-tag:hover {
-    background: var(--accent-wash);
-    border-right-color: var(--accent);
-    border-top-color: var(--accent);
-    border-bottom-color: var(--accent);
-    transform: translateY(-2px);
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 400;
 }
 
 /* ============================================
    EXPERIENCE SECTION
    ============================================ */
+#experience {
+    background: var(--bg-primary);
+}
+
 .experience-timeline {
     position: relative;
     padding-left: 2rem;
@@ -775,24 +745,23 @@ section {
 
 .experience-item {
     position: relative;
-    margin-bottom: 2.5rem;
-    background: var(--card-bg);
-    padding: 2rem;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    transition: border-color 0.2s ease;
+    margin-bottom: 2.75rem;
+    padding: 0 0 2.75rem;
+    border-bottom: 1px solid var(--border);
 }
 
-.experience-item:hover {
-    border-color: var(--accent);
+.experience-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
 }
 
 /* Small 8px accent dots */
 .experience-item::before {
     content: '';
     position: absolute;
-    left: -2.35rem;
-    top: 2.2rem;
+    left: calc(-2rem - 3.5px);
+    top: 0.65rem;
     width: 8px;
     height: 8px;
     background: var(--accent);
@@ -837,16 +806,17 @@ section {
 }
 
 .experience-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.3rem;
-    font-weight: 400;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.4;
     color: var(--text-primary);
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.4rem;
 }
 
 .company-name {
-    color: var(--accent-text);
-    font-weight: 500;
+    color: var(--text-secondary);
+    font-weight: 400;
     font-size: 0.95rem;
     margin-bottom: 0.25rem;
 }
@@ -858,16 +828,18 @@ section {
 
 .experience-list {
     list-style: none;
-    margin-top: 0.75rem;
+    max-width: 78ch;
+    margin-top: 1.25rem;
+    margin-left: 2.9rem;
 }
 
 .experience-list li {
     position: relative;
-    padding-left: 1.25rem;
-    margin-bottom: 0.6rem;
+    padding-left: 1.15rem;
+    margin-bottom: 0.65rem;
     color: var(--text-secondary);
-    line-height: 1.7;
-    font-size: 0.95rem;
+    line-height: 1.75;
+    font-size: 1rem;
 }
 
 .experience-list li::before {
@@ -899,22 +871,21 @@ section {
    APPS / BUILDER SIDE SECTION
    ============================================ */
 .apps {
-    padding: 6rem 2rem;
+    padding: 4rem 2rem;
     max-width: 100%;
 }
 
 .apps .section-title {
-    max-width: 1100px;
+    max-width: 1120px;
     margin-left: auto;
     margin-right: auto;
 }
 
 .apps-intro {
-    max-width: 1100px;
-    margin: 0 auto 3rem auto;
+    max-width: 1120px;
+    margin: -1rem auto 2rem;
     color: var(--text-secondary);
     font-size: 1rem;
-    text-align: center;
 }
 
 .app-card {
@@ -953,27 +924,47 @@ section {
 .projects {
     background: var(--bg-alt);
     max-width: 100%;
-    padding: 6rem 2rem;
+    padding: 5rem 2rem;
 }
 
 .projects .section-title {
-    max-width: 1100px;
+    max-width: 1120px;
     margin-left: auto;
     margin-right: auto;
+}
+
+.section-heading {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem 2rem;
+    max-width: 1120px;
+    margin: 0 auto 2.5rem;
+}
+
+.section-heading .section-title {
+    margin: 0;
+}
+
+.section-link {
+    color: var(--accent-text);
+    text-underline-offset: 0.3em;
+    padding: 0.5rem 0;
 }
 
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 1.5rem;
-    max-width: 1100px;
+    max-width: 1120px;
     margin: 0 auto;
 }
 
 .project-card {
     background: var(--card-bg);
-    border-radius: 8px;
-    padding: 2rem;
+    border-radius: 12px;
+    padding: 2.5rem;
     border: 1px solid var(--border);
     transition: border-color 0.2s ease;
 }
@@ -983,11 +974,12 @@ section {
 }
 
 .project-title {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 1.3rem;
-    font-weight: 400;
+    font-weight: 600;
+    line-height: 1.4;
     color: var(--text-primary);
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.75rem;
 }
 
 /* Large accent-colored metric numbers */
@@ -1004,7 +996,7 @@ section {
 .metric-value {
     display: block;
     font-family: 'DM Serif Display', serif;
-    font-size: 2rem;
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
     font-weight: 400;
     color: var(--accent);
     line-height: 1.2;
@@ -1012,10 +1004,8 @@ section {
 
 .metric-label {
     display: block;
-    font-size: 0.8rem;
-    color: var(--text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
     margin-top: 0.15rem;
 }
 
@@ -1054,33 +1044,27 @@ section {
    ============================================ */
 .education {
     background: var(--bg-primary);
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
 }
 
 .education-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3rem;
 }
 
-/* The transition list lives with the other card surfaces in the depth block
-   below: naming it here as well left transform out, so an education card
-   jumped to its revealed position while its neighbours eased into theirs. */
+/* Education is an open row; the existing reveal supplies its transition. */
 .education-card {
-    background: var(--card-bg);
-    padding: 2rem;
-    border-radius: 8px;
-    border: 1px solid var(--border);
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
     text-align: left;
 }
 
-.education-card:hover {
-    border-color: var(--accent);
-}
-
 .degree-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.25rem;
-    font-weight: 400;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 0.35rem;
 }
@@ -1109,20 +1093,20 @@ section {
 .testimonials {
     background: var(--bg-alt);
     max-width: 100%;
-    padding: 6rem 2rem;
+    padding: 5rem 2rem;
 }
 
 .testimonials .section-title {
-    max-width: 1100px;
+    max-width: 1120px;
     margin-left: auto;
     margin-right: auto;
 }
 
 .testimonials-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    max-width: 1100px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.75rem 4rem;
+    max-width: 1120px;
     margin: 0 auto;
 }
 
@@ -1134,10 +1118,8 @@ section {
 }
 
 .testimonial-card {
-    background: var(--card-bg);
-    padding: 2rem;
-    border-radius: 8px;
-    border: 1px solid var(--border);
+    padding: 1.5rem 0 0 0.5rem;
+    border-top: 1px solid var(--border);
 }
 
 /* DM Serif Display ships one face, upright. `font-style: italic` asked for an
@@ -1152,28 +1134,16 @@ section {
 .testimonial-text {
     font-family: 'DM Serif Display', serif;
     font-weight: 400;
-    color: var(--text-secondary);
-    line-height: 1.75;
+    color: var(--text-primary);
+    line-height: 1.7;
     margin-bottom: 1.5rem;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     text-indent: -0.42em;
 }
 
-/* Small accent line above author name */
+/* Author details stay aligned with the quotation. */
 .testimonial-author {
-    padding-top: 1rem;
-    border-top: none;
     position: relative;
-}
-
-.testimonial-author::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 30px;
-    height: 2px;
-    background: var(--accent);
 }
 
 .testimonial-author strong {
@@ -1375,22 +1345,11 @@ footer {
     transform: rotate(-135deg);
 }
 
-/* ============================================
-   MOBILE RESPONSIVE
-   The eight-link nav wraps to a second row below ~960px, and the three-up
-   hero stat row cannot fit the narrower text column, so both collapse here
-   rather than at 768px.
-
-   Scoped to `screen` deliberately: a Letter page box is 816px and A4 is 794px,
-   so an unqualified max-width:960px query also matches printed pages and would
-   drag the stacked mobile layout onto paper. At the old 768px breakpoint this
-   was not possible, which is why print never had to guard against it.
-   ============================================ */
+/* Tablet navigation collapses at the same breakpoint used by script.js.
+   Screen-only queries keep phone layout rules out of printed pages. */
 @media screen and (max-width: 960px) {
-    .mobile-menu-toggle {
-        display: block;
-    }
-
+    .mobile-menu-toggle { display: block; }
+    .nav-container { gap: 1rem; }
     .nav-links {
         display: none;
         position: absolute;
@@ -1401,163 +1360,72 @@ footer {
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         flex-direction: column;
-        padding: 1.5rem 2rem;
+        align-items: stretch;
+        gap: 0;
+        padding: 1rem 2rem;
         border-bottom: 1px solid var(--border);
-        /* The dropdown hangs off a fixed nav, so eight links run past the
-           bottom of a short viewport with no way to reach the last of them.
-           A phone in landscape is about 390px tall and the nav takes 76 of
-           that, so cap the panel just under the remaining space and scroll.
-           overscroll-behavior stops the page moving underneath it. */
-        /* vh first: a browser without svh drops that declaration entirely,
-           and losing the cap would put the lower links out of reach again */
         max-height: calc(100vh - 5rem);
         max-height: calc(100svh - 5rem);
         overflow-y: auto;
-        /* y only: the panel never scrolls sideways, and containing the x axis
-           would also swallow horizontal swipe gestures */
         overscroll-behavior-y: contain;
     }
-
-    .nav-links.active {
-        display: flex;
-    }
-
-    .nav-links a {
-        padding: 0.75rem 0;
-    }
-
-    /* The separator belongs on the li, which is the full-width flex item.
-       On the anchor it underlines only the text, giving a ragged edge, and
-       `a:last-child` matched every anchor anyway since each is the only
-       child of its li, so every separator was removed rather than the last. */
-    .nav-links li {
-        border-bottom: 1px solid var(--border);
-    }
-
-    .nav-links li:last-child {
-        border-bottom: none;
-    }
-
-    /* Hero stacks vertically on mobile */
-    .hero-grid {
-        grid-template-columns: 1fr;
-        gap: 2.5rem;
-        text-align: center;
-    }
-
-    /* Photo goes first on mobile (reorder) */
-    .hero-profile {
-        order: -1;
-    }
-
-    .hero-profile img {
-        max-width: 260px;
-        margin: 0 auto;
-        display: block;
-    }
-
-    .hero-title {
-        font-size: 1rem;
-    }
-
-    /* Stats stack on mobile */
-    .hero-stats {
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .stat-item {
-        text-align: center;
-        padding: 0;
-    }
-
-    .stat-separator {
-        width: 40px;
-        height: 1px;
-    }
-
-    .cta-buttons {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    .hero-social {
-        justify-content: center;
-    }
-
-    /* Section titles centered on mobile */
-    .section-title {
-        text-align: center;
-        padding-left: 0;
-    }
-
-    .section-title::before {
-        left: 50%;
-        transform: translateX(-50%);
-        top: auto;
-        bottom: -8px;
-        width: 40px;
-        height: 2px;
-    }
-
-    .about-content {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
-
-    .about-image {
-        justify-content: center;
-    }
-
-    .profile-photo {
-        max-width: 220px;
-    }
-
-    .skills-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .experience-timeline {
-        padding-left: 1.5rem;
-    }
-
-    .experience-header {
-        flex-direction: column;
-    }
-
-    .projects-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .contact-info {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: center;
-    }
-
-    .social-links {
-        justify-content: center;
-    }
-
-    .contact-content {
-        text-align: center;
-    }
-
-    .testimonials-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .testimonial-author::before {
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    .testimonial-author {
-        text-align: center;
-    }
+    .nav-links.active { display: flex; }
+    .nav-links a { display: block; padding: 0.75rem 0; }
+    .nav-links li { border-bottom: 1px solid var(--border); }
+    .nav-links li:last-child { border-bottom: none; padding-top: 0.75rem; }
+    .nav-links .nav-contact { padding: 0.65rem 1rem; }
+    .hero-grid { gap: 2.5rem; }
+    .hero h1 { font-size: clamp(3rem, 6.5vw, 4.5rem); }
+    .about-content { gap: 2.5rem; }
+    .experience-header { flex-direction: column; gap: 0.5rem; }
+    .experience-date { margin-left: 2.9rem; }
 }
 
+@media screen and (max-width: 640px) {
+    section, .about, .projects, .apps, .testimonials, .education {
+        padding: 3.5rem 1.25rem;
+    }
+    .nav-container { padding: 0.75rem 1.25rem; }
+    .nav-links { padding: 1rem 1.25rem; }
+    .hero {
+        min-height: auto;
+        padding: 96px 0 1.5rem;
+    }
+    .hero-grid {
+        grid-template-columns: 1fr;
+        padding: 0 1.25rem;
+        gap: 1.5rem;
+    }
+    .hero-profile { order: -1; justify-content: flex-start; }
+    .hero-frame { margin: 0; }
+    .hero-profile img { max-width: 128px; }
+    .hero h1 { font-size: clamp(2.65rem, 11vw, 3.8rem); margin-bottom: 0.75rem; }
+    .hero-title { font-size: 1rem; margin-bottom: 1.5rem; max-width: 30ch; }
+    .hero-stats { gap: 0.65rem; padding-top: 1.25rem; margin-bottom: 1.5rem; }
+    .stat-number { font-size: clamp(1.85rem, 7.5vw, 2.4rem); }
+    .stat-label { font-size: 0.75rem; }
+    .cta-buttons { gap: 0.65rem; margin-bottom: 1.25rem; }
+    .btn { padding: 0.75rem 1rem; }
+    .hero-social-link { width: 32px; height: 32px; }
+    .section-title { margin-bottom: 2rem; }
+    .section-heading { margin-bottom: 2rem; gap: 0.5rem; }
+    .section-heading .section-title { margin: 0; }
+    .about-content, .projects-grid, .education-grid, .testimonials-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    .experience-timeline { padding-left: 1.25rem; }
+    .experience-item::before { left: calc(-1.25rem - 3.5px); }
+    .experience-title { font-size: 1.1rem; }
+    .experience-list { margin-left: 0; }
+    .experience-heading { gap: 0.7rem; }
+    .experience-date { margin-left: 2.7rem; }
+    .project-card { padding: 1.5rem; }
+    .project-title { font-size: 1.2rem; }
+    .contact-info { flex-direction: column; gap: 1rem; align-items: flex-start; }
+    .contact-item { overflow-wrap: anywhere; }
+    .back-to-top { right: 1rem; bottom: 1rem; }
+}
 
 /* ============================================
    POLISH PASS — borrowed from nateherk.com
@@ -1566,51 +1434,16 @@ footer {
    (4) Animated conic-gradient ring on headshot
    ============================================ */
 
-/* (1) Card hover physics — applies to project cards, app cards, experience items, testimonials */
-.project-card,
-.experience-item,
-.testimonial-card,
-.education-card {
+/* Raised project surfaces retain a quiet edge; links respond without moving. */
+.project-card {
     transition: transform .35s cubic-bezier(.2,.7,.2,1),
-                box-shadow .35s cubic-bezier(.2,.7,.2,1),
-                background-color .25s ease,
+                box-shadow .35s ease, background-color .25s ease,
                 border-color .25s ease;
-}
-
-/* Scoped to hover: as a standing declaration this held a compositor layer for
-   all 17 cards for the life of the page. */
-.project-card:hover,
-.experience-item:hover,
-.testimonial-card:hover,
-.education-card:hover {
-    will-change: transform;
-}
-
-/* A 1px top edge catches the light on the raised surfaces, which is what
-   separates a card from the page in dark mode. Transparent in light. */
-.project-card,
-.experience-item,
-.testimonial-card,
-.education-card {
     box-shadow: inset 0 1px 0 var(--card-edge);
 }
 
-.project-card:hover,
-.app-card:hover,
-.testimonial-card:hover {
-    transform: translateY(-4px);
-    box-shadow: inset 0 1px 0 var(--card-edge), var(--card-shadow-hover);
+.app-card:hover {
     border-color: var(--accent);
-    background: var(--card-bg-hover);
-}
-
-.experience-item:hover {
-    transform: translateY(-2px);
-    box-shadow: inset 0 1px 0 var(--card-edge), var(--card-shadow-hover-sm);
-    background: var(--card-bg-hover);
-}
-
-.education-card:hover {
     background: var(--card-bg-hover);
 }
 
@@ -1649,7 +1482,7 @@ footer {
 .hero-frame {
     position: relative;
     width: fit-content;
-    margin: 0 auto;
+    margin: 0;
     padding: 3px;
     border-radius: 16px;
     background: conic-gradient(
@@ -1675,9 +1508,9 @@ footer {
 .section-divider {
     display: block;
     width: 100%;
-    max-width: 1100px;
+    max-width: 1184px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 clamp(1.25rem, 5vw, 2rem);
     position: relative;
     z-index: 1;
 }
@@ -1688,15 +1521,7 @@ footer {
     display: block;
     height: 1px;
     width: 100%;
-    opacity: 0.6;
-    background: linear-gradient(
-        90deg,
-        transparent 0%,
-        var(--border) 15%,
-        var(--accent) 50%,
-        var(--border) 85%,
-        transparent 100%
-    );
+    background: var(--border);
 }
 
 /* ============================================
@@ -1820,12 +1645,7 @@ a.app-card {
             --tilt: 3;
         }
 
-        .education-grid .education-card {
-            --tilt: 4;
-        }
-
-        .projects-grid .project-card:not(a):hover,
-        .education-grid .education-card:hover {
+        .projects-grid .project-card:not(a):hover {
             transform:
                 perspective(900px)
                 rotateX(calc(var(--py, 0) * var(--tilt) * -1deg))
@@ -1996,7 +1816,8 @@ a.app-card {
     .about,
     .apps,
     .projects,
-    .testimonials {
+    .testimonials,
+    .education {
         page-break-inside: avoid;
         padding: 1rem 0;
     }

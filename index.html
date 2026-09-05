@@ -162,16 +162,12 @@
     <!-- Navigation -->
     <nav role="navigation" aria-label="Main navigation">
         <div class="nav-container">
-            <div class="nav-logo" aria-label="Vishut Dhar Logo">VD</div>
+            <a class="nav-logo" href="#home" aria-label="Vishut Dhar, home">VD</a>
             <ul class="nav-links" role="list">
-                <li><a href="#home">Home</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#experience">Experience</a></li>
                 <li><a href="#projects">Projects</a></li>
-                <li><a href="#education">Education</a></li>
-                <li><a href="#testimonials">Testimonials</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="#apps">Personal Projects</a></li>
+                <li><a href="#contact" class="nav-contact">Contact</a></li>
             </ul>
             <div class="nav-actions">
                 <!-- Cycles dark -> light -> system. The visible icon is the
@@ -210,17 +206,15 @@
                 <div class="hero-stats">
                     <div class="stat-item">
                         <div class="stat-number">8+</div>
-                        <div class="stat-label">Years Experience</div>
+                        <div class="stat-label">Years experience</div>
                     </div>
-                    <div class="stat-separator"></div>
                     <div class="stat-item">
                         <div class="stat-number">$15M</div>
-                        <div class="stat-label">Annual Savings</div>
+                        <div class="stat-label">Annual savings</div>
                     </div>
-                    <div class="stat-separator"></div>
                     <div class="stat-item">
                         <div class="stat-number" data-count-from="5">0.5%</div>
-                        <div class="stat-label">Scrap Rate Achievement</div>
+                        <div class="stat-label">Scrap rate</div>
                     </div>
                 </div>
                 <div class="cta-buttons">
@@ -259,34 +253,27 @@
     <section id="about" class="about" tabindex="-1">
         <h2 class="section-title">About Me</h2>
         <div class="about-content">
-            <!-- About Section Profile Photo -->
-            <div class="about-image">
-                <picture>
-                    <source srcset="vishut-dhar-headshot.webp" type="image/webp">
-                    <img src="vishut-dhar-headshot.jpg" alt="Vishut Dhar - Senior Supplier Quality Engineer" class="profile-photo" width="1600" height="1570" loading="lazy">
-                </picture>
-            </div>
             <div class="about-text">
                 <h3 class="about-heading">Data-Driven Quality Excellence</h3>
                 <p>Senior Supplier Quality Engineer at General Motors and US citizen with over 8 years in automotive quality. I turn production data into actionable strategies using Six Sigma methodologies, SPC, and Power BI to identify failure patterns, reduce scrap, and drive cost savings. My approach: find the root cause, fix the system, and make the improvement permanent.</p>
-                <div class="skills-section">
-                    <h4 class="skills-heading">Key Skills</h4>
-                    <div class="skills-grid">
-                        <div class="skill-tag">IATF 16949</div>
-                        <div class="skill-tag">Six Sigma</div>
-                        <div class="skill-tag">DMAIC</div>
-                        <div class="skill-tag">8D</div>
-                        <div class="skill-tag">5-Why</div>
-                        <div class="skill-tag">Kaizen</div>
-                        <div class="skill-tag">SPC</div>
-                        <div class="skill-tag">GD&amp;T</div>
-                        <div class="skill-tag">APQP/PPAP</div>
-                        <div class="skill-tag">PFMEA</div>
-                        <div class="skill-tag">SAP</div>
-                        <div class="skill-tag">CAPA</div>
-                        <div class="skill-tag">Power BI</div>
-                        <div class="skill-tag">Data Analytics</div>
-                    </div>
+            </div>
+            <div class="skills-section">
+                <h4 class="skills-heading">Key Skills</h4>
+                <div class="skills-grid">
+                    <div class="skill-tag">IATF 16949</div>
+                    <div class="skill-tag">Six Sigma</div>
+                    <div class="skill-tag">DMAIC</div>
+                    <div class="skill-tag">8D</div>
+                    <div class="skill-tag">5-Why</div>
+                    <div class="skill-tag">Kaizen</div>
+                    <div class="skill-tag">SPC</div>
+                    <div class="skill-tag">GD&amp;T</div>
+                    <div class="skill-tag">APQP/PPAP</div>
+                    <div class="skill-tag">PFMEA</div>
+                    <div class="skill-tag">SAP</div>
+                    <div class="skill-tag">CAPA</div>
+                    <div class="skill-tag">Power BI</div>
+                    <div class="skill-tag">Data Analytics</div>
                 </div>
             </div>
         </div>
@@ -409,7 +396,10 @@
 
     <!-- Projects Section -->
     <section id="projects" class="projects" tabindex="-1">
-        <h2 class="section-title">Key Projects & Achievements</h2>
+        <div class="section-heading">
+            <h2 class="section-title">Key Projects & Achievements</h2>
+            <a class="section-link" href="#apps">Personal projects</a>
+        </div>
         <div class="projects-grid">
             <div class="project-card">
                 <h3 class="project-title">EV Battery Plant Launch</h3>
@@ -450,6 +440,27 @@
                     <li>Trained cross-functional teams</li>
                 </ul>
             </div>
+        </div>
+    </section>
+
+    <div class="section-divider" aria-hidden="true"><span></span></div>
+
+    <!-- Personal Projects Section -->
+    <section id="apps" class="apps" tabindex="-1">
+        <h2 class="section-title">Personal Projects</h2>
+        <p class="apps-intro">Independent products I've shipped outside of work.</p>
+
+        <div class="projects-grid">
+            <a href="https://freedom-terminal.com" class="project-card app-card" target="_blank" rel="noopener noreferrer">
+                <img src="assets/apps/freedomterminal.png" alt="Freedom Terminal icon" class="app-icon app-icon-round" width="64" height="64" loading="lazy">
+                <h3 class="project-title">Freedom Terminal</h3>
+                <p class="project-description">My independent software studio. Seven products for Mac, iPhone, Apple Watch, and the web, built around privacy and fair pricing.</p>
+            </a>
+            <a href="https://x.com/USC1787" class="project-card app-card" target="_blank" rel="noopener noreferrer">
+                <img src="assets/apps/usc1787.png" alt="USC1787 icon" class="app-icon" width="64" height="64" loading="lazy">
+                <h3 class="project-title">@USC1787</h3>
+                <p class="project-description">Daily X bot posting U.S. Constitution content.</p>
+            </a>
         </div>
     </section>
 
@@ -585,28 +596,6 @@
                     </svg>
                 </a>
             </div>
-        </div>
-    </section>
-
-
-    <div class="section-divider" aria-hidden="true"><span></span></div>
-
-    <!-- Personal Projects Section -->
-    <section id="apps" class="apps" tabindex="-1">
-        <h2 class="section-title">Personal Projects</h2>
-        <p class="apps-intro">Independent products I've shipped outside of work.</p>
-
-        <div class="projects-grid">
-            <a href="https://freedom-terminal.com" class="project-card app-card" target="_blank" rel="noopener noreferrer">
-                <img src="assets/apps/freedomterminal.png" alt="Freedom Terminal icon" class="app-icon app-icon-round" width="64" height="64" loading="lazy">
-                <h3 class="project-title">Freedom Terminal</h3>
-                <p class="project-description">My independent software studio. Seven products for Mac, iPhone, Apple Watch, and the web, built around privacy and fair pricing.</p>
-            </a>
-            <a href="https://x.com/USC1787" class="project-card app-card" target="_blank" rel="noopener noreferrer">
-                <img src="assets/apps/usc1787.png" alt="USC1787 icon" class="app-icon" width="64" height="64" loading="lazy">
-                <h3 class="project-title">@USC1787</h3>
-                <p class="project-description">Daily X bot posting U.S. Constitution content.</p>
-            </a>
         </div>
     </section>
     </main>
