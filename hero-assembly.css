@@ -1,0 +1,107 @@
+/* The engineering scene is one contained enhancement of the opening. */
+.hero-engineering {
+    max-width: 100%;
+    min-height: 780px;
+    min-height: min(92svh, 960px);
+    padding: 108px 0 56px;
+}
+
+.hero-engineering .hero-grid {
+    max-width: 1376px;
+    grid-template-columns: minmax(0, 0.94fr) minmax(0, 1.16fr);
+    gap: 1.5rem;
+    padding: 1.5rem 3rem;
+}
+
+.hero-engineering .hero-text { animation: none; }
+.hero-engineering h1 { font-size: clamp(3.5rem, 6.7vw, 5.8rem); }
+.hero-engineering .hero-title { margin-bottom: 2rem; }
+.hero-engineering .hero-profile { justify-content: flex-start; margin-bottom: 1.5rem; animation: none; }
+.hero-engineering .hero-frame { padding: 2px; border-radius: 50%; }
+.hero-engineering .hero-profile img { width: 72px; height: 72px; object-fit: cover; border-radius: 50%; }
+.hero-engineering .hero-stats { max-width: 460px; }
+
+.assembly { min-width: 0; margin: 0; position: relative; }
+.assembly-viewport { width: 100%; height: clamp(340px, 56svh, 550px); position: relative; isolation: isolate; }
+.assembly-viewport::before {
+    content: '';
+    position: absolute;
+    inset: 16% 8% 7%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(212, 120, 94, 0.065), transparent 67%);
+    z-index: -1;
+}
+.assembly-fallback, .assembly-viewport canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+}
+.assembly-fallback { transition: opacity 0.35s ease; }
+.assembly-viewport canvas { opacity: 0; transition: opacity 0.35s ease; }
+.assembly.scene-ready .assembly-fallback { opacity: 0; }
+.assembly.scene-ready canvas { opacity: 1; }
+.assembly-caption {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin: 0 2rem;
+    border-top: 1px solid var(--border);
+    padding-top: 0.65rem;
+    min-height: 56px;
+    color: var(--text-tertiary);
+    font-size: 0.8rem;
+}
+.assembly-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 0;
+    min-height: 44px;
+    border: 0;
+    background: transparent;
+    color: var(--accent-text);
+    font: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.assembly-action[hidden] { display: none; }
+.assembly-action svg { width: 18px; height: 18px; }
+.assembly-action:hover { color: var(--text-primary); }
+.assembly-action:focus-visible { outline-offset: 5px; }
+
+@media screen and (max-width: 1100px) {
+    .hero-engineering .hero-grid { padding: 1.5rem 2rem; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .hero-engineering h1 { font-size: clamp(3.25rem, 6.6vw, 4.8rem); }
+    .assembly-viewport { height: clamp(340px, 56svh, 470px); }
+    .assembly-caption { margin: 0 0.5rem; }
+}
+
+@media screen and (max-width: 760px) {
+    .hero-engineering { min-height: auto; padding: 96px 0 40px; }
+    .hero-engineering .hero-grid { grid-template-columns: 1fr; padding: 0 1.25rem; gap: 0.5rem; }
+    .hero-engineering .hero-profile { margin-bottom: 1rem; }
+    .hero-engineering .hero-profile img { width: 52px; height: 52px; }
+    .hero-engineering h1 { font-size: clamp(2.65rem, 11vw, 4.25rem); }
+    .hero-engineering .hero-title { margin-bottom: 1.5rem; }
+    .hero-engineering .hero-stats { max-width: 100%; }
+    .hero-engineering .cta-buttons { margin-bottom: 1rem; }
+    .assembly { width: 100%; max-width: 550px; justify-self: center; }
+    .assembly-viewport { height: clamp(280px, 77vw, 400px); }
+    .assembly-caption { margin: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .assembly-fallback, .assembly-viewport canvas { transition: none; }
+}
+
+@media print {
+    .hero-engineering { min-height: auto; padding: 1rem 0; }
+    .hero-engineering .hero-grid { display: block; padding: 0; }
+    .hero-engineering h1 { font-size: 22pt; }
+    .hero-engineering .hero-profile { margin-bottom: 0.75rem; }
+    .assembly { display: none; }
+}
