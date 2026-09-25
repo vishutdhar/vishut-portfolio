@@ -1,5 +1,5 @@
 /* ============================================
-   ARCHITECTURAL PRECISION - Portfolio Stylesheet
+   Portfolio Stylesheet
    Typography: DM Serif Display + DM Sans
    Accent: Warm Terracotta
    ============================================ */
@@ -42,111 +42,150 @@
     unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
-* {
+
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* --- Color System ---
+/* ============================================
+   TOKENS
    Three accent roles, split because one terracotta cannot clear WCAG AA
    everywhere it is used:
      --accent       decorative surfaces, borders, icons, and large text (>=24px)
      --accent-text  accent-coloured text at normal sizes (needs 4.5:1)
      --accent-solid a filled accent surface, always paired with --on-accent
-   Every pairing below is verified at 4.5:1 for text and 3:1 for UI. */
-/* Dark lives on :root, so it is what the document renders with no
-   data-theme attribute at all: JavaScript disabled, theme-init.js blocked, or
-   the instant before it runs. Light is the opt-in override. Putting light here
-   instead would make "dark by default" true only for visitors who run our JS.
-
-   The dark surfaces form a real ladder -- page, alt band, card, hovered card --
-   so a card reads as raised without relying on its 1px border alone. */
+   Dark lives on :root so it renders with no data-theme attribute at all
+   (JavaScript disabled, theme-init.js blocked); light is the opt-in override.
+   ============================================ */
 :root {
     --bg-primary: #0F0F0E;
-    --bg-alt: #161615;
-    --card-bg: #1F1F1D;
-    --card-bg-hover: #262623;
+    --bg-alt: #141413;
+    --card-bg: #191918;
+    --card-bg-hover: #20201E;
     --text-primary: #EDEDEB;
     --text-secondary: #B5B5AE;
     --text-tertiary: #9B9B94;
     --accent: #D4785E;
-    --accent-text: #D4785E;
+    --accent-text: #E08B6E;
     --accent-solid: #D4785E;
     --accent-solid-hover: #E08B6E;
     --on-accent: #0F0F0E;
     --accent-wash: rgba(212, 120, 94, 0.1);
+    --accent-soft: rgba(212, 120, 94, 0.28);
     --accent-tap: rgba(212, 120, 94, 0.25);
-    --grid-line: rgba(212, 120, 94, 0.07);
+    --grid-line: rgba(212, 120, 94, 0.08);
     --hero-glow-strong: rgba(212, 120, 94, 0.18);
     --hero-glow-soft: rgba(212, 120, 94, 0.07);
-    --border: #33332F;
-    /* At 0.95 the 12px backdrop-filter under this bar was doing invisible
-       work. 0.88 is as far down as it can go: the nav crosses the headshot on
-       the way past the hero, and the wall behind the head is the brightest
-       thing on the page. Measured on the composited strip at that crossing,
-       0.88 holds the links at 5.5:1 and the logo at 4.6:1, while 0.80 drops
-       them to 4.3:1 and 3.5:1 -- under the 4.5:1 body text needs. */
-    --nav-bg: rgba(15, 15, 14, 0.88);
-    --shadow-color: rgba(0, 0, 0, 0.2);
-    --card-edge: rgba(255, 255, 255, 0.045);
-    --cast-color: rgba(0, 0, 0, 0.4);
-    --card-shadow-hover: 6px 14px 36px var(--cast-color);
-    --card-shadow-hover-sm: 4px 14px 36px var(--cast-color);
-    --github-hover-border: #f0f6fc;
+    --success: #6CC08B;
+    --success-wash: rgba(108, 192, 139, 0.16);
+    --border: #2C2C29;
+    --border-strong: #3A3A36;
+    --nav-bg: rgba(15, 15, 14, 0.86);
+    --card-edge: rgba(255, 255, 255, 0.04);
+    --cast-color: rgba(0, 0, 0, 0.45);
+    --mark-bg: rgba(212, 120, 94, 0.22);
+    --track: #262623;
+
+    --serif: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+    --sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --container: 1200px;
+    --gutter: clamp(1rem, 4vw, 2rem);
+    --radius: 18px;
+    --ease: cubic-bezier(.2, .7, .2, 1);
 }
 
 [data-theme="light"] {
     --bg-primary: #FAFAF8;
-    --bg-alt: #F2F0EC;
+    --bg-alt: #F3F1ED;
     --card-bg: #FFFFFF;
     --card-bg-hover: #FFFFFF;
     --text-primary: #1C1C1C;
-    --text-secondary: #5C5C5C;
+    --text-secondary: #525252;
     --text-tertiary: #6B6B6B;
     --accent: #C45D3E;
     --accent-text: #A84E33;
     --accent-solid: #A84E33;
     --accent-solid-hover: #8E4029;
     --on-accent: #FFFFFF;
-    --accent-wash: rgba(196, 93, 62, 0.06);
+    --accent-wash: rgba(196, 93, 62, 0.07);
+    --accent-soft: rgba(196, 93, 62, 0.22);
     --accent-tap: rgba(196, 93, 62, 0.2);
-    --grid-line: rgba(196, 93, 62, 0.045);
+    --grid-line: rgba(196, 93, 62, 0.07);
     --hero-glow-strong: rgba(196, 93, 62, 0.12);
     --hero-glow-soft: rgba(196, 93, 62, 0.05);
+    --success: #2E7D4F;
+    --success-wash: rgba(46, 125, 79, 0.12);
     --border: #E5E3DF;
-    /* Same measurement, opposite content: in light the dark jacket below the
-       face is what the nav has to stay legible over. 4.96:1 links, 3.12:1
-       logo at 0.88; 0.80 gives 4.14:1 and 2.61:1. */
-    --nav-bg: rgba(250, 250, 248, 0.88);
-    --shadow-color: rgba(0, 0, 0, 0.06);
+    --border-strong: #D4D1CB;
+    --nav-bg: rgba(250, 250, 248, 0.86);
     --card-edge: transparent;
     --cast-color: rgba(0, 0, 0, 0.08);
-    --card-shadow-hover: 6px 14px 36px var(--cast-color);
-    --card-shadow-hover-sm: 4px 10px 28px rgba(0, 0, 0, 0.06);
-    --github-hover-border: #181717;
+    --mark-bg: rgba(196, 93, 62, 0.14);
+    --track: #E9E6E0;
 }
 
 html {
     scroll-behavior: smooth;
+    /* Direct section links land below the fixed navigation. */
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
-    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: var(--sans);
+    font-size: 1rem;
     line-height: 1.7;
     color: var(--text-primary);
     background-color: var(--bg-primary);
     transition: background-color 0.3s ease, color 0.3s ease;
-    opacity: 0;
-    animation: fadeIn 0.6s ease forwards;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
 }
 
-@keyframes fadeIn {
-    to { opacity: 1; }
+img,
+svg {
+    display: block;
+    max-width: 100%;
 }
 
-/* --- Scroll Progress Indicator ---
-   Driven by transform, not width, so scrolling stays on the compositor. */
+a {
+    color: inherit;
+}
+
+::selection {
+    background: var(--accent-soft);
+    color: var(--text-primary);
+}
+
+.container {
+    width: 100%;
+    max-width: calc(var(--container) + var(--gutter) * 2);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* --- Scroll progress: transform-driven so scrolling stays on the compositor --- */
 .scroll-progress {
     position: fixed;
     top: 0;
@@ -159,7 +198,7 @@ body {
     transform-origin: left center;
 }
 
-/* --- Skip Link for Accessibility --- */
+/* --- Skip link --- */
 .skip-link {
     position: absolute;
     top: 0;
@@ -168,8 +207,8 @@ body {
     color: var(--on-accent);
     padding: 0.5rem 1rem;
     text-decoration: none;
-    border-radius: 0 0 4px 0;
-    z-index: 2000;
+    border-radius: 0 0 6px 0;
+    z-index: 2001;
     width: 1px;
     height: 1px;
     overflow: hidden;
@@ -184,13 +223,21 @@ body {
     clip-path: none;
 }
 
-/* --- Focus Styles --- */
+/* --- Focus --- */
 *:focus-visible {
     outline: 2px solid var(--accent);
-    outline-offset: 2px;
+    outline-offset: 3px;
+    border-radius: 4px;
 }
 
 *:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* Sections and main are programmatic focus targets only. */
+section:focus,
+main:focus,
+#education:focus {
     outline: none;
 }
 
@@ -200,46 +247,89 @@ body {
 nav {
     position: fixed;
     top: 0;
-    width: 100%;
-    background: var(--nav-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 1px 0 var(--border);
+    left: 0;
+    right: 0;
     z-index: 1000;
-    transition: box-shadow 0.3s ease;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 nav.scrolled {
-    box-shadow: 0 2px 20px var(--shadow-color);
+    background: var(--nav-bg);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-bottom-color: var(--border);
 }
 
 .nav-container {
-    max-width: 1184px;
+    max-width: calc(var(--container) + var(--gutter) * 2);
     margin: 0 auto;
-    padding: 1rem 2rem;
+    padding: 0.85rem var(--gutter);
     display: flex;
-    gap: 2rem;
     align-items: center;
+    gap: 2rem;
 }
 
 .nav-logo {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.6rem;
-    font-weight: 400;
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    line-height: 1;
     color: var(--text-primary);
     text-decoration: none;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.02em;
     margin-right: auto;
-    min-width: 44px;
-    min-height: 44px;
-    display: inline-flex;
+    padding: 0.35rem 0;
+}
+
+.nav-logo:hover {
+    color: var(--accent);
+}
+
+.nav-links {
+    display: flex;
     align-items: center;
+    gap: 0.35rem;
+    list-style: none;
+}
+
+.nav-links a {
+    display: inline-block;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 500;
+    padding: 0.5rem 0.85rem;
+    border-radius: 999px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.nav-links a:hover {
+    color: var(--text-primary);
+}
+
+.nav-links a.active {
+    color: var(--text-primary);
+    background: var(--accent-wash);
+}
+
+.nav-links a.nav-contact {
+    margin-left: 0.5rem;
+    color: var(--on-accent);
+    background: var(--accent-solid);
+    padding: 0.5rem 1.1rem;
+}
+
+.nav-links a.nav-contact:hover,
+.nav-links a.nav-contact.active {
+    color: var(--on-accent);
+    background: var(--accent-solid-hover);
 }
 
 .nav-actions {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .theme-toggle {
@@ -247,10 +337,9 @@ nav.scrolled {
     border: 1px solid var(--border);
     color: var(--text-secondary);
     cursor: pointer;
-    padding: 0.6rem;
-    border-radius: 8px;
-    width: 44px;
-    height: 44px;
+    border-radius: 999px;
+    width: 42px;
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -263,20 +352,14 @@ nav.scrolled {
 }
 
 .theme-toggle .icon {
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
     display: none;
 }
 
-/* Which icon shows is driven by data-theme-mode, which theme-init.js writes
-   before first paint. Doing this in CSS rather than in the deferred script
-   means a visitor whose saved mode is light never sees a dark control in the
-   first frame, and the control stays correct even if script.js never runs.
-
-   Written as "dark, unless another mode is named" rather than one rule per
-   mode, so that a missing or unrecognised attribute still yields exactly one
-   icon. Enumerating the three modes instead would render a blank button for
-   any value outside the set. */
+/* Which icon shows is driven by data-theme-mode, written by theme-init.js
+   before first paint. "Dark unless another mode is named" guarantees exactly
+   one icon even for a missing or unrecognised attribute. */
 #themeIconDark {
     display: block;
 }
@@ -291,1012 +374,11 @@ nav.scrolled {
     display: block;
 }
 
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    list-style: none;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: var(--text-secondary);
-    font-weight: 500;
-    font-size: 0.9rem;
-    letter-spacing: 0.3px;
-    transition: color 0.2s ease;
-    position: relative;
-}
-
-.nav-links a:hover {
-    color: var(--text-primary);
-}
-
-.nav-links a::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 1.5px;
-    background: var(--accent);
-    transition: width 0.2s ease;
-}
-
-.nav-links a:hover::after {
-    width: 100%;
-}
-
-.nav-links a.active {
-    color: var(--text-primary);
-}
-
-.nav-links a.active::after {
-    width: 100%;
-}
-
-.nav-links a.nav-contact {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    padding: 0.55rem 1.2rem;
-    background: var(--accent-solid);
-    color: var(--on-accent);
-    border-radius: 6px;
-}
-
-.nav-links .nav-contact:hover {
-    background: var(--accent-solid-hover);
-}
-
-.nav-links .nav-contact::after {
-    display: none;
-}
-
-/* ============================================
-   HERO SECTION - 2 Column Split
-   ============================================ */
-.hero {
-    min-height: 680px;
-    min-height: min(85svh, 880px);
-    display: flex;
-    align-items: center;
-    background: var(--bg-primary);
-    padding: 100px 0 48px;
-}
-
-/* Flexible tracks reserve more room for the name while including the gap. */
-.hero-grid {
-    max-width: 1184px;
-    margin: 0 auto;
-    padding: 3rem 2rem;
-    display: grid;
-    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
-    gap: 5rem;
-    align-items: center;
-    width: 100%;
-}
-
-.hero-text {
-    z-index: 1;
-}
-
-.hero h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(3.5rem, 7vw, 6rem);
-    font-weight: 400;
-    color: var(--text-primary);
-    line-height: 1.05;
-    margin-bottom: 1rem;
-    letter-spacing: -0.045em;
-}
-
-.hero-title {
-    font-size: 1.15rem;
-    color: var(--text-secondary);
-    font-weight: 400;
-    margin-bottom: 2.5rem;
-}
-
-/* Three metrics share one compact row, including on phones. */
-.hero-stats {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.25rem;
-    max-width: 520px;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-    margin-bottom: 2rem;
-}
-
-.stat-item {
-    text-align: left;
-    min-width: 0;
-}
-
-.stat-number {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2rem, 3.5vw, 2.8rem);
-    font-weight: 400;
-    color: var(--accent);
-    line-height: 1.1;
-    font-variant-numeric: tabular-nums;
-}
-
-.stat-label {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    line-height: 1.5;
-    margin-top: 0.4rem;
-}
-
-/* Buttons: Small rounded-rectangle, understated */
-.cta-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-}
-
-.btn {
-    padding: 0.7rem 1.75rem;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    display: inline-block;
-}
-
-.btn-primary {
-    background: var(--accent-solid);
-    color: var(--on-accent);
-}
-
-.btn-primary:hover {
-    background: var(--accent-solid-hover);
-}
-
-.btn-secondary {
-    background: transparent;
-    color: var(--text-primary);
-    border: 1px solid var(--border);
-}
-
-.btn-secondary:hover {
-    border-color: var(--accent);
-    color: var(--accent-text);
-}
-
-/* Hero Social: Clean inline links */
-.hero-social {
-    display: flex;
-    gap: 0.75rem;
-}
-
-.hero-social-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    color: var(--text-tertiary);
-    border-radius: 6px;
-    text-decoration: none;
-    transition: color 0.2s ease;
-    border: 1px solid var(--border);
-}
-
-.hero-social-link:hover {
-    color: var(--accent);
-    border-color: var(--accent);
-}
-
-.brand-linkedin {
-    padding: 0;
-    border-color: transparent;
-}
-
-.brand-linkedin svg {
-    max-width: 100%;
-    max-height: 100%;
-    width: 100%;
-    height: 100%;
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-.brand-linkedin:hover {
-    border-color: #0A66C2;
-}
-
-.brand-github {
-    padding: 0;
-    border-color: transparent;
-}
-
-.brand-github svg {
-    max-width: 100%;
-    max-height: 100%;
-    width: 100%;
-    height: 100%;
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-.brand-github:hover {
-    border-color: var(--github-hover-border);
-}
-
-.hero-social-link:not(.brand-linkedin):not(.brand-github) svg,
-.social-link:not(.brand-linkedin):not(.brand-github) svg {
-    width: 100%;
-    height: 100%;
-    max-width: 20px;
-    max-height: 20px;
-}
-
-/* Hero Profile Photo: Rectangular with rounded corners */
-.hero-profile {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.hero-profile img {
-    width: 100%;
-    max-width: 330px;
-    height: auto;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border-radius: 12px;
-}
-
-/* ============================================
-   SECTION STYLES
-   ============================================ */
-section {
-    padding: 5rem 2rem;
-    max-width: 1184px;
-    margin: 0 auto;
-    scroll-margin-top: 92px;
-}
-
-/* Section headings share a quiet, unadorned left edge. */
-.section-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2rem, 3.4vw, 2.8rem);
-    font-weight: 400;
-    color: var(--text-primary);
-    line-height: 1.2;
-    letter-spacing: -0.025em;
-    text-align: left;
-    margin-bottom: 2.5rem;
-}
-
-/* ============================================
-   SCROLL REVEAL ANIMATIONS
-   Content arrives along the z axis: a section starts 30px behind the page and
-   settles onto it, which the perspective renders as a 3.6% grow. Cards inside
-   an arriving section come from half that depth, so the two movements read as
-   one assembly seating rather than two competing slides.
-   ============================================ */
-/* Scaled from the top edge, not the centre. A section is often many times the
-   height of the viewport, and a centre-origin scale moves its top edge by half
-   the height it loses: on the experience list that is 144px. Clicking a nav
-   link scrolls to wherever the top edge is at that moment, the reveal then
-   fires and puts it back, and the heading you asked for ends up behind the
-   fixed nav or above the viewport entirely. Anchored at the top, the edge the
-   browser scrolled to is the edge that stays. */
-.reveal {
-    opacity: 0;
-    transform: perspective(800px) translate3d(0, 10px, -30px);
-    transform-origin: top center;
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-}
-
-.reveal.active {
-    opacity: 1;
-    transform: none;
-}
-
-/* No top origin here, unlike .reveal above. That anchoring exists because a
-   section is tall enough for a centre-origin scale to move its top edge out
-   from under the browser's scroll destination; a card is not, and it would
-   cost something real. These same cards tilt on hover about offsets measured
-   from their centre, and transform-origin is not part of the transition, so a
-   top edge left standing here would still be the pivot hours later: the card
-   would hinge from its top while the numbers driving it said centre. */
-.stagger-children > * {
-    opacity: 0;
-    transform: perspective(800px) translate3d(0, 8px, -16px);
-    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
-}
-
-.stagger-children.active > *:nth-child(1) { transition-delay: 0.05s; }
-.stagger-children.active > *:nth-child(2) { transition-delay: 0.1s; }
-.stagger-children.active > *:nth-child(3) { transition-delay: 0.15s; }
-.stagger-children.active > *:nth-child(4) { transition-delay: 0.2s; }
-.stagger-children.active > *:nth-child(5) { transition-delay: 0.25s; }
-.stagger-children.active > *:nth-child(6) { transition-delay: 0.3s; }
-.stagger-children.active > *:nth-child(7) { transition-delay: 0.35s; }
-.stagger-children.active > *:nth-child(8) { transition-delay: 0.4s; }
-.stagger-children.active > *:nth-child(9) { transition-delay: 0.45s; }
-.stagger-children.active > *:nth-child(10) { transition-delay: 0.5s; }
-.stagger-children.active > *:nth-child(11) { transition-delay: 0.55s; }
-.stagger-children.active > *:nth-child(12) { transition-delay: 0.6s; }
-.stagger-children.active > *:nth-child(13) { transition-delay: 0.65s; }
-.stagger-children.active > *:nth-child(14) { transition-delay: 0.7s; }
-
-.stagger-children.active > * {
-    opacity: 1;
-    transform: none;
-}
-
-/* Prefers reduced motion */
-@media (prefers-reduced-motion: reduce) {
-    html {
-        scroll-behavior: auto;
-    }
-
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
-
-    .reveal,
-    .stagger-children > * {
-        opacity: 1;
-        transform: none;
-    }
-}
-
-/* ============================================
-   ABOUT SECTION
-   ============================================ */
-.about {
-    background: var(--bg-alt);
-    max-width: 100%;
-    padding: 5rem 2rem;
-}
-
-.about .section-title {
-    max-width: 1120px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.about-content {
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-    gap: 5rem;
-    align-items: start;
-    max-width: 1120px;
-    margin: 0 auto;
-}
-
-.about-heading {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1.3rem;
-    font-weight: 500;
-    color: var(--text-primary);
-    margin-bottom: 1rem;
-}
-
-.about-text p {
-    color: var(--text-secondary);
-    font-size: 1rem;
-    line-height: 1.85;
-    max-width: 62ch;
-}
-
-.skills-heading {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin-bottom: 1rem;
-}
-
-/* Quiet labels keep the skills scannable without repeated accent bars. */
-.skills-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-}
-
-.skill-tag {
-    padding: 0.35rem 0.7rem;
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    font-weight: 400;
-}
-
-/* ============================================
-   EXPERIENCE SECTION
-   ============================================ */
-#experience {
-    background: var(--bg-primary);
-}
-
-.experience-timeline {
-    position: relative;
-    padding-left: 2rem;
-}
-
-/* Thin 1px timeline */
-.experience-timeline::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: var(--border);
-}
-
-.experience-item {
-    position: relative;
-    margin-bottom: 2.75rem;
-    padding: 0 0 2.75rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.experience-item:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-}
-
-/* Small 8px accent dots */
-.experience-item::before {
-    content: '';
-    position: absolute;
-    left: calc(-2rem - 3.5px);
-    top: 0.65rem;
-    width: 8px;
-    height: 8px;
-    background: var(--accent);
-    border-radius: 50%;
-}
-
-.experience-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.experience-heading {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.9rem;
-}
-
-/* Compact company logo marks, top-aligned with the job title cap height */
-.company-logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
-    margin-top: 3px;
-}
-
-.company-logo svg {
-    width: 100%;
-    height: 100%;
-}
-
-.company-logo.continental {
-    color: var(--text-primary);
-    width: 40px;
-    height: 40px;
-}
-
-.experience-title {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1.25rem;
-    font-weight: 600;
-    line-height: 1.4;
-    color: var(--text-primary);
-    margin-bottom: 0.4rem;
-}
-
-.company-name {
-    color: var(--text-secondary);
-    font-weight: 400;
-    font-size: 0.95rem;
-    margin-bottom: 0.25rem;
-}
-
-.experience-date {
-    color: var(--text-tertiary);
-    font-size: 0.85rem;
-}
-
-.experience-list {
-    list-style: none;
-    max-width: 78ch;
-    margin-top: 1.25rem;
-    margin-left: 2.9rem;
-}
-
-.experience-list li {
-    position: relative;
-    padding-left: 1.15rem;
-    margin-bottom: 0.65rem;
-    color: var(--text-secondary);
-    line-height: 1.75;
-    font-size: 1rem;
-}
-
-.experience-list li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.65rem;
-    width: 4px;
-    height: 4px;
-    background: var(--accent);
-    border-radius: 50%;
-}
-
-.highlight {
-    color: var(--text-primary);
-    font-weight: 600;
-    padding: 0;
-    background: none;
-    position: relative;
-    padding-left: 0;
-}
-
-/* Remove the emoji from highlight */
-.highlight::before {
-    display: none;
-}
-
-/* ============================================
-   APPS / BUILDER SIDE SECTION
-   ============================================ */
-.apps {
-    padding: 4rem 2rem;
-    max-width: 100%;
-}
-
-.apps .section-title {
-    max-width: 1120px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.apps-intro {
-    max-width: 1120px;
-    margin: -1rem auto 2rem;
-    color: var(--text-secondary);
-    font-size: 1rem;
-}
-
-.app-card {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.app-icon {
-    width: 64px;
-    height: 64px;
-    border-radius: 14px;
-    margin-bottom: 1rem;
-    object-fit: cover;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.app-icon-round {
-    border-radius: 50%;
-}
-
-.app-icon-text {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--accent-solid);
-    color: var(--on-accent);
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.1rem;
-    letter-spacing: 0.5px;
-}
-
-/* ============================================
-   PROJECTS SECTION
-   ============================================ */
-.projects {
-    background: var(--bg-alt);
-    max-width: 100%;
-    padding: 5rem 2rem;
-}
-
-.projects .section-title {
-    max-width: 1120px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.section-heading {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem 2rem;
-    max-width: 1120px;
-    margin: 0 auto 2.5rem;
-}
-
-.section-heading .section-title {
-    margin: 0;
-}
-
-.section-link {
-    color: var(--accent-text);
-    text-underline-offset: 0.3em;
-    padding: 0.5rem 0;
-}
-
-.projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1.5rem;
-    max-width: 1120px;
-    margin: 0 auto;
-}
-
-.project-card {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 2.5rem;
-    border: 1px solid var(--border);
-    transition: border-color 0.2s ease;
-}
-
-.project-card:hover {
-    border-color: var(--accent);
-}
-
-.project-title {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1.3rem;
-    font-weight: 600;
-    line-height: 1.4;
-    color: var(--text-primary);
-    margin-bottom: 1.75rem;
-}
-
-/* Large accent-colored metric numbers */
-.project-metrics {
-    display: flex;
-    gap: 2rem;
-    margin-bottom: 1.25rem;
-}
-
-.metric {
-    text-align: left;
-}
-
-.metric-value {
-    display: block;
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2.5rem, 4vw, 3.5rem);
-    font-weight: 400;
-    color: var(--accent);
-    line-height: 1.2;
-}
-
-.metric-label {
-    display: block;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-top: 0.15rem;
-}
-
-.project-description {
-    color: var(--text-secondary);
-    margin-bottom: 1.25rem;
-    line-height: 1.7;
-    font-size: 0.95rem;
-}
-
-.project-highlights {
-    list-style: none;
-}
-
-.project-highlights li {
-    position: relative;
-    padding-left: 1.25rem;
-    margin-bottom: 0.4rem;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
-
-.project-highlights li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.6rem;
-    width: 4px;
-    height: 4px;
-    background: var(--accent);
-    border-radius: 50%;
-}
-
-/* ============================================
-   EDUCATION SECTION
-   ============================================ */
-.education {
-    background: var(--bg-primary);
-    padding-top: 3.5rem;
-    padding-bottom: 3.5rem;
-}
-
-.education-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 3rem;
-}
-
-/* Education is an open row; the existing reveal supplies its transition. */
-.education-card {
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--border);
-    text-align: left;
-}
-
-.degree-title {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 0.35rem;
-}
-
-.university-name {
-    color: var(--accent-text);
-    font-weight: 500;
-    font-size: 0.95rem;
-    margin-bottom: 0.25rem;
-}
-
-.education-card p {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-}
-
-.degree-year {
-    color: var(--text-tertiary);
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-}
-
-/* ============================================
-   TESTIMONIALS SECTION
-   ============================================ */
-.testimonials {
-    background: var(--bg-alt);
-    max-width: 100%;
-    padding: 5rem 2rem;
-}
-
-.testimonials .section-title {
-    max-width: 1120px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.testimonials-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 2.75rem 4rem;
-    max-width: 1120px;
-    margin: 0 auto;
-}
-
-.testimonial-card:last-child:nth-child(odd) {
-    grid-column: 1 / -1;
-    max-width: 560px;
-    margin: 0 auto;
-    width: 100%;
-}
-
-.testimonial-card {
-    padding: 1.5rem 0 0 0.5rem;
-    border-top: 1px solid var(--border);
-}
-
-/* DM Serif Display ships one face, upright. `font-style: italic` asked for an
-   italic that does not exist, so all eight quotes were a slanted roman the
-   browser drew itself: uneven stems, no true italic letterforms.
-
-   Upright instead, and the quotes are set apart from the surrounding sans by
-   size and leading rather than by slant -- a step up from the 0.95rem body
-   copy, with the leading opened to carry the extra x-height. The opening
-   quotation mark hangs into the padding so the words still start on the same
-   vertical as the author's name below them. */
-.testimonial-text {
-    font-family: 'DM Serif Display', serif;
-    font-weight: 400;
-    color: var(--text-primary);
-    line-height: 1.7;
-    margin-bottom: 1.5rem;
-    font-size: 1.15rem;
-    text-indent: -0.42em;
-}
-
-/* Author details stay aligned with the quotation. */
-.testimonial-author {
-    position: relative;
-}
-
-.testimonial-author strong {
-    display: block;
-    color: var(--text-primary);
-    font-size: 0.9rem;
-    margin-bottom: 0.15rem;
-}
-
-.testimonial-author span {
-    color: var(--text-tertiary);
-    font-size: 0.85rem;
-}
-
-/* ============================================
-   CONTACT SECTION
-   ============================================ */
-#contact {
-    background: var(--bg-primary);
-}
-
-.contact-content {
-    max-width: 600px;
-}
-
-.contact-content > p {
-    color: var(--text-secondary);
-    line-height: 1.8;
-    margin-bottom: 2rem;
-}
-
-/* Clean inline contact items */
-.contact-info {
-    display: flex;
-    gap: 2.5rem;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
-}
-
-.contact-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 0.95rem;
-    transition: color 0.2s ease;
-}
-
-.contact-item:hover {
-    color: var(--accent-text);
-}
-
-.contact-item .icon {
-    width: 17px;
-    height: 17px;
-    color: var(--accent);
-    flex-shrink: 0;
-}
-
-.contact-noscript {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
-}
-
-/* Small social icon links */
-.social-links {
-    display: flex;
-    gap: 0.75rem;
-}
-
-.social-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    color: var(--text-tertiary);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    text-decoration: none;
-    transition: all 0.2s ease;
-}
-
-.social-link:hover {
-    color: var(--accent);
-    border-color: var(--accent);
-}
-
-/* ============================================
-   FOOTER - Thin top border, minimal
-   ============================================ */
-footer {
-    border-top: 1px solid var(--border);
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-tertiary);
-    font-size: 0.85rem;
-    background: var(--bg-primary);
-}
-
-/* ============================================
-   BACK TO TOP BUTTON
-   ============================================ */
-.back-to-top {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    width: 42px;
-    height: 42px;
-    background: var(--card-bg);
-    color: var(--accent);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(12px);
-    transition: all 0.2s ease;
-    z-index: 99;
-}
-
-.back-to-top.visible {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.back-to-top:hover {
-    border-color: var(--accent-solid);
-    background: var(--accent-solid);
-    color: var(--on-accent);
-}
-
-.back-to-top .icon {
-    width: 18px;
-    height: 18px;
-}
-
-/* ============================================
-   MOBILE MENU STYLES
-   ============================================ */
 .mobile-menu-toggle {
     display: none;
     background: none;
     border: none;
     cursor: pointer;
-    padding: 12px;
     position: relative;
     width: 44px;
     height: 44px;
@@ -1311,225 +393,98 @@ footer {
     width: 20px;
     background: var(--text-primary);
     border-radius: 2px;
-    opacity: 1;
     left: 12px;
-    transform: rotate(0deg);
-    transition: all 0.25s ease;
+    transition: transform 0.25s ease, opacity 0.2s ease, top 0.25s ease;
     pointer-events: none;
 }
 
-.mobile-menu-toggle span:nth-child(1) {
-    top: 14px;
-}
-
-.mobile-menu-toggle span:nth-child(2) {
-    top: 21px;
-}
-
-.mobile-menu-toggle span:nth-child(3) {
-    top: 28px;
-}
+.mobile-menu-toggle span:nth-child(1) { top: 15px; }
+.mobile-menu-toggle span:nth-child(2) { top: 21px; }
+.mobile-menu-toggle span:nth-child(3) { top: 27px; }
 
 .mobile-menu-toggle.active span:nth-child(1) {
     top: 21px;
-    transform: rotate(135deg);
+    transform: rotate(45deg);
 }
 
 .mobile-menu-toggle.active span:nth-child(2) {
     opacity: 0;
-    left: -40px;
 }
 
 .mobile-menu-toggle.active span:nth-child(3) {
     top: 21px;
-    transform: rotate(-135deg);
-}
-
-/* Tablet navigation collapses at the same breakpoint used by script.js.
-   Screen-only queries keep phone layout rules out of printed pages. */
-@media screen and (max-width: 960px) {
-    .mobile-menu-toggle { display: block; }
-    .nav-container { gap: 1rem; }
-    .nav-links {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: var(--nav-bg);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0;
-        padding: 1rem 2rem;
-        border-bottom: 1px solid var(--border);
-        max-height: calc(100vh - 5rem);
-        max-height: calc(100svh - 5rem);
-        overflow-y: auto;
-        overscroll-behavior-y: contain;
-    }
-    .nav-links.active { display: flex; }
-    .nav-links a { display: block; padding: 0.75rem 0; }
-    .nav-links li { border-bottom: 1px solid var(--border); }
-    .nav-links li:last-child { border-bottom: none; padding-top: 0.75rem; }
-    .nav-links .nav-contact { padding: 0.65rem 1rem; }
-    .hero-grid { gap: 2.5rem; }
-    .hero h1 { font-size: clamp(3rem, 6.5vw, 4.5rem); }
-    .about-content { gap: 2.5rem; }
-    .experience-header { flex-direction: column; gap: 0.5rem; }
-    .experience-date { margin-left: 2.9rem; }
-}
-
-@media screen and (max-width: 640px) {
-    section, .about, .projects, .apps, .testimonials, .education {
-        padding: 3.5rem 1.25rem;
-    }
-    .nav-container { padding: 0.75rem 1.25rem; }
-    .nav-links { padding: 1rem 1.25rem; }
-    .hero {
-        min-height: auto;
-        padding: 96px 0 1.5rem;
-    }
-    .hero-grid {
-        grid-template-columns: 1fr;
-        padding: 0 1.25rem;
-        gap: 1.5rem;
-    }
-    .hero-profile { order: -1; justify-content: flex-start; }
-    .hero-frame { margin: 0; }
-    .hero-profile img { max-width: 128px; }
-    .hero h1 { font-size: clamp(2.65rem, 11vw, 3.8rem); margin-bottom: 0.75rem; }
-    .hero-title { font-size: 1rem; margin-bottom: 1.5rem; max-width: 30ch; }
-    .hero-stats { gap: 0.65rem; padding-top: 1.25rem; margin-bottom: 1.5rem; }
-    .stat-number { font-size: clamp(1.85rem, 7.5vw, 2.4rem); }
-    .stat-label { font-size: 0.75rem; }
-    .cta-buttons { gap: 0.65rem; margin-bottom: 1.25rem; }
-    .btn { padding: 0.75rem 1rem; }
-    .hero-social-link { width: 32px; height: 32px; }
-    .section-title { margin-bottom: 2rem; }
-    .section-heading { margin-bottom: 2rem; gap: 0.5rem; }
-    .section-heading .section-title { margin: 0; }
-    .about-content, .projects-grid, .education-grid, .testimonials-grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-    .experience-timeline { padding-left: 1.25rem; }
-    .experience-item::before { left: calc(-1.25rem - 3.5px); }
-    .experience-title { font-size: 1.1rem; }
-    .experience-list { margin-left: 0; }
-    .experience-heading { gap: 0.7rem; }
-    .experience-date { margin-left: 2.7rem; }
-    .project-card { padding: 1.5rem; }
-    .project-title { font-size: 1.2rem; }
-    .contact-info { flex-direction: column; gap: 1rem; align-items: flex-start; }
-    .contact-item { overflow-wrap: anywhere; }
-    .back-to-top { right: 1rem; bottom: 1rem; }
+    transform: rotate(-45deg);
 }
 
 /* ============================================
-   POLISH PASS — borrowed from nateherk.com
-   (1) Card hover physics with cubic-bezier
-   (2) Subtle 1px grid background
-   (4) Animated conic-gradient ring on headshot
+   BUTTONS
    ============================================ */
-
-/* Raised project surfaces retain a quiet edge; links respond without moving. */
-.project-card {
-    transition: transform .35s cubic-bezier(.2,.7,.2,1),
-                box-shadow .35s ease, background-color .25s ease,
-                border-color .25s ease;
-    box-shadow: inset 0 1px 0 var(--card-edge);
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 48px;
+    padding: 0.8rem 1.5rem;
+    border-radius: 999px;
+    font-family: var(--sans);
+    font-size: 0.98rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s var(--ease);
 }
 
-.app-card:hover {
-    border-color: var(--accent);
-    background: var(--card-bg-hover);
+.btn .icon {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s var(--ease);
 }
 
-/* (2) Subtle 1px grid background: tracks the theme accent via --grid-line */
-body::before {
-    content: '';
-    position: fixed;
+.btn:hover .icon {
+    transform: translateX(3px);
+}
+
+.btn-primary {
+    background: var(--accent-solid);
+    color: var(--on-accent);
+}
+
+.btn-primary:hover {
+    background: var(--accent-solid-hover);
+}
+
+.btn-secondary {
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    border-color: var(--text-secondary);
+    background: var(--card-bg);
+}
+
+/* ============================================
+   HERO
+   ============================================ */
+.hero {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(7rem, 14vh, 9.5rem) 0 clamp(3rem, 7vh, 4.5rem);
+}
+
+/* Engineering-paper grid, faded out toward the edges so it frames the name
+   rather than papering the whole page. */
+.hero-backdrop {
+    position: absolute;
     inset: 0;
     background-image:
         linear-gradient(var(--grid-line) 1px, transparent 1px),
         linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 60% 35%, #000 20%, transparent 75%);
+    mask-image: radial-gradient(ellipse 80% 70% at 60% 35%, #000 20%, transparent 75%);
     pointer-events: none;
-    z-index: 0;
-}
-
-/* Keep section content above the grid layer.
-   nav is intentionally excluded — it's already position: fixed; z-index: 1000
-   above. Including it here would override the cascade and (a) un-fix the
-   navbar, (b) drop nav to z-index: 1, which causes the mobile menu dropdown
-   to render BEHIND <main> when opened. */
-main,
-footer {
-    position: relative;
-    z-index: 1;
-}
-
-/* (4) Conic-gradient ring around the headshot.
-   315deg puts the lit arc at the upper left, which is where every cast shadow
-   on this page falls from. It is the resting position: with a pointer in the
-   hero the arc follows it instead, because in the hero the pointer *is* the
-   lamp -- the cursor light below is the same light source seen on the page
-   behind the portrait. It never animates on its own; this ring wraps the LCP
-   element, and rotating it on a keyframe loop repainted that element every
-   frame for as long as the page stayed open. */
-.hero-frame {
-    position: relative;
-    width: fit-content;
-    margin: 0;
-    padding: 3px;
-    border-radius: 16px;
-    background: conic-gradient(
-        from var(--ring-ang, 315deg),
-        var(--accent) 0deg,
-        var(--accent) 25deg,
-        transparent 110deg,
-        transparent 250deg,
-        var(--accent) 335deg,
-        var(--accent) 360deg
-    );
-}
-
-.hero-profile img {
-    border: none;
-    display: block;
-    background: var(--bg-primary);
-}
-
-/* ============================================
-   (D) SECTION DIVIDER — animated pulse line
-   ============================================ */
-.section-divider {
-    display: block;
-    width: 100%;
-    max-width: 1184px;
-    margin: 0 auto;
-    padding: 0 clamp(1.25rem, 5vw, 2rem);
-    position: relative;
-    z-index: 1;
-}
-
-/* Static: seven of these ran an infinite background-position animation, one
-   per section boundary, none of which the reader ever looks at directly. */
-.section-divider span {
-    display: block;
-    height: 1px;
-    width: 100%;
-    background: var(--border);
-}
-
-/* ============================================
-   (F) CURSOR LIGHT EFFECT — hero radial gradient
-   ============================================ */
-.hero {
-    position: relative;
-    overflow: hidden;
 }
 
 .cursor-light {
@@ -1539,178 +494,1507 @@ footer {
     opacity: 0;
     transition: opacity 0.3s ease;
     background: radial-gradient(
-        360px circle at var(--mx, 50%) var(--my, 50%),
+        380px circle at var(--mx, 50%) var(--my, 50%),
         var(--hero-glow-strong) 0%,
         var(--hero-glow-soft) 40%,
         transparent 70%
     );
-    z-index: 0;
 }
 
-.hero-grid {
+.hero .container {
     position: relative;
     z-index: 1;
 }
 
-/* Make anchor-wrapped app cards inherit card look */
-a.project-card,
-a.app-card {
-    text-decoration: none;
-    color: inherit;
-    display: block;
+.hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: center;
 }
 
-a.app-card {
+.hero-kicker {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.6rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 1.25rem;
 }
 
+.hero-kicker::before {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: var(--accent);
+}
 
-/* ============================================
-   DEPTH: ONE FIXED LIGHT, MEASURED RELIEF
+.kicker-org {
+    color: var(--text-primary);
+}
 
-   Three rules hold the whole system together:
-     - a surface turns to face the pointer, so the edge nearest it sits back
-       and the far edge lifts off the page;
-     - its cast shadow swings the other way, out from under the lifted edge,
-       because the lamp does not move when the part does;
-     - nothing exceeds 4deg, and nothing runs unless a pointer is driving it.
+.kicker-org::before {
+    content: '·';
+    margin-right: 0.6rem;
+    color: var(--text-tertiary);
+}
 
-   No transform-style: preserve-3d anywhere. Every surface is a flat plane
-   carrying its own perspective(), which is what keeps Safari clipping a
-   card's children to its border radius; under preserve-3d it stops doing
-   that and the corners square off behind their own content.
-   ============================================ */
+.hero h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(3.4rem, 9vw, 7.25rem);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+    margin-bottom: 1.75rem;
+}
 
-/* Registered so the arc can be interpolated on the way home. An unregistered
-   custom property is a plain token substitution and transition has nothing to
-   interpolate between, so the ring would jump back to rest. */
+.hero-lede {
+    font-size: clamp(1.1rem, 1.6vw, 1.3rem);
+    line-height: 1.6;
+    color: var(--text-secondary);
+    max-width: 34em;
+    margin-bottom: 2.25rem;
+}
+
+.cta-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.hero-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.75rem;
+    list-style: none;
+    font-size: 0.92rem;
+    color: var(--text-tertiary);
+}
+
+.hero-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-strong);
+    padding-bottom: 2px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.hero-links a:hover {
+    color: var(--accent-text);
+    border-color: var(--accent);
+}
+
+.hero-profile {
+    position: relative;
+    justify-self: end;
+    width: 100%;
+    max-width: 400px;
+    perspective: 900px;
+}
+
 @property --ring-ang {
     syntax: '<angle>';
     inherits: false;
     initial-value: 315deg;
 }
 
-.hero-profile {
-    perspective: 900px;
+/* Conic ring around the portrait. The lit arc rests at the upper left and
+   follows the pointer while it is in the hero (script.js). */
+.hero-frame {
+    position: relative;
+    padding: 3px;
+    border-radius: 22px;
+    background: conic-gradient(
+        from var(--ring-ang, 315deg),
+        var(--accent) 0deg,
+        var(--accent) 25deg,
+        var(--border) 110deg,
+        var(--border) 250deg,
+        var(--accent) 335deg,
+        var(--accent) 360deg
+    );
+    box-shadow: 10px 24px 60px var(--cast-color);
 }
 
-/* Relief is a pointer affordance, so it is gated on having a pointer to drive
-   it, and on the visitor not having asked for less movement. script.js
-   applies both gates again before it writes a single custom property: a media
-   query can stop a transform, but it cannot un-write the value behind it, so
-   each layer has to hold on its own.
+.hero-frame img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 30%;
+    border-radius: 19px;
+    background: var(--bg-primary);
+}
 
-   any-hover and any-pointer rather than the unprefixed pair, which describe
-   only the primary input: a tablet with a mouse attached still calls its
-   touchscreen primary, and gating on that would leave a visitor holding a
-   cursor with no relief under it. What has to be true is that something on
-   the device can hover, and script.js turns away finger events one by one, so
-   a device with both inputs is answered correctly whichever one is in use. */
+.hero-badge {
+    position: absolute;
+    left: -2rem;
+    bottom: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    max-width: 16rem;
+    padding: 0.85rem 1.1rem;
+    border-radius: 14px;
+    background: var(--nav-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    box-shadow: 4px 12px 32px var(--cast-color);
+    font-size: 0.88rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--text-primary);
+}
+
+.hero-badge-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--success);
+    letter-spacing: 0.02em;
+}
+
+.hero-badge-label::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 0 4px var(--success-wash);
+}
+
+/* Proof strip */
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: clamp(3rem, 7vh, 5rem);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    padding: 1.6rem 1.5rem 1.5rem;
+    border-left: 1px solid var(--border);
+}
+
+.stat-item:first-child {
+    border-left: none;
+    padding-left: 0;
+}
+
+.stat-number {
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 4vw, 3.1rem);
+    line-height: 1;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+}
+
+.stat-label {
+    font-size: 0.86rem;
+    line-height: 1.45;
+    color: var(--text-secondary);
+    max-width: 16em;
+}
+
+/* ============================================
+   SECTIONS
+   ============================================ */
+main > section:not(.hero) {
+    padding: clamp(4.5rem, 10vw, 8rem) 0;
+}
+
+.section-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.9rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+    max-width: 44rem;
+}
+
+.section-index {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.section-index span {
+    font-variant-numeric: tabular-nums;
+    color: var(--accent-text);
+    font-weight: 600;
+}
+
+.section-index::after {
+    content: '';
+    width: 48px;
+    height: 1px;
+    background: var(--border-strong);
+}
+
+.section-title {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2.3rem, 5vw, 3.6rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+}
+
+.section-intro {
+    font-size: 1.08rem;
+    color: var(--text-secondary);
+    max-width: 38em;
+}
+
+/* Alternate band for the recommendation and project sections so the page
+   has rhythm without a divider between every pair of sections. */
+.projects,
+.testimonials,
+.apps {
+    background: var(--bg-alt);
+}
+
+/* ============================================
+   IMPACT
+   ============================================ */
+.impact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
+.case {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: inset 0 1px 0 var(--card-edge);
+    transition: border-color 0.25s ease, transform 0.35s var(--ease), box-shadow 0.35s ease;
+}
+
+.case:hover {
+    border-color: var(--border-strong);
+}
+
+.case-feature {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+    padding: clamp(1.75rem, 4vw, 3.25rem);
+    background:
+        radial-gradient(120% 90% at 100% 0%, var(--accent-wash), transparent 60%),
+        var(--card-bg);
+}
+
+.case-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.case-meta {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-tertiary);
+}
+
+.case-title {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(1.6rem, 2.4vw, 1.95rem);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+}
+
+.case-feature .case-title {
+    font-size: clamp(2rem, 3.6vw, 2.8rem);
+}
+
+.case-text {
+    color: var(--text-secondary);
+    font-size: 0.98rem;
+    line-height: 1.65;
+}
+
+.case-list {
+    list-style: none;
+    display: grid;
+    gap: 0.7rem;
+    margin-top: 0.25rem;
+}
+
+.case-list li {
+    position: relative;
+    padding-left: 1.6rem;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
+.case-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.45em;
+    width: 0.8rem;
+    height: 0.45rem;
+    border-left: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    transform: rotate(-45deg);
+}
+
+/* Scrap chart: bars drawn to scale, so 0.5% really is a tenth of 5%. */
+.case-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border-radius: 14px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+}
+
+.scrap-chart {
+    display: grid;
+    gap: 1.1rem;
+}
+
+.bar-row {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr) 3.25rem;
+    align-items: center;
+    gap: 0.9rem;
+    font-size: 0.85rem;
+}
+
+.bar-label {
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+.bar-value {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: right;
+}
+
+.bar-track {
+    height: 14px;
+    border-radius: 999px;
+    background: var(--track);
+    overflow: hidden;
+}
+
+.bar {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    transform-origin: left center;
+    transition: transform 1.1s var(--ease) 0.2s;
+}
+
+.bar-before {
+    width: 100%;
+    background: repeating-linear-gradient(
+        -45deg,
+        var(--text-tertiary) 0 6px,
+        transparent 6px 10px
+    );
+    opacity: 0.55;
+}
+
+.bar-after {
+    width: 10%;
+    background: var(--accent);
+}
+
+/* Drawn in once the section reveals; static if JS never adds .reveal. */
+.projects.reveal:not(.active) .bar {
+    transform: scaleX(0);
+}
+
+.case-outcome {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.case-outcome > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.outcome-value {
+    font-family: var(--serif);
+    font-size: clamp(2.4rem, 4.5vw, 3.4rem);
+    line-height: 1;
+    color: var(--accent);
+}
+
+.outcome-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Supplier dot grid */
+.supplier-viz {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: 1.1rem 1.2rem;
+    border-radius: 12px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+}
+
+.dot-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.55rem;
+    max-width: 15rem;
+}
+
+.dot {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 0 4px var(--success-wash);
+    transition: transform 0.4s var(--ease), opacity 0.4s ease;
+}
+
+.dot-original {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 3px;
+}
+
+.projects.reveal:not(.active) .dot {
+    transform: scale(0.3);
+    opacity: 0;
+}
+
+.dot:nth-child(n+5) { transition-delay: 0.3s; }
+.dot:nth-child(n+9) { transition-delay: 0.45s; }
+
+.supplier-viz figcaption {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.supplier-viz strong {
+    color: var(--success);
+    font-weight: 700;
+}
+
+.case-metrics {
+    display: flex;
+    gap: 2.25rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.case-metrics > div {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.25rem;
+}
+
+.case-metrics dd {
+    font-family: var(--serif);
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--accent);
+}
+
+.case-metrics dt {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   EXPERIENCE
+   ============================================ */
+.company {
+    display: grid;
+    grid-template-columns: minmax(0, 17rem) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 4rem);
+    padding: clamp(2rem, 4vw, 3rem) 0;
+    border-top: 1px solid var(--border);
+}
+
+.company:last-child {
+    border-bottom: 1px solid var(--border);
+}
+
+.company-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    align-self: start;
+    position: sticky;
+    top: 6rem;
+}
+
+.company-logo {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 9px;
+}
+
+.company-logo svg {
+    width: 100%;
+    height: 100%;
+}
+
+.company-logo.continental {
+    color: var(--text-primary);
+    padding: 6px;
+}
+
+.company-title {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 1.15;
+    color: var(--text-primary);
+}
+
+.company-span {
+    font-size: 0.88rem;
+    color: var(--text-tertiary);
+    margin-top: 0.3rem;
+}
+
+.roles {
+    list-style: none;
+    position: relative;
+    display: grid;
+    gap: 2.25rem;
+}
+
+/* Promotion line: the roles within a company read as one progression. */
+.roles::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 0.7rem;
+    bottom: 0.7rem;
+    width: 1px;
+    background: linear-gradient(var(--accent), var(--border) 70%);
+}
+
+.experience-item {
+    position: relative;
+    padding-left: 2.25rem;
+}
+
+.experience-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--bg-primary);
+    border: 2px solid var(--accent);
+}
+
+.experience-item:first-child::before {
+    background: var(--accent);
+    box-shadow: 0 0 0 5px var(--accent-wash);
+}
+
+.role-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem 1.5rem;
+}
+
+.experience-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text-primary);
+}
+
+.experience-date {
+    font-size: 0.88rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-tertiary);
+    white-space: nowrap;
+}
+
+.company-name {
+    font-size: 0.9rem;
+    color: var(--text-tertiary);
+    margin-top: 0.1rem;
+}
+
+.highlight {
+    position: relative;
+    margin-top: 1rem;
+    padding: 0.9rem 1.1rem 0.9rem 1.25rem;
+    border-radius: 10px;
+    background: var(--accent-wash);
+    border-left: 2px solid var(--accent);
+    color: var(--text-primary);
+    font-weight: 500;
+    line-height: 1.55;
+    max-width: 48rem;
+}
+
+.role-details {
+    margin-top: 0.85rem;
+    max-width: 48rem;
+}
+
+.role-details summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    list-style: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-text);
+    padding: 0.35rem 0;
+    min-height: 44px;
+    user-select: none;
+}
+
+.role-details summary::-webkit-details-marker {
+    display: none;
+}
+
+.role-details summary::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+    transition: transform 0.2s ease;
+    margin-right: 0.15rem;
+}
+
+.role-details[open] summary::before {
+    transform: rotate(45deg);
+}
+
+.role-details summary:hover {
+    color: var(--text-primary);
+}
+
+.role-details .count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.4rem;
+    height: 1.4rem;
+    padding: 0 0.35rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    background: var(--track);
+    color: var(--text-secondary);
+}
+
+.experience-list {
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+    padding: 0.5rem 0 0.25rem;
+}
+
+.experience-list li {
+    position: relative;
+    padding-left: 1.25rem;
+    color: var(--text-secondary);
+    font-size: 0.96rem;
+    line-height: 1.6;
+}
+
+.experience-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 6px;
+    height: 1px;
+    background: var(--accent);
+}
+
+/* ============================================
+   RECOMMENDATIONS
+   ============================================ */
+.testimonial-features {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(2rem, 5vw, 4rem);
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.testimonial-feature {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-top: 1.75rem;
+    border-top: 2px solid var(--accent);
+}
+
+.testimonial-feature blockquote p {
+    font-family: var(--serif);
+    font-size: clamp(1.2rem, 1.8vw, 1.45rem);
+    line-height: 1.45;
+    color: var(--text-primary);
+}
+
+mark {
+    color: inherit;
+    background: linear-gradient(transparent 58%, var(--mark-bg) 58%);
+    padding: 0 0.05em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
+.testimonial-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding: 1.6rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: inset 0 1px 0 var(--card-edge);
+}
+
+.testimonial-text p {
+    font-size: 0.97rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
+.testimonial-text mark {
+    color: var(--text-primary);
+}
+
+.testimonial-author {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding-left: 0.9rem;
+    border-left: 2px solid var(--accent);
+}
+
+.testimonial-author strong {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.testimonial-author span {
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--text-tertiary);
+}
+
+.swipe-hint {
+    display: none;
+}
+
+/* ============================================
+   ABOUT
+   ============================================ */
+.about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
+}
+
+.about-text {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.about-lede {
+    font-family: var(--serif);
+    font-size: clamp(1.45rem, 2.4vw, 1.85rem);
+    line-height: 1.35;
+    color: var(--text-primary);
+}
+
+.about-text p:not(.about-lede) {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.75;
+}
+
+.skills-section {
+    display: grid;
+    gap: 1.75rem;
+}
+
+.skills-heading {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    margin-bottom: 0.7rem;
+}
+
+.skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+}
+
+.skill-tag {
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    color: var(--text-primary);
+    background: var(--card-bg);
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.skill-tag:hover {
+    border-color: var(--accent);
+    color: var(--accent-text);
+}
+
+.credentials {
+    margin-top: clamp(3rem, 6vw, 5rem);
+}
+
+.credentials-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 1.1rem;
+}
+
+.education-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
+.education-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    box-shadow: inset 0 1px 0 var(--card-edge);
+}
+
+.degree-kind {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent-text);
+    margin-bottom: 0.35rem;
+}
+
+.degree-year {
+    font-weight: 500;
+    color: var(--text-tertiary);
+    font-variant-numeric: tabular-nums;
+}
+
+.degree-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--text-primary);
+}
+
+.university-name {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   PERSONAL PROJECTS
+   ============================================ */
+.apps-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
+.app-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    padding: 1.6rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: inherit;
+    text-decoration: none;
+    box-shadow: inset 0 1px 0 var(--card-edge);
+    transition: border-color 0.25s ease, background-color 0.25s ease, transform 0.35s var(--ease), box-shadow 0.35s ease;
+}
+
+.app-card:hover {
+    border-color: var(--accent);
+    background: var(--card-bg-hover);
+    transform: translateY(-3px);
+    box-shadow: inset 0 1px 0 var(--card-edge), 6px 14px 36px var(--cast-color);
+}
+
+.app-icon {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    border-radius: 13px;
+}
+
+.app-icon-round {
+    border-radius: 50%;
+}
+
+.app-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.app-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.app-arrow {
+    display: inline-block;
+    margin-left: 0.2rem;
+    color: var(--accent-text);
+    transition: transform 0.2s var(--ease);
+}
+
+.app-card:hover .app-arrow {
+    transform: translate(2px, -2px);
+}
+
+.app-description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   CONTACT
+   ============================================ */
+.contact-panel {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    padding: clamp(1.5rem, 6vw, 4.5rem);
+    border-radius: 28px;
+    border: 1px solid var(--border);
+    background:
+        radial-gradient(80% 120% at 100% 100%, var(--hero-glow-strong), transparent 60%),
+        var(--card-bg);
+    box-shadow: inset 0 1px 0 var(--card-edge);
+}
+
+.contact-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(60% 80% at 100% 100%, #000, transparent 70%);
+    mask-image: radial-gradient(60% 80% at 100% 100%, #000, transparent 70%);
+    pointer-events: none;
+}
+
+.contact-panel > * {
+    position: relative;
+    z-index: 1;
+}
+
+.contact-title {
+    font-size: clamp(2.6rem, 7vw, 5rem);
+}
+
+.contact-intro {
+    font-size: 1.08rem;
+    color: var(--text-secondary);
+    max-width: 36em;
+}
+
+.contact-email {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 100%;
+    margin: 0.75rem 0 0.5rem;
+    font-family: var(--serif);
+    font-size: clamp(1rem, 5vw, 2.6rem);
+    line-height: 1.2;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.2rem;
+    overflow-wrap: anywhere;
+    transition: color 0.2s ease;
+}
+
+.contact-email .icon {
+    width: 0.8em;
+    height: 0.8em;
+    color: var(--accent);
+    transition: transform 0.2s var(--ease);
+}
+
+.contact-email:hover {
+    color: var(--accent-text);
+}
+
+.contact-email:hover .icon {
+    transform: translate(3px, -3px);
+}
+
+.contact-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    list-style: none;
+    margin-top: 0.5rem;
+}
+
+.contact-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 44px;
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    text-decoration: none;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.contact-item .icon {
+    width: 16px;
+    height: 16px;
+    color: var(--accent);
+}
+
+a.contact-item:hover {
+    color: var(--text-primary);
+    border-color: var(--accent);
+}
+
+.contact-noscript {
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   FOOTER / BACK TO TOP
+   ============================================ */
+footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 0;
+}
+
+.footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+}
+
+.footer-mark {
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+}
+
+.back-to-top {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 44px;
+    height: 44px;
+    background: var(--card-bg);
+    color: var(--accent);
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px);
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    z-index: 99;
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.back-to-top:hover {
+    background: var(--accent-solid);
+    border-color: var(--accent-solid);
+    color: var(--on-accent);
+}
+
+/* ============================================
+   REVEAL
+   Top-anchored so a tall section's heading stays where the browser scrolled
+   it when the reveal fires.
+   ============================================ */
+.reveal {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+    transition: opacity 0.6s ease-out, transform 0.6s var(--ease);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: none;
+}
+
+.stagger-children > * {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+    transition: opacity 0.45s ease-out, transform 0.45s var(--ease);
+}
+
+.stagger-children.active > * {
+    opacity: 1;
+    transform: none;
+}
+
+.stagger-children.active > *:nth-child(2) { transition-delay: 0.06s; }
+.stagger-children.active > *:nth-child(3) { transition-delay: 0.12s; }
+.stagger-children.active > *:nth-child(4) { transition-delay: 0.18s; }
+.stagger-children.active > *:nth-child(5) { transition-delay: 0.24s; }
+.stagger-children.active > *:nth-child(6) { transition-delay: 0.3s; }
+.stagger-children.active > *:nth-child(7) { transition-delay: 0.36s; }
+
+/* Entrance for the hero itself, CSS-only so it never depends on script.js. */
+@media (prefers-reduced-motion: no-preference) {
+    .hero-text > *,
+    .hero-profile,
+    .hero-stats {
+        animation: rise 0.8s var(--ease) both;
+    }
+    .hero-text > :nth-child(2) { animation-delay: 0.05s; }
+    .hero-text > :nth-child(3) { animation-delay: 0.12s; }
+    .hero-text > :nth-child(4) { animation-delay: 0.18s; }
+    .hero-text > :nth-child(5) { animation-delay: 0.24s; }
+    .hero-profile { animation-delay: 0.1s; }
+    .hero-stats { animation-delay: 0.3s; }
+}
+
+@keyframes rise {
+    from { opacity: 0; transform: translate3d(0, 18px, 0); }
+    to { opacity: 1; transform: none; }
+}
+
+/* Pointer relief on the portrait: gated on a real hovering pointer and on
+   motion being welcome. script.js applies the same gates before writing. */
 @media (any-hover: hover) and (any-pointer: fine) {
     @media (prefers-reduced-motion: no-preference) {
-        /* --fx/--fy are the pointer's offset from the portrait centre, -1 to 1
-           across the hero. The portrait turns to face it; the ring's lit arc
-           follows the same pointer, one angle written per frame. */
         .hero-frame {
             transform: rotateX(calc(var(--fy, 0) * -4deg)) rotateY(calc(var(--fx, 0) * 4deg));
             transition: transform 0.16s ease-out;
         }
 
-        /* Leaving the hero is the one moment the ring angle is interpolated.
-           While it tracks, every frame is a fresh value and a transition would
-           only add lag. script.js keeps the tracked angle within half a turn of
-           315deg, so this eases the short way round rather than unwinding. */
         .hero-profile.settling .hero-frame {
             transition: transform 0.5s ease, --ring-ang 0.5s ease;
         }
 
-        /* Cards use the same scheme: --px/--py are the pointer's offset from
-           the card centre. Rotation and shadow are both derived from that one
-           pair, so the tilt and the light can never disagree.
-
-           Only short-copy surfaces tilt. Rotating a plane re-rasterises the
-           text on it, which a heading and two lines survive and the experience
-           entries -- six bullets of body copy each -- do not. */
-        /* :not(a) is the whole point of the selector, not a tidy-up. Rotating
-           an element rotates the quad the browser hit-tests, and the far edge
-           of a wide card pulls inward by about 12px at the single-column width.
-           On a link that band is dead: the pointer enters it, the card turns
-           away under the press, and the click lands on nothing. Measured at
-           960px, clicks 4px and 10px inside both side edges of a personal
-           project card were lost. Those cards still lift and still cast the
-           shadow; they just do not turn. */
-        .projects-grid .project-card:not(a) {
-            --tilt: 3;
-        }
-
-        .projects-grid .project-card:not(a):hover {
-            transform:
-                perspective(900px)
-                rotateX(calc(var(--py, 0) * var(--tilt) * -1deg))
-                rotateY(calc(var(--px, 0) * var(--tilt) * 1deg))
-                translateY(-4px);
-            /* 6px/14px is the fixed lamp, above and to the left. The swing is
-               the tilt negated, so the shadow appears from under the raised
-               edge rather than following the pointer around. */
-            box-shadow:
-                inset 0 1px 0 var(--card-edge),
-                calc(6px - var(--px, 0) * 5px) calc(14px - var(--py, 0) * 5px) 36px var(--cast-color);
-            /* Short while tracking, so the card reads as answering the pointer
-               rather than chasing it. Releasing hands it back to the 0.35s ease
-               on the resting rule, which is the unhurried half of the move. */
-            transition: transform 0.12s ease-out,
-                        box-shadow 0.12s ease-out,
-                        background-color .25s ease,
-                        border-color .25s ease;
+        .case:not(.case-feature):hover {
+            transform: translateY(-4px);
+            box-shadow: inset 0 1px 0 var(--card-edge), 6px 14px 36px var(--cast-color);
         }
     }
 }
 
-/* Differential drift as the hero leaves: the portrait travels further than
-   the text beside it, which is how two planes at different depths read
-   without anything moving along z. translateZ is not an option in here --
-   .hero is overflow: hidden, which clips 3D children, and the fixed nav
-   crosses in front of the same space.
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
 
-   The reduced-motion guard has to be its own query. The global block only
-   collapses animation-duration, and a scroll-progress timeline has no
-   duration to collapse. */
-@supports (animation-timeline: scroll()) {
-    @media (prefers-reduced-motion: no-preference) {
-        .hero-text {
-            animation: hero-drift-text linear both;
-            animation-timeline: scroll(root block);
-            animation-range: 0px 100vh;
-        }
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        transition-delay: 0s !important;
+    }
 
-        .hero-profile {
-            animation: hero-drift-portrait linear both;
-            animation-timeline: scroll(root block);
-            animation-range: 0px 100vh;
-        }
+    .reveal,
+    .stagger-children > * {
+        opacity: 1;
+        transform: none;
     }
 }
-
-@keyframes hero-drift-text {
-    to { transform: translateY(-8px); }
-}
-
-@keyframes hero-drift-portrait {
-    to { transform: translateY(-20px); }
-}
-
 
 /* ============================================
-   PRINT STYLES
+   RESPONSIVE
+   960px must match mobileMenuQuery in script.js.
+   ============================================ */
+@media screen and (max-width: 1080px) {
+    .impact-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .impact-grid .case:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media screen and (max-width: 960px) {
+    .mobile-menu-toggle { display: block; }
+
+    nav {
+        background: var(--nav-bg);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-bottom-color: var(--border);
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-primary);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 0.75rem var(--gutter) 1.25rem;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 20px 40px var(--cast-color);
+        max-height: calc(100vh - 4.5rem);
+        max-height: calc(100svh - 4.5rem);
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
+    }
+    .nav-links.active { display: flex; }
+    .nav-links li { border-bottom: 1px solid var(--border); }
+    .nav-links li:last-child { border-bottom: none; padding-top: 1rem; }
+    .nav-links a {
+        display: block;
+        padding: 0.9rem 0.25rem;
+        border-radius: 0;
+        font-size: 1.05rem;
+    }
+    .nav-links a.active { background: none; color: var(--accent-text); }
+    .nav-links a.nav-contact {
+        margin: 0;
+        text-align: center;
+        border-radius: 999px;
+        padding: 0.85rem 1rem;
+    }
+    .nav-links a.nav-contact.active { color: var(--on-accent); }
+
+    .hero-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+    }
+    .hero-badge { left: -1rem; }
+
+    .hero-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .stat-item:nth-child(3) {
+        border-left: none;
+        padding-left: 0;
+    }
+    .stat-item:nth-child(n+3) {
+        border-top: 1px solid var(--border);
+    }
+
+    .case-feature {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .company {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.75rem;
+    }
+    .company-head { position: static; }
+
+    .about-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .testimonials-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media screen and (max-width: 720px) {
+    .hero {
+        padding-top: 6.5rem;
+    }
+
+    .hero-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 2rem;
+    }
+
+    /* Portrait first and compact on phones, the name straight after it. */
+    .hero-profile {
+        order: -1;
+        justify-self: start;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        max-width: none;
+    }
+    .hero-frame {
+        width: 108px;
+        flex-shrink: 0;
+        border-radius: 18px;
+        box-shadow: 6px 12px 28px var(--cast-color);
+    }
+    .hero-frame img {
+        aspect-ratio: 1;
+        border-radius: 15px;
+    }
+    .hero-badge {
+        position: static;
+        max-width: 14rem;
+        box-shadow: none;
+    }
+
+    .hero h1 { margin-bottom: 1.25rem; }
+    .kicker-org::before { content: none; }
+    .hero-kicker { font-size: 0.88rem; margin-bottom: 0.9rem; }
+    .hero-lede { margin-bottom: 1.75rem; }
+    .cta-buttons .btn { flex: 1 1 10rem; }
+
+    .hero-stats { margin-top: 2.5rem; }
+    .stat-item { padding: 1.2rem 1rem 1.1rem; }
+
+    .impact-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .impact-grid .case:last-child { grid-column: auto; }
+
+    .testimonial-features { grid-template-columns: minmax(0, 1fr); }
+
+    /* Recommendations become a swipeable row instead of screens of quotes. */
+    .testimonials-grid {
+        display: flex;
+        gap: 0.9rem;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-padding-left: var(--gutter);
+        margin: 0 calc(var(--gutter) * -1);
+        padding: 0.25rem var(--gutter) 1rem;
+        scrollbar-width: thin;
+        overscroll-behavior-x: contain;
+    }
+    .testimonial-card {
+        flex: 0 0 min(84%, 22rem);
+        scroll-snap-align: start;
+    }
+    .swipe-hint {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: var(--text-tertiary);
+    }
+
+    .education-grid,
+    .apps-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .contact-panel { border-radius: 22px; }
+
+    .footer-inner { flex-direction: column-reverse; text-align: center; }
+}
+
+@media screen and (max-width: 380px) {
+    .hero h1 { font-size: 3rem; }
+    .stat-number { font-size: 1.9rem; }
+    .stat-label { font-size: 0.8rem; }
+    .case-metrics { gap: 1.5rem; }
+    .hero-badge { font-size: 0.82rem; }
+}
+
+/* ============================================
+   PRINT
+   Paper is white in every theme: re-point the tokens once so anything added
+   later prints correctly without being listed here.
    ============================================ */
 @media print {
-    /* Paper is white in every theme. Re-point the tokens once here instead of
-       overriding each selector, so a section added later prints correctly
-       without anyone remembering to add it to a list below. Every block that
-       defines tokens is reset -- printing from dark must not carry #0F0F0E
-       backgrounds or pale grey body text onto the page, and :root is dark. */
     :root,
     [data-theme="light"],
     [data-theme="dark"] {
@@ -1722,6 +2006,7 @@ a.app-card {
         --text-secondary: #222;
         --text-tertiary: #555;
         --border: #ccc;
+        --border-strong: #bbb;
         --accent: #000;
         --accent-text: #000;
         --accent-solid: #000;
@@ -1729,139 +2014,78 @@ a.app-card {
         --on-accent: #fff;
         --accent-wash: transparent;
         --grid-line: transparent;
-        --shadow-color: transparent;
         --card-edge: transparent;
         --cast-color: transparent;
+        --mark-bg: transparent;
         --nav-bg: #fff;
-        /* these sit inside a box-shadow list, so they need a valid
-           shadow value rather than `none` */
-        --card-shadow-hover: 0 0 0 transparent;
-        --card-shadow-hover-sm: 0 0 0 transparent;
+        --success: #000;
+        --success-wash: transparent;
+        --hero-glow-strong: transparent;
     }
 
     nav,
     .scroll-progress,
     .skip-link,
-    .hero-social,
-    .social-links,
     .theme-toggle,
     .mobile-menu-toggle,
     .back-to-top,
     .cta-buttons,
-    .section-divider,
     .cursor-light,
-    body::before {
+    .hero-backdrop,
+    .hero-badge,
+    .swipe-hint,
+    .contact-panel::after {
         display: none !important;
     }
 
     body {
-        font-size: 11pt;
+        font-size: 10.5pt;
         line-height: 1.5;
-        /* the fade-in animation never runs in print, so force the end state */
-        opacity: 1 !important;
     }
 
     .reveal,
-    .stagger-children > * {
+    .stagger-children > *,
+    .hero-text > *,
+    .hero-profile,
+    .hero-stats {
         opacity: 1 !important;
         transform: none !important;
+        animation: none !important;
     }
 
-    .hero {
-        min-height: auto;
-        padding: 1rem 0;
-        page-break-after: always;
-    }
-
-    /* Zero the padding as well: 4rem/2rem is a screen gutter, and leaving it
-       set indents the resume header 32px from the section titles below it. */
-    .hero-grid {
-        grid-template-columns: 2fr 1fr;
-        gap: 2rem;
-        padding: 0;
-    }
-
-    .hero h1 {
-        font-size: 22pt;
-    }
-
-    /* the accent ring is a screen flourish; on paper it prints as a black arc */
-    .hero-frame {
-        background: none;
-        padding: 0;
-    }
-
-    /* Printing does not flip the interaction media features: a browser
-       printing from a laptop still reports hover and a fine pointer, so the
-       rules that tilt these surfaces still match on paper, and the pointer's
-       last position is still sitting in their inline style.
-
-       The portrait is the one that actually reaches paper crooked, because
-       its tilt is not scoped to :hover -- the pointer only has to be
-       somewhere in the hero. The cards are listed because the only thing
-       nulling their transform today is the reveal reset above, which is
-       there for a different reason and would take this protection with it if
-       it ever moved. */
-    .hero-frame,
-    .project-card,
-    .education-card {
+    .bar,
+    .dot {
         transform: none !important;
+        opacity: 1 !important;
     }
 
-    /* The class selectors are listed alongside the element one because
-       `.about` and friends set `padding: 6rem 2rem` at higher specificity;
-       a bare `section` rule loses to them and leaves roughly 640px of screen
-       whitespace spread through the printed pages. */
-    section,
-    .about,
-    .apps,
-    .projects,
-    .testimonials,
-    .education {
-        page-break-inside: avoid;
-        padding: 1rem 0;
-    }
+    .hero { padding: 0 0 1rem; }
+    .hero h1 { font-size: 28pt; }
+    .hero-frame { background: none; padding: 0; box-shadow: none; transform: none !important; }
+    .hero-frame img { max-width: 160px; }
+    .hero-grid { grid-template-columns: 3fr 1fr; }
 
-    .section-title {
-        font-size: 16pt;
-        page-break-after: avoid;
-    }
+    main > section:not(.hero) { padding: 1.25rem 0; }
+    .section-head { margin-bottom: 1rem; }
+    .section-title { font-size: 18pt; }
 
-    .experience-item,
+    /* Collapsed responsibilities still print: paper has no "show more". */
+    .role-details > *:not(summary) { display: block !important; }
+    .role-details summary { display: none; }
+
+    .company-head { position: static; }
+    .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+    .case,
+    .testimonial-card,
     .education-card,
-    .project-card,
-    .testimonial-card {
+    .experience-item,
+    .contact-panel {
+        break-inside: avoid;
         box-shadow: none !important;
-        page-break-inside: avoid;
     }
 
-    /* a.contact-item, not .contact-item: the class is also on the location
-       row, which is a div and not a link. The anchor form is listed because
-       it sets its own colour, so the bare `a` rule loses to it and the phone
-       and email rows print without the underline that marks them as links. */
     a,
     a.contact-item {
         color: #000;
-        text-decoration: underline;
-    }
-
-    .contact-item {
-        color: #000;
-    }
-
-    /* Card-shaped links are block surfaces, not inline links. Underlining
-       every line of a card's title and description is noise on paper. */
-    a.project-card,
-    a.app-card {
-        text-decoration: none;
-    }
-
-    .contact-item[href^="mailto:"]:after {
-        content: " (" attr(href) ")";
-    }
-
-    * {
-        animation: none !important;
-        transition: none !important;
     }
 }

@@ -16,6 +16,10 @@
         el.href = 'mailto:' + email;
         et.textContent = email;
     }
+    // Secondary email calls to action fall back to #contact without script.
+    document.querySelectorAll('.js-email-link').forEach(function (link) {
+        link.href = 'mailto:' + email;
+    });
 })();
 
 // Theme toggle. Cycles dark -> light -> system -> dark.
@@ -245,7 +249,9 @@ function updateScrollUI() {
     if (maxScroll > 0 && y >= maxScroll - 2 && navSections.length) {
         activeId = navSections[navSections.length - 1].id;
     }
-    if (activeId === 'apps') activeId = 'projects';
+    // Sections without their own navigation item select the nearest one.
+    if (activeId === 'apps') activeId = 'about';
+    if (activeId === 'testimonials') activeId = 'experience';
     navLinkElements.forEach(function (link) {
         link.classList.toggle('active', link.getAttribute('href') === '#' + activeId);
     });
@@ -304,17 +310,36 @@ document.querySelectorAll('section:not(#home)').forEach(function (section) {
 });
 
 // Add stagger animation to grids
-document.querySelectorAll('.projects-grid, .education-grid, .testimonials-grid, .skills-grid').forEach(function (grid) {
+document.querySelectorAll('.impact-grid, .education-grid, .testimonials-grid, .skills-section, .apps-grid').forEach(function (grid) {
     grid.classList.add('stagger-children');
     revealObserver.observe(grid);
 });
 
-// Add reveal to experience items
-document.querySelectorAll('.experience-item').forEach(function (item, index) {
-    item.classList.add('reveal');
-    item.style.transitionDelay = (index * 0.15) + 's';
-    revealObserver.observe(item);
+// Add reveal to experience items, staggered within each company
+document.querySelectorAll('.roles').forEach(function (roles) {
+    Array.prototype.forEach.call(roles.children, function (item, index) {
+        item.classList.add('reveal');
+        item.style.transitionDelay = (index * 0.12) + 's';
+        revealObserver.observe(item);
+    });
 });
+
+// Paper has no "show more": expand every collapsed role for printing and
+// put back only the ones the visitor had closed.
+(function () {
+    var reopened = [];
+    window.addEventListener('beforeprint', function () {
+        reopened = [];
+        document.querySelectorAll('details:not([open])').forEach(function (d) {
+            d.open = true;
+            reopened.push(d);
+        });
+    });
+    window.addEventListener('afterprint', function () {
+        reopened.forEach(function (d) { d.open = false; });
+        reopened = [];
+    });
+})();
 
 // Matches the number inside a stat, keeping whatever wraps it ($, %, +).
 var STAT_NUMBER = /-?\d+(?:\.\d+)?/;
@@ -355,7 +380,6 @@ var statsObserver = new IntersectionObserver(function (entries) {
         if (entry.isIntersecting && !entry.target.dataset.animated) {
             entry.target.dataset.animated = 'true';
             if (prefersReducedMotion.matches) return;
-            // Hero stat numbers
             var statNumbers = entry.target.querySelectorAll('.stat-number');
             statNumbers.forEach(function (stat) {
                 var match = stat.textContent.match(STAT_NUMBER);
@@ -364,32 +388,6 @@ var statsObserver = new IntersectionObserver(function (entries) {
                 // value, which the scrap rate does so it counts down instead.
                 var from = parseFloat(stat.dataset.countFrom);
                 animateValue(stat, isFinite(from) ? from : 0, parseFloat(match[0]), 800);
-            });
-            // Project metric values
-            var metricValues = entry.target.querySelectorAll('.metric-value');
-            metricValues.forEach(function (metric) {
-                var text = metric.textContent.trim();
-                var end, fmt;
-                if (text.includes('$')) {
-                    end = parseInt(text.replace(/[^0-9]/g, ''), 10);
-                    fmt = function (v) { return '$' + Math.floor(v) + 'M'; };
-                } else if (text.includes('%')) {
-                    end = parseInt(text.replace(/[^0-9]/g, ''), 10);
-                    fmt = function (v) { return Math.floor(v) + '%'; };
-                } else {
-                    end = parseInt(text, 10) || 0;
-                    fmt = function (v) { return '' + Math.floor(v); };
-                }
-                if (end > 0) {
-                    var startTime = null;
-                    var step = function (ts) {
-                        if (!startTime) startTime = ts;
-                        var p = Math.min((ts - startTime) / 800, 1);
-                        metric.textContent = fmt(p * end);
-                        if (p < 1) requestAnimationFrame(step);
-                    };
-                    requestAnimationFrame(step);
-                }
             });
         }
     });
@@ -400,11 +398,6 @@ var heroStats = document.querySelector('.hero-stats');
 if (heroStats) {
     statsObserver.observe(heroStats);
 }
-
-// Animate project metrics
-document.querySelectorAll('.project-card').forEach(function (card) {
-    statsObserver.observe(card);
-});
 
 // Pointer offsets are held to -1..1 so the tilt ceilings in the stylesheet
 // mean what they say: whatever produces the numbers, the rotation they drive
@@ -588,154 +581,6 @@ function onMediaChange(query, handler) {
     onMediaChange(prefersReducedMotion, function () {
         if (prefersReducedMotion.matches) {
             rest();
-        }
-    });
-})();
-
-// Project relief is delegated to project grids. Open education and
-// experience entries are reading surfaces and do not rotate.
-(function () {
-    // As above: the pointer question decides whether these listeners exist,
-    // and it is re-asked whenever the answer changes.
-    var cursor = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');
-    var listening = false;
-    var grids = document.querySelectorAll('.projects-grid');
-
-    // Mirrors the stylesheet's own exclusion: a card that is a link is not
-    // rotated, because rotating it moves the quad the browser hit-tests and
-    // clicks near its side edges are lost. Writing offsets nothing reads would
-    // be work for no picture.
-    var CARD = '.project-card:not(a)';
-    // One pointer means one addressed card, whichever grid it is in, so the
-    // state is held once rather than per grid.
-    var active = null;
-    // Whether the pointer is over a grid at all, which is not the same
-    // question as whether it is over a card: the gutters belong to the grid
-    // too, and a pointer resting in one is still a pointer the next scroll
-    // has to account for.
-    var within = false;
-    var pointerX = 0;
-    var pointerY = 0;
-    var ticking = false;
-
-    // Removing the properties rather than zeroing them hands the card back to
-    // the stylesheet's own defaults, and stops a stale offset from the last
-    // visit applying for a frame on the next one.
-    function clear(card) {
-        if (!card) return;
-        card.style.removeProperty('--px');
-        card.style.removeProperty('--py');
-    }
-
-    function paint() {
-        ticking = false;
-        if (!active) return;
-        // The preference can be turned on with the page already open, and the
-        // startup guard above only ran once.
-        if (prefersReducedMotion.matches) {
-            release();
-            return;
-        }
-        // Measured fresh each frame rather than cached on entry: the page can
-        // scroll under a resting pointer, and a cached rectangle would leave
-        // the card's centre wherever it used to be.
-        var rect = active.getBoundingClientRect();
-        if (!rect.width || !rect.height) return;
-        active.style.setProperty('--px', clampUnit((pointerX - rect.left) / rect.width * 2 - 1).toFixed(3));
-        active.style.setProperty('--py', clampUnit((pointerY - rect.top) / rect.height * 2 - 1).toFixed(3));
-    }
-
-    function schedule() {
-        if (!ticking) {
-            ticking = true;
-            window.requestAnimationFrame(paint);
-        }
-    }
-
-    // Optional event argument, same as the hero's rest(): a finger leaving is
-    // not the cursor leaving, and clearing on it would flatten a card the
-    // mouse is still sitting on, which stays lifted and hovered meanwhile.
-    function release(e) {
-        if (e && e.pointerType === 'touch') return;
-        within = false;
-        clear(active);
-        active = null;
-    }
-
-    // Whatever the pointer is over, record where it is: a position taken in a
-    // gutter is what lets the scroll handler below recognise the next card
-    // that arrives under a pointer which never moved again.
-    function aim(x, y, card) {
-        if (prefersReducedMotion.matches) {
-            release();
-            return;
-        }
-        within = true;
-        pointerX = x;
-        pointerY = y;
-        if (card !== active) {
-            // crossing the gutter between two cards counts as leaving one
-            clear(active);
-            active = card;
-        }
-        if (active) {
-            schedule();
-        }
-    }
-
-    // Same reason as the hero: a touchscreen laptop reports a fine hovering
-    // pointer and still delivers finger events here, and a card tilting under
-    // a finger that is trying to scroll past it is not the affordance.
-    function onPointer(e) {
-        if (e.pointerType === 'touch') return;
-        aim(e.clientX, e.clientY, e.target.closest(CARD));
-    }
-
-    // Scrolling slides a card under a pointer that has not moved, and sends no
-    // pointermove to say so. Left alone the card holds the tilt it had several
-    // hundred pixels ago, which is the one thing this whole system is not
-    // allowed to do: face somewhere the pointer is not.
-    //
-    // Scrolling can also put a different card under that pointer, which in the
-    // single-column layout below 960px is the ordinary case rather than the
-    // edge one. The pointer's coordinates still say which card it is over, so
-    // ask the document instead of trusting the one the last move named. Keyed
-    // on the pointer being over a grid rather than over a card: keyed on the
-    // card, a single scroll that carried the pointer across a gutter would
-    // clear it and stop every hit test after that.
-    function onScroll() {
-        if (!within) return;
-        var under = document.elementFromPoint(pointerX, pointerY);
-        aim(pointerX, pointerY, under ? under.closest(CARD) : null);
-    }
-
-    // pointerover as well as pointermove: a card can arrive under a cursor
-    // parked outside the grid entirely, and scrolling it there announces
-    // itself with boundary events and a :hover change but no move. The card
-    // would otherwise rise with no tilt until the pointer twitched.
-    function sync() {
-        var wanted = cursor.matches;
-        if (wanted === listening) return;
-        listening = wanted;
-        var bind = wanted ? 'addEventListener' : 'removeEventListener';
-        grids.forEach(function (grid) {
-            grid[bind]('pointerover', onPointer);
-            grid[bind]('pointermove', onPointer);
-            grid[bind]('pointerleave', release);
-            grid[bind]('pointercancel', release);
-        });
-        window[bind]('scroll', onScroll, { passive: true });
-        if (!wanted) {
-            release();
-        }
-    }
-
-    sync();
-    onMediaChange(cursor, sync);
-
-    onMediaChange(prefersReducedMotion, function () {
-        if (prefersReducedMotion.matches) {
-            release();
         }
     });
 })();

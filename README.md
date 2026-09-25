@@ -25,14 +25,13 @@ A professional portfolio website showcasing my experience as a Senior Supplier Q
 
 ## Sections
 
-- **Hero** - Introduction with key metrics
-- **About** - Professional summary and skills
-- **Experience** - Work history with accomplishments and company logo marks (GM, Continental)
-- **Projects** - Major achievements including $15M cost savings
-- **Education** - Academic background
-- **Testimonials** - Professional recommendations
-- **Contact** - Email, LinkedIn, phone
+- **Hero** - Name, one-line positioning, email call to action, and a four-figure proof strip
+- **Impact** - Case studies: scrap reduction ($15M/yr), supplier portfolio turnaround, EV battery launch, IATF 16949 audits
+- **Experience** - Roles grouped by company (GM, Continental) with the key result shown and full responsibilities expandable
+- **Recommendations** - Two featured quotes plus six more (swipeable on phones)
+- **About** - Summary, grouped skills, credentials and education
 - **Personal Projects** - Freedom Terminal, the independent software studio, plus automations shipped outside of work
+- **Contact** - Email, phone, LinkedIn, GitHub
 
 ## Project Structure
 
@@ -52,6 +51,7 @@ vishut-portfolio/
 ├── assets/fonts/            # Self-hosted woff2 fonts
 ├── robots.txt               # Search engine directives
 ├── sitemap.xml              # Page index
+├── docs/                    # Design notes
 └── README.md                # This file
 ```
 
