@@ -61,10 +61,10 @@ The existing palette and font pairing are deliberate continuity choices. Avoid a
 
 **Files changed:**
 
-- `index.html` — navigation, hero labels, About structure, project grouping, and section order.
-- `styles.css` — typography, spacing, responsive layouts, section treatments, button contrast, and print adjustments.
-- `script.js` — section highlighting, including short final sections; pointer tilt restricted to project panels.
-- `docs/ui-refinement.md` — specification, design plan, acceptance criteria, and this handoff.
+- `index.html`: navigation, hero labels, About structure, project grouping, and section order.
+- `styles.css`: typography, spacing, responsive layouts, section treatments, button contrast, and print adjustments.
+- `script.js`: section highlighting, including short final sections; pointer tilt restricted to project panels.
+- `docs/ui-refinement.md`: specification, design plan, acceptance criteria, and this handoff.
 
 **Validation:**
 
@@ -85,7 +85,7 @@ The existing palette and font pairing are deliberate continuity choices. Avoid a
 4. Cycle dark, light, and system themes; reload to check the saved choice. Read the experience, education, and recommendation sections in both themes.
 5. Use Tab and Enter to navigate. Escape should close the phone menu. Open print preview and confirm that the content is readable on white paper.
 
-**Review recommendation: HIGH.** Four files changed and the layout/navigation behavior spans the page. This change meets review criteria — recommend sending to your independent reviewer before proceeding. Confidence in retaining and refining the existing visual identity: 90%.
+**Review recommendation: HIGH.** Four files changed and the layout/navigation behavior spans the page. This change meets review criteria; recommend sending to your independent reviewer before proceeding. Confidence in retaining and refining the existing visual identity: 90%.
 
 ## Depth and motion pass (September 2026)
 
