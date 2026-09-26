@@ -127,6 +127,43 @@
     --github-hover-border: #181717;
 }
 
+
+/* No script ran (blocked or disabled): follow the operating system, since
+   that is the default the toggle would have chosen. Same tokens as
+   [data-theme="light"] above. */
+@media (prefers-color-scheme: light) {
+    :root:not([data-theme]) {
+        --bg-primary: #FAFAF8;
+        --bg-alt: #F2F0EC;
+        --card-bg: #FFFFFF;
+        --card-bg-hover: #FFFFFF;
+        --text-primary: #1C1C1C;
+        --text-secondary: #5C5C5C;
+        --text-tertiary: #6B6B6B;
+        --accent: #C45D3E;
+        --accent-text: #A84E33;
+        --accent-solid: #A84E33;
+        --accent-solid-hover: #8E4029;
+        --on-accent: #FFFFFF;
+        --accent-wash: rgba(196, 93, 62, 0.06);
+        --accent-tap: rgba(196, 93, 62, 0.2);
+        --grid-line: rgba(196, 93, 62, 0.045);
+        --hero-glow-strong: rgba(196, 93, 62, 0.12);
+        --hero-glow-soft: rgba(196, 93, 62, 0.05);
+        --border: #E5E3DF;
+        /* Same measurement, opposite content: in light the dark jacket below the
+           face is what the nav has to stay legible over. 4.96:1 links, 3.12:1
+           logo at 0.88; 0.80 gives 4.14:1 and 2.61:1. */
+        --nav-bg: rgba(250, 250, 248, 0.88);
+        --shadow-color: rgba(0, 0, 0, 0.06);
+        --card-edge: transparent;
+        --cast-color: rgba(0, 0, 0, 0.08);
+        --card-shadow-hover: 6px 14px 36px var(--cast-color);
+        --card-shadow-hover-sm: 4px 10px 28px rgba(0, 0, 0, 0.06);
+        --github-hover-border: #181717;
+    }
+}
+
 html {
     scroll-behavior: smooth;
 }
@@ -2213,6 +2250,137 @@ html:not(.js) .highlight {
     .highlight {
         background-size: 100% 100%;
     }
+}
+
+
+/* ============================================
+   CONTROLS: ONE KEYCAP
+   Every clickable control is the same object: 44px tall, 8px radius, the
+   key face, a lit top edge, a 2px bottom edge, a soft cast shadow. The
+   social glyphs are monochrome on that face and only take their brand
+   colour on hover, so they no longer read as stickers on a key.
+   ============================================ */
+.btn,
+.theme-toggle,
+.hero-social-link,
+.social-link,
+.back-to-top,
+.contact-item:not(div),
+.nav-links a.nav-contact {
+    border-radius: 8px;
+}
+
+.btn {
+    min-height: 44px;
+    padding: 0.7rem 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    line-height: 1.2;
+}
+
+.hero-social-link,
+.social-link,
+.theme-toggle,
+.back-to-top {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+}
+
+.hero-social-link .icon,
+.social-link .icon {
+    width: 20px;
+    height: 20px;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.hero-social-link:not(.brand-linkedin):not(.brand-github) svg,
+.social-link:not(.brand-linkedin):not(.brand-github) svg {
+    max-width: 20px;
+    max-height: 20px;
+}
+
+.brand-linkedin,
+.brand-github {
+    padding: 0;
+    border-color: var(--border);
+}
+
+.brand-linkedin svg,
+.brand-github svg {
+    width: 20px;
+    height: 20px;
+    border-radius: 0;
+}
+
+.brand-linkedin:hover {
+    color: #0A66C2;
+    border-color: var(--border);
+}
+
+[data-theme="light"] .brand-linkedin:hover {
+    color: #0A66C2;
+}
+
+.brand-github:hover {
+    color: var(--text-primary);
+    border-color: var(--border);
+}
+
+.hero-social-link:hover .icon,
+.social-link:hover .icon {
+    transform: scale(1.08);
+}
+
+/* Back to top: same key, arrives from below and lifts like the rest. */
+.back-to-top {
+    bottom: max(1.5rem, env(safe-area-inset-bottom, 0px) + 1rem);
+    right: max(1.5rem, env(safe-area-inset-right, 0px) + 1rem);
+    color: var(--text-primary);
+    transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s cubic-bezier(.2,.7,.2,1), box-shadow 0.12s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.back-to-top .icon {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.2s cubic-bezier(.2,.7,.2,1);
+}
+
+.back-to-top:hover {
+    background: var(--key-face);
+    border-color: var(--border);
+    color: var(--accent);
+}
+
+.back-to-top:hover .icon {
+    transform: translateY(-2px);
+}
+
+.back-to-top.visible:hover {
+    transform: translateY(-1px);
+}
+
+.back-to-top.visible:active {
+    transform: translateY(1px);
+}
+
+/* The theme icon sits centred on its key. */
+.theme-toggle .icon {
+    width: 17px;
+    height: 17px;
+}
+
+/* Focus ring follows the key's corners. */
+.btn:focus-visible,
+.theme-toggle:focus-visible,
+.hero-social-link:focus-visible,
+.social-link:focus-visible,
+.back-to-top:focus-visible,
+.contact-item:focus-visible,
+.nav-links a.nav-contact:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
 }
 
 /* ============================================

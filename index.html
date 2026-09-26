@@ -135,9 +135,10 @@
     <link rel="icon" type="image/svg+xml" href="/icon.svg">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-    <!-- Browser Chrome Color. Dark is the default theme, so this is the dark
-         surface; script.js re-points it when the visitor picks another. -->
+    <!-- Browser Chrome Color, one per scheme for the no-script case;
+         theme-init.js re-points the first to the resolved theme. -->
     <meta name="theme-color" content="#0F0F0E">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAFAF8">
 
     <!-- Applies the saved/system theme before first paint -->
     <script src="theme-init.js"></script>
@@ -173,7 +174,7 @@
                 <!-- Cycles dark -> light -> system. The visible icon is the
                      mode currently in effect; script.js keeps the label in
                      sync and names the mode one press away. -->
-                <button class="theme-toggle" id="themeToggle" aria-label="Theme: dark. Switch to light theme." title="Theme: dark. Switch to light theme.">
+                <button class="theme-toggle" id="themeToggle" aria-label="Theme: system. Switch to dark theme." title="Theme: system. Switch to dark theme.">
                     <svg id="themeIconDark" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
                     </svg>
@@ -223,16 +224,10 @@
                 </div>
                 <div class="hero-social">
                     <a href="https://www.linkedin.com/in/vishutdhar/" target="_blank" rel="noopener noreferrer" class="hero-social-link brand-linkedin" title="LinkedIn">
-                        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                            <rect x="1" y="1" width="22" height="22" rx="4" fill="#fff"/>
-                            <path fill="#0A66C2" fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                        </svg>
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
                     </a>
                     <a href="https://github.com/vishutdhar" target="_blank" rel="noopener noreferrer" class="hero-social-link brand-github" title="GitHub">
-                        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-                            <rect width="24" height="24" rx="4" fill="#181717"/>
-                            <path fill="#fff" d="M12 1.5c-5.799 0-10.5 4.702-10.5 10.5 0 4.641 3.006 8.571 7.181 9.966.525.098.717-.226.717-.506v-1.955c-2.921.635-3.531-1.239-3.531-1.239-.478-1.214-1.167-1.538-1.167-1.538-.954-.652.074-.637.074-.637 1.055.074 1.609 1.083 1.609 1.083.938 1.606 2.456 1.141 3.056.873.094-.678.367-1.141.668-1.403-2.332-.267-4.785-1.167-4.785-5.19 0-1.147.409-2.084 1.082-2.819-.108-.265-.468-1.334.103-2.781 0 0 .883-.282 2.888 1.076a9.96 9.96 0 0 1 2.629-.354c.892.004 1.791.121 2.631.354 2.004-1.358 2.886-1.076 2.886-1.076.571 1.447.212 2.516.104 2.781.674.735 1.081 1.672 1.081 2.819 0 4.033-2.457 4.92-4.796 5.18.377.325.712.968.712 1.949v2.888c0 .279.189.606.722.503C19.498 20.57 22.5 16.641 22.5 12c0-5.798-4.701-10.5-10.5-10.5z"/>
-                        </svg>
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.5c-5.799 0-10.5 4.702-10.5 10.5 0 4.641 3.006 8.571 7.181 9.966.525.098.717-.226.717-.506v-1.955c-2.921.635-3.531-1.239-3.531-1.239-.478-1.214-1.167-1.538-1.167-1.538-.954-.652.074-.637.074-.637 1.055.074 1.609 1.083 1.609 1.083.938 1.606 2.456 1.141 3.056.873.094-.678.367-1.141.668-1.403-2.332-.267-4.785-1.167-4.785-5.19 0-1.147.409-2.084 1.082-2.819-.108-.265-.468-1.334.103-2.781 0 0 .883-.282 2.888 1.076a9.96 9.96 0 0 1 2.629-.354c.892.004 1.791.121 2.631.354 2.004-1.358 2.886-1.076 2.886-1.076.571 1.447.212 2.516.104 2.781.674.735 1.081 1.672 1.081 2.819 0 4.033-2.457 4.92-4.796 5.18.377.325.712.968.712 1.949v2.888c0 .279.189.606.722.503C19.498 20.57 22.5 16.641 22.5 12c0-5.798-4.701-10.5-10.5-10.5z"/></svg>
                     </a>
                 </div>
             </div>
@@ -584,16 +579,10 @@
             </div>
             <div class="social-links">
                 <a href="https://www.linkedin.com/in/vishutdhar/" target="_blank" rel="noopener noreferrer" class="social-link brand-linkedin" title="LinkedIn">
-                    <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true">
-                        <rect x="1" y="1" width="22" height="22" rx="4" fill="#fff"/>
-                        <path fill="#0A66C2" fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                    </svg>
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
                 </a>
                 <a href="https://github.com/vishutdhar" target="_blank" rel="noopener noreferrer" class="social-link brand-github" title="GitHub">
-                    <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true">
-                        <rect width="24" height="24" rx="4" fill="#181717"/>
-                        <path fill="#fff" d="M12 1.5c-5.799 0-10.5 4.702-10.5 10.5 0 4.641 3.006 8.571 7.181 9.966.525.098.717-.226.717-.506v-1.955c-2.921.635-3.531-1.239-3.531-1.239-.478-1.214-1.167-1.538-1.167-1.538-.954-.652.074-.637.074-.637 1.055.074 1.609 1.083 1.609 1.083.938 1.606 2.456 1.141 3.056.873.094-.678.367-1.141.668-1.403-2.332-.267-4.785-1.167-4.785-5.19 0-1.147.409-2.084 1.082-2.819-.108-.265-.468-1.334.103-2.781 0 0 .883-.282 2.888 1.076a9.96 9.96 0 0 1 2.629-.354c.892.004 1.791.121 2.631.354 2.004-1.358 2.886-1.076 2.886-1.076.571 1.447.212 2.516.104 2.781.674.735 1.081 1.672 1.081 2.819 0 4.033-2.457 4.92-4.796 5.18.377.325.712.968.712 1.949v2.888c0 .279.189.606.722.503C19.498 20.57 22.5 16.641 22.5 12c0-5.798-4.701-10.5-10.5-10.5z"/>
-                    </svg>
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.5c-5.799 0-10.5 4.702-10.5 10.5 0 4.641 3.006 8.571 7.181 9.966.525.098.717-.226.717-.506v-1.955c-2.921.635-3.531-1.239-3.531-1.239-.478-1.214-1.167-1.538-1.167-1.538-.954-.652.074-.637.074-.637 1.055.074 1.609 1.083 1.609 1.083.938 1.606 2.456 1.141 3.056.873.094-.678.367-1.141.668-1.403-2.332-.267-4.785-1.167-4.785-5.19 0-1.147.409-2.084 1.082-2.819-.108-.265-.468-1.334.103-2.781 0 0 .883-.282 2.888 1.076a9.96 9.96 0 0 1 2.629-.354c.892.004 1.791.121 2.631.354 2.004-1.358 2.886-1.076 2.886-1.076.571 1.447.212 2.516.104 2.781.674.735 1.081 1.672 1.081 2.819 0 4.033-2.457 4.92-4.796 5.18.377.325.712.968.712 1.949v2.888c0 .279.189.606.722.503C19.498 20.57 22.5 16.641 22.5 12c0-5.798-4.701-10.5-10.5-10.5z"/></svg>
                 </a>
             </div>
         </div>

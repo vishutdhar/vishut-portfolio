@@ -37,8 +37,8 @@
 })();
 
 // Theme toggle. Cycles dark -> light -> system -> dark.
-// The site is dark by default; 'system' is an opt-in the visitor selects,
-// not the fallback. See theme-init.js for the pre-paint half of this.
+// The site follows the operating system until the visitor picks a theme.
+// See theme-init.js for the pre-paint half of this.
 var themeToggle = document.getElementById('themeToggle');
 var html = document.documentElement;
 var prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -93,7 +93,7 @@ function currentThemeMode() {
     if (THEME_MODES.indexOf(mode) === -1) {
         try { mode = localStorage.getItem('theme'); } catch (e) { mode = null; }
     }
-    return THEME_MODES.indexOf(mode) === -1 ? 'dark' : mode;
+    return THEME_MODES.indexOf(mode) === -1 ? 'system' : mode;
 }
 
 // theme-init.js already set the attributes before paint; sync the toggle UI to them

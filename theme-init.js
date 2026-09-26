@@ -2,9 +2,8 @@
 // Loaded synchronously in <head>, ahead of the stylesheet.
 //
 // The stored value is a MODE, one of 'light' | 'dark' | 'system'. Anything
-// else, including a visitor who has never touched the toggle, means dark:
-// this site is dark by default and only follows the operating system when
-// the visitor has explicitly asked it to.
+// else, including a visitor who has never touched the toggle, means system:
+// the site follows the operating system until the visitor picks a theme.
 //
 // data-theme carries the RESOLVED theme, so the stylesheet only ever deals
 // with 'light' or 'dark'. data-theme-mode carries the stored mode, so
@@ -14,7 +13,7 @@
     var mode = null;
     try { mode = localStorage.getItem('theme'); } catch (e) {}
     if (mode !== 'light' && mode !== 'dark' && mode !== 'system') {
-        mode = 'dark';
+        mode = 'system';
     }
     var theme = mode;
     if (mode === 'system') {
