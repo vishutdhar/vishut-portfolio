@@ -1488,7 +1488,7 @@ footer {
 }
 
 /* ============================================
-   POLISH PASS — borrowed from nateherk.com
+   POLISH PASS, borrowed from nateherk.com
    (1) Card hover physics with cubic-bezier
    (2) Subtle 1px grid background
    (4) Animated conic-gradient ring on headshot
@@ -1523,7 +1523,7 @@ body::before {
 }
 
 /* Keep section content above the grid layer.
-   nav is intentionally excluded — it's already position: fixed; z-index: 1000
+   nav is intentionally excluded: it's already position: fixed; z-index: 1000
    above. Including it here would override the cascade and (a) un-fix the
    navbar, (b) drop nav to z-index: 1, which causes the mobile menu dropdown
    to render BEHIND <main> when opened. */
@@ -1565,7 +1565,7 @@ footer {
 }
 
 /* ============================================
-   (D) SECTION DIVIDER — animated pulse line
+   (D) SECTION DIVIDER, animated pulse line
    ============================================ */
 .section-divider {
     display: block;
@@ -1587,7 +1587,7 @@ footer {
 }
 
 /* ============================================
-   (F) CURSOR LIGHT EFFECT — hero radial gradient
+   (F) CURSOR LIGHT EFFECT, hero radial gradient
    ============================================ */
 .hero {
     position: relative;
