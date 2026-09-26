@@ -767,6 +767,8 @@ section {
 .experience-timeline {
     position: relative;
     padding-left: 2rem;
+    /* Title, date and bullets all start at the same x: logo tile + gap. */
+    --logo-col: calc(40px + 0.9rem);
 }
 
 /* Thin 1px timeline */
@@ -867,7 +869,7 @@ section {
     list-style: none;
     max-width: 78ch;
     margin-top: 1.25rem;
-    margin-left: 2.9rem;
+    margin-left: var(--logo-col);
 }
 
 .experience-list li {
@@ -1415,7 +1417,7 @@ footer {
     .hero h1 { font-size: clamp(3rem, 6.5vw, 4.5rem); }
     .about-content { gap: 2.5rem; }
     .experience-header { flex-direction: column; gap: 0.5rem; }
-    .experience-date { margin-left: 2.9rem; }
+    .experience-date { margin-left: var(--logo-col); }
 }
 
 @media screen and (max-width: 640px) {
@@ -1454,9 +1456,10 @@ footer {
     .experience-timeline { padding-left: 1.25rem; }
     .experience-item::before { left: calc(-1.25rem - 3.5px); }
     .experience-title { font-size: 1.1rem; }
+    .experience-timeline { --logo-col: calc(40px + 0.7rem); }
     .experience-list { margin-left: 0; }
     .experience-heading { gap: 0.7rem; }
-    .experience-date { margin-left: 2.7rem; }
+    .experience-date { margin-left: var(--logo-col); }
     .project-card { padding: 1.5rem; }
     .project-title { font-size: 1.2rem; }
     .contact-info { flex-direction: column; gap: 1rem; align-items: flex-start; }
@@ -2034,8 +2037,9 @@ div.contact-item {
 }
 
 .company-logo.continental {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
+    padding: 3px;
 }
 
 /* --- App icons: lifted, and they turn to face the pointer with the card --- */
