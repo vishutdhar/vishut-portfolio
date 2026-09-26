@@ -139,9 +139,20 @@ function animateToggleIcon(prev, next) {
 // mode change that leaves the page as it was (dark -> system on a dark OS)
 // only turns the icon. Without View Transitions, or with reduced motion, the
 // switch is instant; there are deliberately no colour transitions on the page.
+//
+// A press made while the wipe runs must not be lost. The mode it acts on is
+// the one already on its way (pendingMode), not the attribute the
+// asynchronous commit has yet to write. And during a View Transition the
+// browser hit-tests every click to <html>, so a click that lands there is
+// replayed on the control under the pointer once the wipe is cut short.
+var pendingMode = null;
+var activeVT = null;
+
 function switchTheme(next, fromEl) {
-    var prev = currentThemeMode();
+    var prev = pendingMode || currentThemeMode();
+    if (activeVT) activeVT.skipTransition();
     var commit = function () {
+        if (pendingMode === next) pendingMode = null;
         applyThemeMode(next);
         try { localStorage.setItem('theme', next); } catch (e) {}
         animateToggleIcon(prev, next);
@@ -152,7 +163,12 @@ function switchTheme(next, fromEl) {
     }
     var bar = document.querySelector('nav') || fromEl;
     var rule = Math.max(0, Math.round(bar.getBoundingClientRect().bottom));
+    pendingMode = next;
     var vt = document.startViewTransition(commit);
+    activeVT = vt;
+    vt.finished.catch(function () {}).then(function () {
+        if (activeVT === vt) activeVT = null;
+    });
     vt.ready.then(function () {
         document.documentElement.animate({
             clipPath: [
@@ -168,9 +184,24 @@ function switchTheme(next, fromEl) {
 }
 
 themeToggle.addEventListener('click', function () {
-    var next = THEME_MODES[(THEME_MODES.indexOf(currentThemeMode()) + 1) % THEME_MODES.length];
+    var from = pendingMode || currentThemeMode();
+    var next = THEME_MODES[(THEME_MODES.indexOf(from) + 1) % THEME_MODES.length];
     switchTheme(next, themeToggle);
 });
+
+document.addEventListener('click', function (e) {
+    if (!activeVT || e.target !== html) return;
+    e.stopPropagation();
+    var x = e.clientX;
+    var y = e.clientY;
+    var v = activeVT;
+    v.skipTransition();
+    v.finished.catch(function () {}).then(function () {
+        var t = document.elementFromPoint(x, y);
+        var c = t && t.closest('a, button, summary');
+        if (c) c.click();
+    });
+}, true);
 
 // Follow the operating system only while the visitor has chosen 'system'
 function onSystemThemeChange() {
@@ -580,42 +611,96 @@ updateScrollUI();
 // blocked script can never leave the chart blank. Without the arm, or
 // without IntersectionObserver, the chart is simply shown finished.
 //
-// Mode and trigger are measured on the whole figure (axes, Before/After and
-// the "$15 million saved a year" report), not just the plot, so the ending
-// is never played below the fold.
-// Load mode: the whole figure is on screen at first paint, so the whole
-// sequence plays as soon as the page is ready.
-// Scroll mode: the frame is shown at once, so a partly visible chart never
-// looks like a hole under its title, and the process runs when the figure's
-// bottom is first on screen. It never replays.
+// The sequence splits at its natural beat, the stage break, and each half
+// plays only when what it ends on is on screen:
+// - calibrate and run 1 end on the red 5% level (watched through the "5%"
+//   tick label, which sits on that level);
+// - change, run 2 and report end on "$15 million saved a year" (watched
+//   through the report itself, or through the whole figure).
+// "On screen" means below the sticky nav, not behind it.
+// Load mode: the report is on screen at first paint (1440x900, common
+// laptops such as 1366x768), so the whole sequence plays as soon as the page
+// is ready; the last few pixels of run 2 may draw just below the fold.
+// Split: only the 5% level is on screen (1280x720, most phones), so the
+// frame is ruled in and the process runs out of control at 5%, then holds
+// at the stage break until the report is in view. The first view is the
+// before condition, not an empty frame.
+// Already passed: a figure that is above the viewport at the first callback
+// (restored scroll, a deep link, Back) or that comes back into view top edge
+// first is shown finished at once, never as an empty frame.
+// Scroll: not even the 5% level is on screen, so the frame is shown at once
+// (a partly visible chart never looks like a hole under its title) and each
+// half runs when its ending comes into view. Nothing ever replays.
 (function () {
     var root = document.documentElement;
     root.setAttribute('data-chart-observed', '');
     var chart = document.getElementById('scrap-chart');
     var fig = chart ? chart.querySelector('.sc-figure') : null;
-    if (!chart || !fig) return;
+    var level = chart ? chart.querySelector('.sc-y-5') : null;
+    var report = chart ? chart.querySelector('.sc-result') : null;
+    if (!chart || !fig || !level || !report) return;
     if (!root.classList.contains('chart-armed') || !('IntersectionObserver' in window)) {
         chart.classList.add('is-drawn');
         return;
     }
+
+    // Reduced motion switched on mid-visit: show the finished chart now,
+    // not whenever it would have been released.
+    function disarm() {
+        if (prefersReducedMotion.matches) root.classList.remove('chart-armed');
+    }
+    if (typeof prefersReducedMotion.addEventListener === 'function') {
+        prefersReducedMotion.addEventListener('change', disarm);
+    } else if (typeof prefersReducedMotion.addListener === 'function') {
+        prefersReducedMotion.addListener(disarm);
+    }
+
+    // Releases happen in order, one after another.
+    var queue = Promise.resolve();
+    function then(fn) {
+        queue = queue.then(fn);
+    }
+    // When the second half may start: the stage break on the timeline, so a
+    // fast scroll can never start the change while run 1 is still running.
+    var holdUntil = 0;
+    var released = 0; // 0 nothing, 1 calibrate + run 1, 2 everything
     var first = true;
-    function go(loadMode) {
+    var figIn = false;
+    var levelIn = false;
+    var reportIn = false;
+
+    // Wait (briefly) for Archivo before the first release, so a late font
+    // swap cannot move the chart mid-sequence. The font is preloaded, so
+    // this is normally immediate.
+    function fontGate() {
         var fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-        // Wait (briefly) for Archivo, so a late font swap cannot move the
-        // chart mid-sequence; then two frames, so the undrawn state has been
-        // painted and the transitions have something to run from.
-        var gate = loadMode
-            ? Promise.race([fonts, new Promise(function (r) { setTimeout(r, 300); })])
-            : Promise.resolve();
-        gate.then(function () {
-            requestAnimationFrame(function () {
-                requestAnimationFrame(function () {
-                    if (loadMode) chart.classList.add('run-frame');
-                    chart.classList.add('is-drawn');
-                });
-            });
+        return Promise.race([fonts, new Promise(function (r) { setTimeout(r, 300); })]);
+    }
+
+    function releaseRun1(ruled) {
+        released = 1;
+        then(function () {
+            if (ruled) chart.classList.add('run-frame');
+            chart.classList.add('run-before');
+            // 620ms on the full timeline; 340ms when the frame was shown at
+            // once (--t: -280ms).
+            holdUntil = performance.now() + (ruled ? 620 : 340);
         });
     }
+
+    function releaseAll(ruled) {
+        var held = released === 1;
+        released = 2;
+        then(function () {
+            var wait = held ? holdUntil - performance.now() : 0;
+            return wait > 0 ? new Promise(function (r) { setTimeout(r, wait); }) : null;
+        });
+        then(function () {
+            if (ruled) chart.classList.add('run-frame');
+            chart.classList.add('is-drawn');
+        });
+    }
+
     // Whole figure in view. A figure taller than the viewport (heavy zoom)
     // can never reach 98%, so filling most of the viewport also counts.
     function inView(e) {
@@ -623,24 +708,60 @@ updateScrollUI();
         var vh = e.rootBounds ? e.rootBounds.height : window.innerHeight;
         return e.boundingClientRect.height > vh && e.intersectionRect.height >= vh * 0.8;
     }
+
+    // Visibility is measured below the sticky nav: the part of the page
+    // behind the bar is not in view.
+    var nav = document.querySelector('nav');
+    var navH = nav ? nav.offsetHeight : 0;
+
     var io = new IntersectionObserver(function (entries) {
-        var e = entries[entries.length - 1];
-        if (first) {
-            first = false;
-            if (inView(e)) {
+        var fe = null;
+        entries.forEach(function (e) {
+            if (e.target === fig) {
+                fe = e;
+                figIn = inView(e);
+            } else if (e.target === report) {
+                reportIn = e.isIntersecting && e.intersectionRatio >= 0.99;
+            } else {
+                levelIn = e.isIntersecting && e.intersectionRatio >= 0.99;
+            }
+        });
+        var initial = first;
+        first = false;
+        // Already scrolled past, or coming back from below: show it finished.
+        if (fe && !figIn && !reportIn && released < 2) {
+            var top = fe.rootBounds ? fe.rootBounds.top : 0;
+            if (fe.boundingClientRect.top < top && (initial || fe.isIntersecting)) {
                 io.disconnect();
-                go(true);
+                chart.classList.add('is-drawn');
+                root.classList.remove('chart-armed');
                 return;
             }
-            chart.classList.add('frame-ready');
+        }
+        if (initial) {
+            if (figIn || levelIn || reportIn) {
+                then(fontGate);
+            } else {
+                chart.classList.add('frame-ready');
+            }
+        }
+        // The frame is ruled in only if it was not already shown.
+        var ruled = !chart.classList.contains('frame-ready');
+        if (figIn || reportIn) {
+            io.disconnect();
+            releaseAll(ruled && released === 0);
             return;
         }
-        if (inView(e)) {
-            io.disconnect();
-            go(false);
+        if (levelIn && released === 0) {
+            releaseRun1(ruled);
         }
-    }, { threshold: [0, 0.2, 0.4, 0.6, 0.8, 0.98] });
+    }, {
+        rootMargin: '-' + navH + 'px 0px 0px 0px',
+        threshold: [0, 0.2, 0.4, 0.6, 0.8, 0.98, 0.99, 1]
+    });
     io.observe(fig);
+    io.observe(level);
+    io.observe(report);
 })();
 
 // "N more responsibilities": the list opens to its real height and the new

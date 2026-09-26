@@ -871,29 +871,98 @@ html:not(.js) .theme-toggle {
    measured the same way; only the level changed.
 
    The default is the finished chart. theme-init.js arms this before paint,
-   only when motion is welcome. script.js then adds .run-frame + .is-drawn
-   (load mode: the plot is on screen) or .frame-ready now and .is-drawn
-   later (scroll mode: the frame is shown at once, the process runs when
-   the plot is in view). --t shifts the process back by the frame's 280ms. */
+   only when motion is welcome. script.js then releases the process in one
+   of three ways:
+   - load mode, the whole figure is on screen: .run-frame + .is-drawn, the
+     whole sequence at once;
+   - split, the 5% level is on screen but the report is not: .run-frame +
+     .run-before (calibrate and run 1, then hold at the stage break), and
+     .is-drawn later, when the whole figure is in view (change, run 2,
+     report);
+   - scroll, not even the 5% level is on screen: .frame-ready (the frame at
+     once), then .run-before and .is-drawn as those come into view.
+   --t shifts calibrate/run 1 back by the frame's 280ms when the frame was
+   shown at once; --t2 shifts change/run 2/report back to the stage break
+   when they are released on their own.
+
+   Keyframe animations, not transitions: a transition needs a painted
+   before-change style, and on a cold first visit the classes can land
+   before first paint, which made the chart jump to finished. An animation
+   runs from its own start whatever was painted before; its backwards fill
+   holds the undrawn state through its delay. The reduced-motion and print
+   blocks turn all of it off. */
 .scrap-chart {
     --t: 0ms;
+    --t2: var(--t);
 }
 
 .scrap-chart.frame-ready {
     --t: -280ms;
 }
 
-/* Undrawn: the process */
-.chart-armed .scrap-chart:not(.is-drawn) .sc-line {
+.scrap-chart.run-before {
+    --t2: -620ms;
+}
+
+@keyframes sc-rule-x {
+    from { transform: scaleX(0); }
+}
+
+@keyframes sc-rule-y {
+    from { transform: scaleY(0); }
+}
+
+/* Revealed rather than scaled, so the dash pattern keeps its spacing as it
+   draws down instead of squashing into a dotted line. */
+@keyframes sc-reveal-y {
+    from { clip-path: inset(0 0 100% 0); }
+}
+
+@keyframes sc-appear {
+    from { opacity: 0; }
+}
+
+@keyframes sc-report {
+    from { opacity: 0; transform: translateY(6px); }
+}
+
+/* Undrawn: the frame, until it is shown or ruled in */
+.chart-armed .scrap-chart:not(.run-frame):not(.frame-ready):not(.is-drawn) .sc-plot::before {
+    transform: scaleY(0);
+}
+
+.chart-armed .scrap-chart:not(.run-frame):not(.frame-ready):not(.is-drawn) .sc-plot::after,
+.chart-armed .scrap-chart:not(.run-frame):not(.frame-ready):not(.is-drawn) .sc-y::after {
     transform: scaleX(0);
 }
 
-.chart-armed .scrap-chart:not(.is-drawn) .sc-stage,
+.chart-armed .scrap-chart:not(.run-frame):not(.frame-ready):not(.is-drawn) .sc-y {
+    opacity: 0;
+}
+
+/* Undrawn: run 1, until it is released */
+.chart-armed .scrap-chart:not(.run-before):not(.is-drawn) .sc-before {
+    transform: scaleX(0);
+}
+
+.chart-armed .scrap-chart:not(.run-before):not(.is-drawn) :is(.sc-lab-before, .sc-x-before) {
+    opacity: 0;
+}
+
+/* Undrawn: change, run 2 and report, until they are released */
+.chart-armed .scrap-chart:not(.is-drawn) .sc-after {
+    transform: scaleX(0);
+}
+
+.chart-armed .scrap-chart:not(.is-drawn) .sc-stage {
+    clip-path: inset(0 0 100% 0);
+}
+
 .chart-armed .scrap-chart:not(.is-drawn) .sc-drop {
     transform: scaleY(0);
 }
 
-.chart-armed .scrap-chart:not(.is-drawn) .sc-fade {
+.chart-armed .scrap-chart:not(.is-drawn) :is(.sc-lab-after, .sc-x-after, .sc-result) {
     opacity: 0;
 }
 
@@ -901,37 +970,23 @@ html:not(.js) .theme-toggle {
     transform: translateY(6px);
 }
 
-/* Undrawn: the frame, until .frame-ready or .is-drawn */
-.chart-armed .scrap-chart:not(.is-drawn):not(.frame-ready) .sc-plot::before {
-    transform: scaleY(0);
+/* Calibrate. Only with .run-frame; a .frame-ready frame simply appears.
+   .sc-y keeps its translateY(-50%) for position: only its opacity and its
+   tick (::after) animate. */
+.chart-armed .scrap-chart.run-frame .sc-plot::before {
+    animation: sc-rule-y 280ms var(--ease-out) backwards;
 }
 
-.chart-armed .scrap-chart:not(.is-drawn):not(.frame-ready) .sc-plot::after,
-.chart-armed .scrap-chart:not(.is-drawn):not(.frame-ready) .sc-y::after {
-    transform: scaleX(0);
+.chart-armed .scrap-chart.run-frame .sc-plot::after {
+    animation: sc-rule-x 360ms var(--ease-out) backwards;
 }
 
-.chart-armed .scrap-chart:not(.is-drawn):not(.frame-ready) .sc-y {
-    opacity: 0;
+.chart-armed .scrap-chart.run-frame .sc-y {
+    animation: sc-appear 160ms var(--ease-out) var(--tick-delay) backwards;
 }
 
-/* Calibrate. These transitions exist only in load mode, so .frame-ready
-   snaps. .sc-y keeps its translateY(-50%) for position: only its opacity
-   and its tick (::after) animate. */
-.scrap-chart.run-frame .sc-plot::before {
-    transition: transform 280ms var(--ease-out);
-}
-
-.scrap-chart.run-frame .sc-plot::after {
-    transition: transform 360ms var(--ease-out);
-}
-
-.scrap-chart.run-frame .sc-y {
-    transition: opacity 160ms var(--ease-out) var(--tick-delay);
-}
-
-.scrap-chart.run-frame .sc-y::after {
-    transition: transform 160ms var(--ease-out) var(--tick-delay);
+.chart-armed .scrap-chart.run-frame .sc-y::after {
+    animation: sc-rule-x 160ms var(--ease-out) var(--tick-delay) backwards;
 }
 
 /* ticks are laid in from 0% upward */
@@ -943,36 +998,35 @@ html:not(.js) .theme-toggle {
 .sc-y-5 { --tick-delay: 210ms; }
 .sc-y-6 { --tick-delay: 240ms; }
 
-/* Run 1, change, run 2, report */
-.chart-armed .sc-before {
-    transition: transform 440ms var(--ease-run) calc(280ms + var(--t));
+/* Run 1. One selector for both releases, so adding .is-drawn after
+   .run-before leaves the running (or finished) animation alone. */
+.chart-armed .scrap-chart:is(.run-before, .is-drawn) .sc-before {
+    animation: sc-rule-x 440ms var(--ease-run) calc(280ms + var(--t)) backwards;
 }
 
-.chart-armed .sc-lab-before,
-.chart-armed .sc-x-before {
-    transition: opacity 200ms var(--ease-out) calc(320ms + var(--t));
+.chart-armed .scrap-chart:is(.run-before, .is-drawn) :is(.sc-lab-before, .sc-x-before) {
+    animation: sc-appear 200ms var(--ease-out) calc(320ms + var(--t)) backwards;
 }
 
-.chart-armed .sc-stage {
-    transition: transform 200ms var(--ease-out) calc(620ms + var(--t));
+/* Change, run 2, report */
+.chart-armed .scrap-chart.is-drawn .sc-stage {
+    animation: sc-reveal-y 200ms var(--ease-out) calc(620ms + var(--t2)) backwards;
 }
 
-.chart-armed .sc-drop {
-    transition: transform 240ms var(--ease-step) calc(700ms + var(--t));
+.chart-armed .scrap-chart.is-drawn .sc-drop {
+    animation: sc-rule-y 240ms var(--ease-step) calc(700ms + var(--t2)) backwards;
 }
 
-.chart-armed .sc-after {
-    transition: transform 440ms var(--ease-run) calc(900ms + var(--t));
+.chart-armed .scrap-chart.is-drawn .sc-after {
+    animation: sc-rule-x 440ms var(--ease-run) calc(900ms + var(--t2)) backwards;
 }
 
-.chart-armed .sc-lab-after,
-.chart-armed .sc-x-after {
-    transition: opacity 200ms var(--ease-out) calc(940ms + var(--t));
+.chart-armed .scrap-chart.is-drawn :is(.sc-lab-after, .sc-x-after) {
+    animation: sc-appear 200ms var(--ease-out) calc(940ms + var(--t2)) backwards;
 }
 
-.chart-armed .sc-result {
-    transition: opacity 240ms var(--ease-out) calc(980ms + var(--t)),
-                transform 280ms var(--ease-out) calc(980ms + var(--t));
+.chart-armed .scrap-chart.is-drawn .sc-result {
+    animation: sc-report 280ms var(--ease-out) calc(980ms + var(--t2)) backwards;
 }
 
 /* ---------- Results ---------- */
@@ -1265,6 +1319,14 @@ html:not(.js) .theme-toggle {
     position: relative;
     scroll-margin-top: 24px;
     break-inside: avoid;
+}
+
+/* The first quote of a group, and the first role of an employer, sit under
+   their employer's heading: a jump to one lands with that heading in view
+   below the nav, not half under it (h3 margin + h3 + a little air). */
+.voice--lead,
+.employer > .roles > .role:first-child {
+    scroll-margin-top: 80px;
 }
 
 .voice + .voice {
@@ -2063,6 +2125,7 @@ footer .container > p {
     .sc-plot::before,
     .sc-plot::after {
         transform: none !important;
+        clip-path: none !important;
         opacity: 1 !important;
         transition: none !important;
         animation: none !important;
