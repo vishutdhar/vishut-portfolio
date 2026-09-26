@@ -18,6 +18,24 @@
     }
 })();
 
+// Years of experience, counted from the first role (February 2018) so the
+// figure keeps itself current. Only the number inside each element changes;
+// the "+" in the hero and the sentence in About keep their own wording, and
+// the markup's value stands if this never runs.
+(function () {
+    var now = new Date();
+    document.querySelectorAll('[data-since]').forEach(function (el) {
+        var parts = el.getAttribute('data-since').split('-');
+        var year = parseInt(parts[0], 10);
+        var month = parseInt(parts[1], 10) || 1;
+        if (!isFinite(year)) return;
+        var years = now.getFullYear() - year;
+        if (now.getMonth() + 1 < month) years -= 1;
+        if (years < 0) return;
+        el.textContent = el.textContent.replace(/\d+/, String(years));
+    });
+})();
+
 // Theme toggle. Cycles dark -> light -> system -> dark.
 // The site is dark by default; 'system' is an opt-in the visitor selects,
 // not the fallback. See theme-init.js for the pre-paint half of this.
