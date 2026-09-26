@@ -594,7 +594,7 @@ section {
    browser scrolled to is the edge that stays. */
 .reveal {
     opacity: 0;
-    transform: perspective(800px) translate3d(0, 10px, -30px);
+    transform: perspective(800px) rotateX(-4deg) translate3d(0, 14px, -40px);
     transform-origin: top center;
     transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
@@ -1456,6 +1456,8 @@ body::before {
         linear-gradient(var(--grid-line) 1px, transparent 1px),
         linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(120% 90% at 50% 20%, #000 30%, transparent 100%);
+    mask-image: radial-gradient(120% 90% at 50% 20%, #000 30%, transparent 100%);
     pointer-events: none;
     z-index: 0;
 }
@@ -1519,9 +1521,9 @@ footer {
    per section boundary, none of which the reader ever looks at directly. */
 .section-divider span {
     display: block;
-    height: 1px;
+    height: 2px;
     width: 100%;
-    background: var(--border);
+    background: linear-gradient(var(--groove-dark), var(--groove-dark) 50%, var(--groove-light) 50%);
 }
 
 /* ============================================
@@ -1614,7 +1616,7 @@ a.app-card {
            across the hero. The portrait turns to face it; the ring's lit arc
            follows the same pointer, one angle written per frame. */
         .hero-frame {
-            transform: rotateX(calc(var(--fy, 0) * -4deg)) rotateY(calc(var(--fx, 0) * 4deg));
+            transform: rotateX(calc(var(--fy, 0) * -7deg)) rotateY(calc(var(--fx, 0) * 7deg));
             transition: transform 0.16s ease-out;
         }
 
@@ -1642,7 +1644,7 @@ a.app-card {
            project card were lost. Those cards still lift and still cast the
            shadow; they just do not turn. */
         .projects-grid .project-card:not(a) {
-            --tilt: 3;
+            --tilt: 6;
         }
 
         .projects-grid .project-card:not(a):hover {
@@ -1656,7 +1658,7 @@ a.app-card {
                edge rather than following the pointer around. */
             box-shadow:
                 inset 0 1px 0 var(--card-edge),
-                calc(6px - var(--px, 0) * 5px) calc(14px - var(--py, 0) * 5px) 36px var(--cast-color);
+                calc(8px - var(--px, 0) * 9px) calc(18px - var(--py, 0) * 9px) 40px var(--cast-color);
             /* Short while tracking, so the card reads as answering the pointer
                rather than chasing it. Releasing hands it back to the 0.35s ease
                on the resting rule, which is the unhurried half of the move. */
@@ -1701,6 +1703,472 @@ a.app-card {
     to { transform: translateY(-20px); }
 }
 
+
+
+/* ============================================
+   PERSONALITY PASS: MORE RELIEF FROM THE SAME LAMP
+
+   Everything below is lit by the one fixed light the depth system already
+   describes: above and to the left, or wherever the pointer is in the hero.
+   Surfaces gain thickness (a lit top edge, a shaded bottom edge), controls
+   press down under the pointer, and the portrait sits on a mount that
+   counter-rotates like a second sheet of paper. No new colours, no new
+   type, nothing animates on its own.
+   ============================================ */
+:root {
+    --groove-dark: rgba(0, 0, 0, 0.45);
+    --groove-light: rgba(255, 255, 255, 0.06);
+    --edge-light: rgba(255, 255, 255, 0.07);
+    --edge-dark: rgba(0, 0, 0, 0.35);
+    --key-face: linear-gradient(180deg, #262623, #1B1B19);
+    --key-edge: #0B0B0A;
+    --sheen: rgba(255, 244, 236, 0.16);
+    --accent-edge: #9C4E39;
+}
+
+[data-theme="light"] {
+    --groove-dark: rgba(0, 0, 0, 0.08);
+    --groove-light: rgba(255, 255, 255, 0.9);
+    --edge-light: rgba(255, 255, 255, 0.9);
+    --edge-dark: rgba(0, 0, 0, 0.08);
+    --key-face: linear-gradient(180deg, #FFFFFF, #F4F2EE);
+    --key-edge: #D6D2CB;
+    --sheen: rgba(255, 255, 255, 0.55);
+    --accent-edge: #7A3722;
+}
+
+/* --- The name: a specular sheen that follows the hero light --- */
+.hero h1 {
+    position: relative;
+}
+
+.hero.lit h1::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    color: transparent;
+    background: radial-gradient(
+        220px circle at var(--nx, -999px) var(--ny, -999px),
+        var(--sheen) 0%,
+        transparent 70%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+/* --- Portrait: a mount behind the photo, offset away from the light --- */
+.hero-profile {
+    position: relative;
+}
+
+.hero-frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--accent-wash);
+    border: 1px solid var(--border);
+    transform: translate(14px, 18px) rotate(1.5deg);
+    z-index: -1;
+    transition: transform 0.5s ease;
+}
+
+.hero-frame {
+    box-shadow: 10px 22px 48px var(--cast-color);
+}
+
+/* --- Buttons and controls: keycaps that press --- */
+.btn-primary {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        0 3px 0 var(--accent-edge),
+        4px 10px 22px var(--cast-color);
+    transform: translateY(0);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        0 4px 0 var(--accent-edge),
+        6px 14px 28px var(--cast-color);
+}
+
+.btn-primary:active {
+    transform: translateY(2px);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 1px 0 var(--accent-edge),
+        2px 4px 10px var(--cast-color);
+}
+
+.btn-secondary,
+.theme-toggle,
+.hero-social-link,
+.social-link,
+.back-to-top,
+.skill-tag,
+.contact-item:not(div) {
+    background: var(--key-face);
+    box-shadow:
+        inset 0 1px 0 var(--edge-light),
+        0 2px 0 var(--key-edge),
+        2px 6px 14px var(--cast-color);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-secondary:hover,
+.theme-toggle:hover,
+.hero-social-link:hover,
+.social-link:hover,
+.back-to-top:hover,
+.skill-tag:hover {
+    transform: translateY(-1px);
+    box-shadow:
+        inset 0 1px 0 var(--edge-light),
+        0 3px 0 var(--key-edge),
+        4px 10px 20px var(--cast-color);
+}
+
+.btn-secondary:active,
+.theme-toggle:active,
+.hero-social-link:active,
+.social-link:active,
+.back-to-top:active,
+.skill-tag:active {
+    transform: translateY(1px);
+    box-shadow:
+        inset 0 1px 0 var(--edge-light),
+        0 1px 0 var(--key-edge),
+        1px 3px 8px var(--cast-color);
+}
+
+.skill-tag {
+    color: var(--text-primary);
+    cursor: default;
+}
+
+.nav-links .nav-contact {
+    box-shadow: 0 2px 0 var(--accent-edge);
+}
+
+.nav-links .nav-contact:active {
+    transform: translateY(2px);
+    box-shadow: none;
+}
+
+.contact-item {
+    padding: 0.5rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+div.contact-item {
+    border-color: transparent;
+    padding-left: 0;
+}
+
+.contact-info {
+    gap: 0.75rem;
+}
+
+/* --- Raised surfaces: real thickness on cards and the mobile menu --- */
+.project-card,
+.testimonial-card,
+.education-card {
+    box-shadow:
+        inset 0 1px 0 var(--edge-light),
+        inset 0 -1px 0 var(--edge-dark);
+}
+
+.project-card {
+    box-shadow:
+        inset 0 1px 0 var(--edge-light),
+        inset 0 -1px 0 var(--edge-dark),
+        6px 14px 36px var(--cast-color);
+}
+
+/* A glare on the card face, centred where the pointer is. */
+.project-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.project-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+        260px circle at calc(50% + var(--px, 0) * 50%) calc(50% + var(--py, 0) * 50%),
+        var(--sheen) 0%,
+        transparent 70%
+    );
+    transition: opacity 0.25s ease;
+}
+
+.project-card:hover::after {
+    opacity: 0.55;
+}
+
+/* Metric numbers stand proud of the card when it lifts. */
+.metric-value,
+.stat-number {
+    transition: text-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.project-card:hover .metric-value {
+    text-shadow: 2px 4px 0 var(--accent-wash), 4px 10px 18px var(--cast-color);
+}
+
+/* --- Timeline: beads on a groove, logos on tiles --- */
+.experience-timeline::before {
+    width: 2px;
+    background: linear-gradient(90deg, var(--groove-dark), var(--groove-light));
+}
+
+.experience-item::before {
+    left: calc(-2rem - 4px);
+    width: 10px;
+    height: 10px;
+    background: radial-gradient(circle at 35% 30%, var(--accent-solid-hover), var(--accent) 55%, var(--accent-edge));
+    box-shadow: 1px 2px 5px var(--cast-color), 0 0 0 3px var(--bg-primary);
+}
+
+.company-logo {
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    border-radius: 9px;
+    background: var(--key-face);
+    box-shadow:
+        inset 0 1px 0 var(--edge-light),
+        0 2px 0 var(--key-edge),
+        2px 6px 14px var(--cast-color);
+    margin-top: 0;
+}
+
+.company-logo.continental {
+    width: 44px;
+    height: 44px;
+}
+
+/* --- App icons: lifted, and they turn to face the pointer with the card --- */
+.app-icon {
+    box-shadow: 4px 10px 24px var(--cast-color), 0 0 0 1px var(--edge-light);
+    transition: transform 0.35s cubic-bezier(.2,.7,.2,1);
+}
+
+.app-card:hover .app-icon {
+    transform: translateY(-4px) rotate(-4deg) scale(1.06);
+}
+
+/* --- Section titles: a faint shadow gives the serif some weight --- */
+.section-title,
+.hero h1 {
+    text-shadow: 0 2px 0 var(--edge-dark);
+}
+
+/* --- Pointer-driven pieces only run with a hovering pointer and motion --- */
+@media (any-hover: hover) and (any-pointer: fine) {
+    @media (prefers-reduced-motion: no-preference) {
+        /* The mount swings the opposite way to the photo, so the two
+           sheets separate as the portrait turns. */
+        .hero-frame::before {
+            transform:
+                translate(calc(14px + var(--fx, 0) * -8px), calc(18px + var(--fy, 0) * -8px))
+                rotate(calc(1.5deg + var(--fx, 0) * -1.5deg));
+            transition: transform 0.16s ease-out;
+        }
+
+        .hero-profile.settling .hero-frame::before {
+            transition: transform 0.5s ease;
+        }
+
+        /* Testimonials and education lift a touch on hover, without turning:
+           they are reading surfaces. */
+        .testimonial-card,
+        .education-card {
+            transition: transform 0.35s cubic-bezier(.2,.7,.2,1), box-shadow 0.35s ease;
+        }
+
+        .testimonial-card:hover,
+        .education-card:hover {
+            transform: translateY(-3px);
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero.lit h1::after,
+    .project-card::after {
+        display: none;
+    }
+}
+
+/* The mount only pays off when a pointer can swing it. On touch and on
+   narrow screens it reads as a misaligned second photo, so the portrait
+   stands alone there, with a single soft cast shadow and the ring sweep as
+   its entrance. */
+@media (hover: none), screen and (max-width: 640px) {
+    .hero-frame::before {
+        display: none;
+    }
+
+    .hero-frame {
+        box-shadow: 4px 12px 28px var(--cast-color);
+    }
+}
+
+
+/* ============================================
+   MOTION PASS
+
+   One choreographed entrance: the lamp switches on (the ring sweeps round to
+   its resting angle), the name and its lines rise, the portrait lifts off
+   its mount. After that, nothing moves unless the page is scrolled or the
+   pointer asks: the timeline draws itself as it arrives, section rules draw
+   in as they cross the viewport, the key results are highlighted as each
+   role reveals, and the theme icon turns over when it changes.
+   ============================================ */
+@keyframes rise {
+    from { opacity: 0; transform: translate3d(0, 22px, 0); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes rise-frame {
+    from { opacity: 0; transform: translate3d(0, 28px, 0) scale(0.97); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes lamp-on {
+    from { --ring-ang: 675deg; }
+    to { --ring-ang: 315deg; }
+}
+
+@keyframes rule-in {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+
+@keyframes mount-out {
+    from { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+}
+
+@keyframes turn-over {
+    from { transform: rotateY(90deg); opacity: 0; }
+    to { transform: none; opacity: 1; }
+}
+
+/* Entrance. Fill is backwards only: every element hands its transform back
+   to the pointer and scroll rules the moment its entrance ends. */
+.hero-text > * {
+    animation: rise 0.7s cubic-bezier(.2,.7,.2,1) backwards;
+}
+
+.hero-text > :nth-child(1) { animation-delay: 0.10s; }
+.hero-text > :nth-child(2) { animation-delay: 0.20s; }
+.hero-text > :nth-child(3) { animation-delay: 0.30s; }
+.hero-text > :nth-child(4) { animation-delay: 0.42s; }
+.hero-text > :nth-child(5) { animation-delay: 0.52s; }
+
+.hero-stats {
+    position: relative;
+    border-top-color: transparent;
+}
+
+/* The stats rule draws in from the left instead of appearing. */
+.hero-stats::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -1px;
+    height: 1px;
+    background: var(--border);
+    transform-origin: left center;
+    animation: rule-in 0.8s cubic-bezier(.2,.7,.2,1) 0.5s backwards;
+}
+
+.hero-frame {
+    animation:
+        rise-frame 0.9s cubic-bezier(.2,.7,.2,1) 0.25s backwards,
+        lamp-on 1.3s cubic-bezier(.3,.6,.2,1) 0.55s backwards;
+}
+
+.hero-frame::before {
+    animation: mount-out 0.9s cubic-bezier(.2,.7,.2,1) 0.75s backwards;
+}
+
+/* Timeline draws down as the section arrives; beads follow with their items. */
+.experience-timeline::before {
+    transform: scaleY(0);
+    transform-origin: top center;
+    transition: transform 1.4s cubic-bezier(.2,.7,.2,1) 0.15s;
+}
+
+#experience.reveal.active .experience-timeline::before,
+html:not(.js) .experience-timeline::before {
+    transform: scaleY(1);
+}
+
+/* Each role's key result is marked with a highlighter sweep on reveal. */
+.highlight {
+    background-image: linear-gradient(var(--accent-wash), var(--accent-wash));
+    background-repeat: no-repeat;
+    background-size: 0% 100%;
+    background-position: left center;
+    padding: 0.1em 0.25em;
+    margin: -0.1em -0.25em;
+    border-radius: 3px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    transition: background-size 0.9s cubic-bezier(.2,.7,.2,1) 0.5s;
+}
+
+.experience-item.reveal.active .highlight,
+html:not(.js) .highlight {
+    background-size: 100% 100%;
+}
+
+/* Theme icon turns over when the mode changes (script.js adds the class). */
+.theme-toggle.turned .icon {
+    animation: turn-over 0.35s cubic-bezier(.2,.7,.2,1);
+}
+
+/* Section rules draw in as they cross the viewport. Scroll-driven, so
+   there is no observer and no work at rest; browsers without it get the
+   static rule. */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .section-divider span {
+            transform-origin: left center;
+            animation: rule-in linear both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 60%;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-text > *,
+    .hero-stats::before,
+    .hero-frame,
+    .hero-frame::before {
+        animation: none;
+    }
+
+    .experience-timeline::before {
+        transform: scaleY(1);
+    }
+
+    .highlight {
+        background-size: 100% 100%;
+    }
+}
 
 /* ============================================
    PRINT STYLES
@@ -1806,6 +2274,39 @@ a.app-card {
     .project-card,
     .education-card {
         transform: none !important;
+    }
+
+    .hero-frame::before,
+    .project-card::after,
+    .hero h1::after {
+        display: none !important;
+    }
+
+    .hero-text > *,
+    .hero-stats::before,
+    .hero-frame,
+    .section-divider span {
+        animation: none !important;
+    }
+
+    .experience-timeline::before {
+        transform: scaleY(1) !important;
+    }
+
+    .highlight {
+        background-size: 100% 100% !important;
+    }
+
+    .btn,
+    .skill-tag,
+    .company-logo,
+    .contact-item,
+    .section-title,
+    .hero h1,
+    .app-icon {
+        box-shadow: none !important;
+        text-shadow: none !important;
+        background: none !important;
     }
 
     /* The class selectors are listed alongside the element one because

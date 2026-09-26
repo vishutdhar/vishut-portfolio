@@ -21,6 +21,9 @@
         theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
     var root = document.documentElement;
+    // Script runs, so the stylesheet may hold its drawn-in states for the
+    // reveal to release; without it they show finished from the start.
+    root.classList.add('js');
     root.setAttribute('data-theme', theme);
     root.setAttribute('data-theme-mode', mode);
 

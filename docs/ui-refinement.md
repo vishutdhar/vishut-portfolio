@@ -86,3 +86,11 @@ The existing palette and font pairing are deliberate continuity choices. Avoid a
 5. Use Tab and Enter to navigate. Escape should close the phone menu. Open print preview and confirm that the content is readable on white paper.
 
 **Review recommendation: HIGH.** Four files changed and the layout/navigation behavior spans the page. This change meets review criteria — recommend sending to your independent reviewer before proceeding. Confidence in retaining and refining the existing visual identity: 90%.
+
+## Depth and motion pass (September 2026)
+
+Same identity, same content, same one-lamp depth system, turned up.
+
+- **Relief.** The portrait sits on a copper-washed mount that swings the opposite way to the photo. Portrait tilt 4° → 7°, project-card tilt 3° → 6° with a glare that follows the pointer. Buttons, the theme toggle, social links, skill tags, contact rows and company logos are keycaps: a lit top edge, a shaded bottom edge, and they press under the pointer. Timeline dots are beads on a groove; section rules are engraved.
+- **Motion.** One entrance: the name and its lines rise, the ring sweeps round to its resting angle (the lamp switching on), the portrait lifts off its mount. Then only on scroll or pointer: the timeline draws down as the section arrives, each role's key result gets a highlighter sweep, section rules draw in as they cross the viewport (scroll-driven, no observer), the theme icon turns over when changed.
+- **Safety.** Reduced motion, no-JS and print all get the finished state. No new colours or type. No overflow from 320 to 1440px, no console errors.

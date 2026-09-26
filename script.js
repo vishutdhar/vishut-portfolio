@@ -51,6 +51,13 @@ function applyThemeMode(mode) {
     // right from the first frame rather than after this deferred script runs
     html.setAttribute('data-theme-mode', mode);
 
+    // Turn the icon over when the visitor changes it, not on the sync at load.
+    if (themeSynced) {
+        themeToggle.classList.remove('turned');
+        void themeToggle.offsetWidth;
+        themeToggle.classList.add('turned');
+    }
+
     themeToggle.setAttribute('aria-label', THEME_UI[mode].label);
     themeToggle.setAttribute('title', THEME_UI[mode].label);
 
@@ -72,7 +79,9 @@ function currentThemeMode() {
 }
 
 // theme-init.js already set the attributes before paint; sync the toggle UI to them
+var themeSynced = false;
 applyThemeMode(currentThemeMode());
+themeSynced = true;
 
 themeToggle.addEventListener('click', function () {
     var next = THEME_MODES[(THEME_MODES.indexOf(currentThemeMode()) + 1) % THEME_MODES.length];
@@ -447,6 +456,7 @@ function onMediaChange(query, handler) {
 
     var profile = document.querySelector('.hero-profile');
     var frame = document.querySelector('.hero-frame');
+    var name = hero.querySelector('h1');
     var pointerX = 0;
     var pointerY = 0;
     var ticking = false;
@@ -475,10 +485,21 @@ function onMediaChange(query, handler) {
         // carries the tilt, so its own box already reflects what the last
         // frame wrote to it.
         var box = profile ? profile.getBoundingClientRect() : null;
+        var nameBox = name ? name.getBoundingClientRect() : null;
 
-        light.style.setProperty('--mx', (pointerX - rect.left) + 'px');
-        light.style.setProperty('--my', (pointerY - rect.top) + 'px');
+        // Written on the hero, not the glow: the name's sheen and the
+        // portrait mount read the same position, so one write lights all.
+        hero.style.setProperty('--mx', (pointerX - rect.left) + 'px');
+        hero.style.setProperty('--my', (pointerY - rect.top) + 'px');
+        hero.classList.add('lit');
         light.style.opacity = '1';
+
+        // The sheen is a background clipped to the name's own box, so it
+        // takes the pointer in the name's coordinates, not the hero's.
+        if (nameBox) {
+            name.style.setProperty('--nx', (pointerX - nameBox.left) + 'px');
+            name.style.setProperty('--ny', (pointerY - nameBox.top) + 'px');
+        }
 
         if (!box || !frame) return;
 
@@ -528,6 +549,7 @@ function onMediaChange(query, handler) {
         if (e && e.pointerType === 'touch') return;
         inside = false;
         light.style.opacity = '0';
+        hero.classList.remove('lit');
         if (!profile || !frame) return;
         profile.classList.add('settling');
         frame.style.removeProperty('--ring-ang');
