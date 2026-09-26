@@ -15,7 +15,7 @@ A professional portfolio website showcasing my experience as a Senior Supplier Q
 ## Features
 
 - **Responsive Design** - Optimized for desktop, tablet, and mobile
-- **Dark/Light Mode** - Dark by default; the toggle cycles dark, light, and system, and the choice persists
+- **Dark/Light Mode** - Follows the system setting by default; the toggle cycles dark, light, and system, and the choice persists
 - **Smooth Animations** - Scroll-triggered reveals and hover states, with reduced-motion support
 - **Accessibility** - WCAG compliant with ARIA labels, skip-to-content link, keyboard navigation
 - **Performance** - Inline SVG icons (no icon-font CDN), WebP images with JPEG fallback, self-hosted preloaded fonts (no third-party requests)
@@ -40,7 +40,7 @@ A professional portfolio website showcasing my experience as a Senior Supplier Q
 vishut-portfolio/
 ├── index.html               # Main website
 ├── styles.css               # All styling (light/dark themes)
-├── theme-init.js            # Applies the saved theme, or dark, before first paint
+├── theme-init.js            # Applies the saved theme, or the system one, before first paint
 ├── script.js                # All page behavior
 ├── vishut-dhar-headshot.jpg # Profile photo (JPEG fallback)
 ├── vishut-dhar-headshot.webp # Profile photo (WebP)
