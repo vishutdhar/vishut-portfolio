@@ -20,7 +20,7 @@ const TEMPLATE_URL_PATH = '/assets/og/template.html';
 const WIDTH = 1200;
 const HEIGHT = 630;
 // The template's own left and right gutter, reused to check the content fits.
-const MARGIN = 90;
+const MARGIN = 72;
 
 // This repo has no package.json, so Playwright is usually not installed
 // alongside it. Fall back to the global npm root, including one level down,
@@ -82,21 +82,19 @@ function serveRepo() {
     });
 }
 
-// Read the figures the card advertises straight out of the page it advertises,
-// so the two cannot drift apart.
+// Read the name and role the card shows straight out of the page it
+// advertises, so the two cannot drift apart.
 //
 // This hands index.html to a real HTML parser rather than matching it with
 // regexes, so attribute order, extra classes, comments and character references
 // all behave the way a browser says they do. The parsed document is inert: no
-// scripts run and no subresources load, so unlike loading the page for real
-// this returns the authored figures rather than whatever frame the stat
-// animation happens to be on.
+// scripts run and no subresources load.
 function readHeroContent(page) {
     const html = fs.readFileSync(path.join(REPO_ROOT, 'index.html'), 'utf8');
 
     return page.evaluate((src) => {
-        // Labels are matched across two files, so compare them by their visible
-        // text: collapse runs of any whitespace, including non-breaking spaces.
+        // Collapse runs of any whitespace, including non-breaking spaces, so
+        // markup line breaks and nowrap spans do not leak into the card.
         const norm = (text) => text.replace(/\s+/g, ' ').trim();
 
         const doc = new DOMParser().parseFromString(src, 'text/html');
@@ -113,46 +111,21 @@ function readHeroContent(page) {
             return { value };
         };
 
-        const name = only('h1', 'name');
+        const name = only('h1', 'name (h1)');
         if (name.error) return name;
-        const role = only('.hero-title', 'role');
+        const role = only('.hero-role', 'role line (.hero-role)');
         if (role.error) return role;
 
-        // Every stat must sit in its own item with exactly one value and one
-        // label, so a nested or orphaned element cannot be paired up wrongly.
-        const items = [...hero.querySelectorAll('.stat-item')];
-        const totalValues = hero.querySelectorAll('.stat-number').length;
-        const totalLabels = hero.querySelectorAll('.stat-label').length;
-        if (items.length !== 3 || totalValues !== 3 || totalLabels !== 3) {
-            return {
-                error: 'Expected 3 hero stats in index.html, each one value and one label. Found ' +
-                    items.length + ' items, ' + totalValues + ' values, ' + totalLabels + ' labels'
-            };
+        // The card draws the same chart as the page with fixed figures, so
+        // refuse to build if the page's chart no longer says the same thing.
+        const chart = doc.querySelector('#scrap-chart');
+        const chartText = chart ? norm(chart.textContent) : '';
+        const missing = ['5%', '0.5%', '$15 million'].filter(f => !chartText.includes(f));
+        if (missing.length) {
+            return { error: 'The scrap chart in index.html no longer shows ' + missing.join(', ') + '; update the card template to match' };
         }
 
-        const pairs = [];
-        for (const item of items) {
-            const values = item.querySelectorAll('.stat-number');
-            const labels = item.querySelectorAll('.stat-label');
-            if (values.length !== 1 || labels.length !== 1) {
-                return { error: 'A hero stat in index.html does not have exactly one value and one label' };
-            }
-            const value = norm(values[0].textContent);
-            const label = norm(labels[0].textContent);
-            if (!value || !label) {
-                return { error: 'A hero stat in index.html has an empty value or label' };
-            }
-            pairs.push([label, value]);
-        }
-
-        // Distinct labels are checked separately: two stats sharing one would
-        // collapse into a single entry and the survivor would win silently.
-        const labels = pairs.map(p => p[0]);
-        if (new Set(labels).size !== labels.length) {
-            return { error: 'Hero stats in index.html do not have distinct labels: ' + labels.join(', ') };
-        }
-
-        return { value: { name: name.value, role: role.value, stats: Object.fromEntries(pairs) } };
+        return { value: { name: name.value, role: role.value } };
     }, html);
 }
 
@@ -180,62 +153,12 @@ function readHeroContent(page) {
         if (read.error) throw new Error(read.error);
         const content = read.value;
 
-        // The template is checked as strictly as the page was: it has to claim
-        // every hero stat exactly once, or the card can be rendered complete
-        // while quietly missing or repeating a figure.
         const injection = await page.evaluate((c) => {
-            // Normalised the same way the page labels were, so the two sides
-            // match on visible text rather than on incidental whitespace.
-            const norm = (text) => text.replace(/\s+/g, ' ').trim();
-
-            const groups = [...document.querySelectorAll('.stats > div')];
-            const wanted = Object.keys(c.stats);
-
-            if (groups.length !== wanted.length) {
-                return { error: `The card template has ${groups.length} stat slots but the page has ${wanted.length} stats` };
-            }
-
-            const slots = [];
-            for (const group of groups) {
-                const values = group.querySelectorAll('.stat-value');
-                const captions = group.querySelectorAll('.stat-label');
-                if (values.length !== 1 || captions.length !== 1) {
-                    return { error: 'A stat slot in the card template does not have exactly one value and one caption' };
-                }
-                // Writing the figure replaces everything inside the value, so a
-                // caption nested in there would be erased as the card renders.
-                if (values[0].contains(captions[0])) {
-                    return { error: 'A stat caption in the card template sits inside the value and would be overwritten' };
-                }
-
-                const label = norm(values[0].dataset.pageLabel || '');
-                const caption = norm(captions[0].textContent);
-                if (!label) return { error: 'A stat slot in the card template has no data-page-label' };
-                if (!caption) return { error: `The card template caption for "${label}" is empty` };
-                if (!(label in c.stats)) {
-                    return {
-                        error: `index.html has no hero stat labelled "${label}". ` +
-                            `Found: ${wanted.map(l => `"${l}"`).join(', ')}`
-                    };
-                }
-                // The card shortens the page's wording rather than restating it,
-                // so a caption has to be the front of the label it draws from.
-                // Swap two labels and this is what notices.
-                if (!label.toLowerCase().startsWith(caption.toLowerCase())) {
-                    return { error: `The card caption "${caption}" does not match the hero stat "${label}" its figure comes from` };
-                }
-
-                slots.push({ el: values[0], label });
-            }
-
-            const claimed = slots.map(s => s.label);
-            if (new Set(claimed).size !== claimed.length) {
-                return { error: `The card template claims a hero stat twice: ${claimed.join(', ')}` };
-            }
-
-            document.querySelector('.name').textContent = c.name;
-            document.querySelector('.role').textContent = c.role;
-            slots.forEach(({ el, label }) => { el.textContent = c.stats[label]; });
+            const name = document.querySelector('.name');
+            const role = document.querySelector('.role');
+            if (!name || !role) return { error: 'The card template is missing .name or .role' };
+            name.textContent = c.name;
+            role.textContent = c.role;
             return {};
         }, content);
 
@@ -249,7 +172,7 @@ function readHeroContent(page) {
                 headshotLoaded: img.complete && img.naturalWidth > 0,
                 // fonts.status only reports that loading finished, not that it
                 // succeeded, so ask whether each family can actually be used.
-                missingFonts: ['DM Serif Display', 'DM Sans']
+                missingFonts: ['Archivo']
                     .filter(family => !document.fonts.check(`16px "${family}"`))
             };
         });
@@ -260,15 +183,29 @@ function readHeroContent(page) {
             throw new Error(`Fonts unavailable (${ready.missingFonts.join(', ')}); refusing to overwrite the card`);
         }
 
-        // Now that the page's text is in, check it still fits. Copy long enough
-        // to run past the edge would otherwise be cropped silently by the
-        // screenshot, and the card is only ever seen at this fixed size.
+        // Now that the page's text is in, check it still fits. The name, role
+        // and chart share the left column, so they must stop short of the
+        // portrait; the domain must stay inside the card's right margin. Copy
+        // long enough to break either rule would otherwise be cropped or
+        // collide silently, and the card is only ever seen at this size.
         const overflowing = await page.evaluate((margin) => {
-            const limit = document.documentElement.clientWidth - margin;
-            return [...document.querySelectorAll('.name, .role, .stats, .domain')]
-                .map(el => ({ el, right: el.getBoundingClientRect().right }))
-                .filter(({ right }) => right > limit)
-                .map(({ el, right }) => `${el.className.replace('content ', '')} reaches ${Math.round(right)}px, past ${limit}px`);
+            const photoLeft = document.querySelector('.headshot').getBoundingClientRect().left;
+            const columnLimit = photoLeft - 32;
+            const cardLimit = document.documentElement.clientWidth - margin;
+            const checks = [
+                ...[...document.querySelectorAll('.name, .role, .chart, .result')].map(el => ({ el, limit: columnLimit })),
+                { el: document.querySelector('.domain'), limit: cardLimit }
+            ];
+            return checks
+                .map(({ el, limit }) => {
+                    // Measure the text itself: .role is a fixed-width box, so its
+                    // own rectangle would never report a line running long.
+                    const range = document.createRange();
+                    range.selectNodeContents(el);
+                    return { el, limit, right: range.getBoundingClientRect().right };
+                })
+                .filter(({ right, limit }) => right > limit)
+                .map(({ el, right, limit }) => `${el.className} reaches ${Math.round(right)}px, past ${Math.round(limit)}px`);
         }, MARGIN);
 
         if (overflowing.length) {
@@ -291,8 +228,7 @@ function readHeroContent(page) {
             }
         }
 
-        const summary = Object.entries(content.stats).map(([label, value]) => `${value} ${label}`).join(', ');
-        console.log(`Wrote ${OUTPUT} (${WIDTH}x${HEIGHT}) with ${summary}`);
+        console.log(`Wrote ${OUTPUT} (${WIDTH}x${HEIGHT}) for "${content.name}", "${content.role}"`);
     } finally {
         // Shutting down must not throw over the failure that brought us here,
         // and the server has to close even if the browser will not.

@@ -14,7 +14,17 @@
     }
     if (el && et) {
         el.href = 'mailto:' + email;
-        et.textContent = email;
+        // If the address ever has to wrap, it breaks before the @ rather
+        // than leaving "com" on a line of its own.
+        var at = email.indexOf('@');
+        et.textContent = email.slice(0, at);
+        et.appendChild(document.createElement('wbr'));
+        et.appendChild(document.createTextNode(email.slice(at)));
+    }
+    // Printed copies hide the Email me button, so spell the address out.
+    var pe = document.getElementById('print-email');
+    if (pe) {
+        pe.textContent = email;
     }
     // Secondary email calls to action fall back to #contact without script.
     document.querySelectorAll('.js-email-link').forEach(function (link) {
@@ -22,23 +32,23 @@
     });
 })();
 
-// Theme toggle. Cycles dark -> light -> system -> dark.
-// The site is dark by default; 'system' is an opt-in the visitor selects,
+// Theme toggle. Cycles light -> dark -> system -> light.
+// The site is light by default; 'system' is an opt-in the visitor selects,
 // not the fallback. See theme-init.js for the pre-paint half of this.
 var themeToggle = document.getElementById('themeToggle');
 var html = document.documentElement;
 var prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
 var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-var THEME_MODES = ['dark', 'light', 'system'];
-var THEME_BAR = { dark: '#0F0F0E', light: '#FAFAF8' };
+var THEME_MODES = ['light', 'dark', 'system'];
+var THEME_BAR = { light: '#F2F4F3', dark: '#16212A' };
 
 // The button shows the mode it is currently in and names the mode one press
 // away, because no single icon can imply the next state in a three-way cycle.
 var THEME_UI = {
-    dark: { label: 'Theme: dark. Switch to light theme.' },
-    light: { label: 'Theme: light. Switch to system theme.' },
-    system: { label: 'Theme: system. Switch to dark theme.' }
+    light: { label: 'Theme: light. Switch to dark theme.' },
+    dark: { label: 'Theme: dark. Switch to system theme.' },
+    system: { label: 'Theme: system. Switch to light theme.' }
 };
 
 function resolveTheme(mode) {
@@ -66,13 +76,13 @@ function applyThemeMode(mode) {
 
 // theme-init.js normally leaves the mode on the root element. If it was
 // blocked or failed to load, fall back to storage rather than silently
-// forcing dark on someone who saved light or system.
+// forcing light on someone who saved dark or system.
 function currentThemeMode() {
     var mode = html.getAttribute('data-theme-mode');
     if (THEME_MODES.indexOf(mode) === -1) {
         try { mode = localStorage.getItem('theme'); } catch (e) { mode = null; }
     }
-    return THEME_MODES.indexOf(mode) === -1 ? 'dark' : mode;
+    return THEME_MODES.indexOf(mode) === -1 ? 'light' : mode;
 }
 
 // theme-init.js already set the attributes before paint; sync the toggle UI to them
@@ -98,6 +108,27 @@ if (typeof prefersDark.addEventListener === 'function') {
     prefersDark.addListener(onSystemThemeChange);
 }
 
+// A "Recommended by" link lands on one quote among eight. Mark it so the
+// eye finds it. The stylesheet uses :target only when script is off, because
+// pushState does not update :target and a stale one would leave two bars.
+function markVoice(target) {
+    document.querySelectorAll('figure.voice.is-target').forEach(function (v) {
+        v.classList.remove('is-target');
+    });
+    if (target && target.matches('figure.voice')) {
+        target.classList.add('is-target');
+    }
+}
+
+// A direct link to a quote (/#voice-suggs) still gets its bar.
+(function () {
+    var h = window.location.hash.slice(1);
+    if (h) {
+        try { h = decodeURIComponent(h); } catch (e) {}
+        markVoice(document.getElementById(h));
+    }
+})();
+
 // Smooth scrolling for navigation links.
 // preventDefault suppresses the browser's own hash update, so push it back on
 // afterwards: without this the address bar never changes and Back leaves the
@@ -118,6 +149,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
         if (window.history && window.history.pushState && window.location.hash !== href) {
             window.history.pushState(null, '', href);
         }
+        markVoice(target);
         target.scrollIntoView({ behavior: prefersReducedMotion.matches ? 'auto' : 'smooth' });
         target.focus({ preventScroll: true });
     });
@@ -143,19 +175,19 @@ window.addEventListener('popstate', function () {
     // Only the page's own landmarks are focus destinations. A fragment can
     // name any element, and moving focus to something like the theme toggle
     // because a URL said so is not what "go back to that section" means.
-    if (target && !target.matches('section[id], main[id]')) {
+    if (target && !target.matches('section[id], main[id], #education, figure.voice[id], li.role[id]')) {
         target = null;
     }
 
     // Focus synchronously. Deferring this to measure what the restored
-    // viewport shows means racing the browser's scroll animation, which
-    // html's scroll-behavior: smooth turns into a several-hundred-millisecond
-    // affair: overlapping Back presses queue stale callbacks, and anything the
+    // viewport shows means racing the browser's scroll restoration:
+    // overlapping Back presses queue stale callbacks, and anything the
     // visitor focuses meanwhile gets overridden. A deterministic move to the
     // section the URL now names is worth more than a conditional one, even
     // though a visitor who had scrolled away from that section lands with its
     // start above the viewport.
     // preventScroll leaves the browser's own restoration alone.
+    markVoice(target);
     if (target) {
         target.focus({ preventScroll: true });
     } else if (document.activeElement && document.activeElement !== document.body) {
@@ -171,6 +203,7 @@ function setMobileMenu(open) {
     mobileMenuToggle.classList.toggle('active', open);
     navLinks.classList.toggle('active', open);
     mobileMenuToggle.setAttribute('aria-expanded', open);
+    mobileMenuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
 }
 
 mobileMenuToggle.addEventListener('click', function () {
@@ -202,8 +235,22 @@ document.addEventListener('keydown', function (e) {
     }
 });
 
+// The veil under the open panel belongs to the list itself, so a click that
+// lands on the list (not on one of its links) is a click outside the menu.
 document.addEventListener('click', function (e) {
-    if (navLinks.classList.contains('active') && !e.target.closest('nav')) {
+    if (navLinks.classList.contains('active') && (!e.target.closest('nav') || e.target === navLinks)) {
+        setMobileMenu(false);
+    }
+});
+
+// Tabbing out of the nav closes the menu, so the open panel never sits over
+// whatever the visitor has moved on to.
+var menuNav = document.querySelector('nav');
+menuNav.addEventListener('focusout', function (e) {
+    // Only when focus actually lands somewhere else: a tap on the menu button
+    // in Safari blurs the link without focusing anything (relatedTarget is
+    // null), and closing here would let that same tap reopen the menu.
+    if (navLinks.classList.contains('active') && e.relatedTarget && !menuNav.contains(e.relatedTarget)) {
         setMobileMenu(false);
     }
 });
@@ -226,10 +273,8 @@ if (typeof mobileMenuQuery.addEventListener === 'function') {
     mobileMenuQuery.addListener(onMobileMenuBreakpoint);
 }
 
-// Navigation state, scroll progress, and back-to-top visibility share one frame.
+// Navigation state: the active section link and the nav's bottom rule.
 var nav = document.querySelector('nav');
-var scrollProgress = document.getElementById('scrollProgress');
-var backToTopButton = document.getElementById('backToTop');
 var navLinkElements = document.querySelectorAll('.nav-links a');
 var navSections = document.querySelectorAll('main > section[id]');
 var scrollTicking = false;
@@ -251,14 +296,18 @@ function updateScrollUI() {
     }
     // Sections without their own navigation item select the nearest one.
     if (activeId === 'apps') activeId = 'about';
-    if (activeId === 'testimonials') activeId = 'experience';
     navLinkElements.forEach(function (link) {
-        link.classList.toggle('active', link.getAttribute('href') === '#' + activeId);
+        var on = link.getAttribute('href') === '#' + activeId;
+        link.classList.toggle('active', on);
+        if (on) {
+            link.setAttribute('aria-current', 'true');
+        } else {
+            link.removeAttribute('aria-current');
+        }
     });
-    nav.classList.toggle('scrolled', y > 50);
-    var progress = maxScroll > 0 ? Math.min(Math.max(y / maxScroll, 0), 1) : 0;
-    scrollProgress.style.transform = 'scaleX(' + progress + ')';
-    backToTopButton.classList.toggle('visible', y > 500);
+    if (nav) {
+        nav.classList.toggle('scrolled', y > 8);
+    }
 }
 
 function scheduleScrollUI() {
@@ -271,58 +320,40 @@ window.addEventListener('scroll', scheduleScrollUI, { passive: true });
 window.addEventListener('resize', scheduleScrollUI);
 updateScrollUI();
 
-// Back to top button click handler
-backToTopButton.addEventListener('click', function () {
-    window.scrollTo({
-        top: 0,
-        behavior: prefersReducedMotion.matches ? 'auto' : 'smooth'
-    });
-});
-
-// Scroll Reveal Animation.
-//
-// threshold: 0, not a fraction. These targets are whole sections, and a
-// section can be many times the height of the phone reading it: on a 320x568
-// screen the experience list is 8,000px tall, so no more than 6.6% of it can
-// ever be on screen at once. Any fractional threshold is therefore a height
-// limit in disguise -- ask for 10% and every section taller than ten viewports
-// stays at opacity 0 for the whole visit, with no error and nothing to see.
-// The experience section was already over that line, and the testimonials were
-// 0.16 of a percentage point from it.
-//
-// Intersecting at all is the honest question, and rootMargin still holds the
-// reveal until the section is 20px onto the screen.
-var revealObserver = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('active');
-        }
-    });
-}, {
-    threshold: 0,
-    rootMargin: '0px 0px -20px 0px'
-});
-
-// Add reveal class to sections and observe them
-document.querySelectorAll('section:not(#home)').forEach(function (section) {
-    section.classList.add('reveal');
-    revealObserver.observe(section);
-});
-
-// Add stagger animation to grids
-document.querySelectorAll('.impact-grid, .education-grid, .testimonials-grid, .skills-section, .apps-grid').forEach(function (grid) {
-    grid.classList.add('stagger-children');
-    revealObserver.observe(grid);
-});
-
-// Add reveal to experience items, staggered within each company
-document.querySelectorAll('.roles').forEach(function (roles) {
-    Array.prototype.forEach.call(roles.children, function (item, index) {
-        item.classList.add('reveal');
-        item.style.transitionDelay = (index * 0.12) + 's';
-        revealObserver.observe(item);
-    });
-});
+// The scrap chart draws once, the first time most of its plot is on screen.
+// The plot, not the x-axis: on a 1366x768 laptop or a phone the axis sits
+// right at the foot of the first screen, and waiting for it left the frame
+// empty until the visitor scrolled.
+// theme-init.js armed it (unless reduced motion is on) and will disarm it
+// after 3s unless this script reports in, so a blocked script can never
+// leave the chart blank. Without the arm, or without IntersectionObserver,
+// the chart is simply shown finished.
+(function () {
+    var root = document.documentElement;
+    root.setAttribute('data-chart-observed', '');
+    var chart = document.getElementById('scrap-chart');
+    var plot = chart ? chart.querySelector('.sc-plot') : null;
+    if (!chart || !plot) return;
+    if (!root.classList.contains('chart-armed') || !('IntersectionObserver' in window)) {
+        chart.classList.add('is-drawn');
+        return;
+    }
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                observer.unobserve(entry.target);
+                // Two frames, so the undrawn state has been painted at least
+                // once and the transition has something to run from.
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () {
+                        chart.classList.add('is-drawn');
+                    });
+                });
+            }
+        });
+    }, { threshold: 0.6 });
+    observer.observe(plot);
+})();
 
 // Paper has no "show more": expand every collapsed role for printing and
 // put back only the ones the visitor had closed.
@@ -338,249 +369,5 @@ document.querySelectorAll('.roles').forEach(function (roles) {
     window.addEventListener('afterprint', function () {
         reopened.forEach(function (d) { d.open = false; });
         reopened = [];
-    });
-})();
-
-// Matches the number inside a stat, keeping whatever wraps it ($, %, +).
-var STAT_NUMBER = /-?\d+(?:\.\d+)?/;
-
-// Animate a statistic from start to end, rebuilding the element's text each
-// frame from the markup's own prefix, suffix, and decimal places so the last
-// frame lands exactly on the value the page was authored with.
-function animateValue(element, start, end, duration) {
-    var text = element.textContent;
-    var match = text.match(STAT_NUMBER);
-    if (!match) return;
-
-    var prefix = text.slice(0, match.index);
-    var suffix = text.slice(match.index + match[0].length);
-    // Capped at 20: a double carries no meaningful precision past that, and
-    // toFixed throws once asked for more than 100.
-    var decimals = Math.min((match[0].split('.')[1] || '').length, 20);
-
-    var startTimestamp = null;
-    var step = function (timestamp) {
-        if (!startTimestamp) startTimestamp = timestamp;
-        var progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        var value = progress * (end - start) + start;
-
-        element.textContent = prefix + value.toFixed(decimals) + suffix;
-
-        if (progress < 1) {
-            window.requestAnimationFrame(step);
-        }
-    };
-    window.requestAnimationFrame(step);
-}
-
-// Create observer for stats; skip the count-up entirely under reduced motion
-// (the markup already contains the final values)
-var statsObserver = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-        if (entry.isIntersecting && !entry.target.dataset.animated) {
-            entry.target.dataset.animated = 'true';
-            if (prefersReducedMotion.matches) return;
-            var statNumbers = entry.target.querySelectorAll('.stat-number');
-            statNumbers.forEach(function (stat) {
-                var match = stat.textContent.match(STAT_NUMBER);
-                if (!match) return;
-                // Stats count up from zero unless the markup names a starting
-                // value, which the scrap rate does so it counts down instead.
-                var from = parseFloat(stat.dataset.countFrom);
-                animateValue(stat, isFinite(from) ? from : 0, parseFloat(match[0]), 800);
-            });
-        }
-    });
-}, { threshold: 0 });
-
-// Observe hero stats
-var heroStats = document.querySelector('.hero-stats');
-if (heroStats) {
-    statsObserver.observe(heroStats);
-}
-
-// Pointer offsets are held to -1..1 so the tilt ceilings in the stylesheet
-// mean what they say: whatever produces the numbers, the rotation they drive
-// cannot exceed the degrees the rule multiplies them by.
-function clampUnit(n) {
-    return n < -1 ? -1 : (n > 1 ? 1 : n);
-}
-
-// Older Safari only implements addListener on MediaQueryList
-function onMediaChange(query, handler) {
-    if (typeof query.addEventListener === 'function') {
-        query.addEventListener('change', handler);
-    } else if (typeof query.addListener === 'function') {
-        query.addListener(handler);
-    }
-}
-
-// Hero lighting: the glow on the page, the lit arc of the ring around the
-// portrait, and the portrait's own tilt are all the same light source, so one
-// listener and one frame produce all three. Idle cost is nil -- nothing here
-// runs until a pointer moves, and nothing schedules a frame after it leaves.
-(function () {
-    var hero = document.querySelector('.hero');
-    var light = document.querySelector('.cursor-light');
-    if (!hero || !light) return;
-
-    // Both of these can change with the page already open: a tablet gains a
-    // mouse, a visitor turns motion down. Neither is settled once at startup.
-    // The pointer question decides whether the listeners exist at all, which
-    // keeps them off touch devices entirely rather than firing on every
-    // finger-drag only to return; the motion question is asked inside them.
-    //
-    // any-hover and any-pointer, not the unprefixed pair: those two describe
-    // only the primary input, and a tablet with a mouse attached still calls
-    // its touchscreen primary. Asking whether the visitor has anything that
-    // can hover is the real question, and the handlers filter out fingers
-    // themselves, so a device that has both is served correctly either way.
-    var cursor = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');
-    var listening = false;
-
-    var profile = document.querySelector('.hero-profile');
-    var frame = document.querySelector('.hero-frame');
-    var pointerX = 0;
-    var pointerY = 0;
-    var ticking = false;
-    var inside = false;
-
-    function paint() {
-        ticking = false;
-        // A move and the leave that follows it are dispatched before the frame
-        // they scheduled. Without this the queued frame would write the
-        // pointer's last position back over everything the leave just cleared,
-        // and the portrait would stay lit and tilted with nothing on it.
-        if (!inside) return;
-        // The preference can be turned on with the page already open. The
-        // stylesheet stops the tilt on its own, but the ring's lit arc is not
-        // behind a media query -- it has to render at rest with or without a
-        // pointer -- so only this check stops it still following the cursor.
-        if (prefersReducedMotion.matches) {
-            rest();
-            return;
-        }
-
-        // Both measurements before any write: reading a box after touching a
-        // style forces the pending recalculation to flush mid-frame.
-        var rect = hero.getBoundingClientRect();
-        // Measure the wrapper rather than the frame inside it: the frame
-        // carries the tilt, so its own box already reflects what the last
-        // frame wrote to it.
-        var box = profile ? profile.getBoundingClientRect() : null;
-
-        light.style.setProperty('--mx', (pointerX - rect.left) + 'px');
-        light.style.setProperty('--my', (pointerY - rect.top) + 'px');
-        light.style.opacity = '1';
-
-        if (!box || !frame) return;
-
-        // Dropped here rather than in the listener so that every style write
-        // this feature makes happens inside the frame it was scheduled for.
-        if (profile.classList.contains('settling')) {
-            profile.classList.remove('settling');
-        }
-
-        var dx = pointerX - (box.left + box.width / 2);
-        var dy = pointerY - (box.top + box.height / 2);
-
-        // Conic angles run clockwise from twelve o'clock, which puts the lit
-        // arc on whichever side of the portrait the pointer is on.
-        var angle = Math.atan2(dx, -dy) * 180 / Math.PI;
-        // Fold into the half turn either side of the 315deg resting angle.
-        // Written once per frame with no transition behind it the fold is
-        // invisible; what it buys is a settle that can never unwind a whole
-        // rotation on the way back to rest.
-        angle = ((angle - 135) % 360 + 360) % 360 + 135;
-        frame.style.setProperty('--ring-ang', angle.toFixed(1) + 'deg');
-
-        // Normalised against the hero, not the portrait, so the tilt opens up
-        // gradually across the whole section instead of pinning to its limit
-        // the moment the pointer clears the photo.
-        frame.style.setProperty('--fx', clampUnit(dx / (rect.width / 2)).toFixed(3));
-        frame.style.setProperty('--fy', clampUnit(dy / (rect.height / 2)).toFixed(3));
-    }
-
-    function schedule() {
-        if (!ticking) {
-            ticking = true;
-            window.requestAnimationFrame(paint);
-        }
-    }
-
-    // Hand everything back to the stylesheet: glow out, properties gone, and
-    // the longer transition in force so the arc eases to 315deg rather than
-    // jumping there. Landing the class and the removals in one style
-    // recalculation is what makes that transition apply.
-    // The event argument is optional: this is also the way the feature stands
-    // down when a preference or a capability changes. When there is one, a
-    // touch pointer leaving is not the cursor leaving -- a finger scrolling
-    // past sends its own pointerleave, and acting on it would put out a light
-    // the mouse is still holding.
-    function rest(e) {
-        if (e && e.pointerType === 'touch') return;
-        inside = false;
-        light.style.opacity = '0';
-        if (!profile || !frame) return;
-        profile.classList.add('settling');
-        frame.style.removeProperty('--ring-ang');
-        frame.style.removeProperty('--fx');
-        frame.style.removeProperty('--fy');
-    }
-
-    function track(e) {
-        // A laptop with a touchscreen reports a fine pointer and a hovering
-        // one, both true, and still sends finger events to these handlers. A
-        // finger is not a cursor -- it has no position between contacts -- so
-        // letting one drive a light that is meant to sit where the cursor is
-        // would light the portrait for a scroll gesture. Pens pass: a stylus
-        // that hovers is a cursor.
-        if (e.pointerType === 'touch') return;
-        if (prefersReducedMotion.matches) return;
-        pointerX = e.clientX;
-        pointerY = e.clientY;
-        inside = true;
-        schedule();
-    }
-
-    // Scrolling moves the portrait without moving the pointer, and no
-    // pointermove is sent for it. The pointer's viewport coordinates are still
-    // correct, so re-measuring against the new position is all it takes to
-    // keep the light where the cursor actually is; without this the glow
-    // slides away from the cursor and the lit arc aims at where it used to be.
-    function onScroll() {
-        if (inside) {
-            schedule();
-        }
-    }
-
-    // pointerover as well as pointermove: scrolling can carry the hero up to a
-    // cursor that never moved, and the browser announces that with boundary
-    // events only. Waiting for a move would leave the glow off under a pointer
-    // that is plainly sitting on the section.
-    function sync() {
-        var wanted = cursor.matches;
-        if (wanted === listening) return;
-        listening = wanted;
-        var bind = wanted ? 'addEventListener' : 'removeEventListener';
-        hero[bind]('pointerover', track);
-        hero[bind]('pointermove', track);
-        hero[bind]('pointerleave', rest);
-        window[bind]('scroll', onScroll, { passive: true });
-        if (!wanted) {
-            rest();
-        }
-    }
-
-    sync();
-    onMediaChange(cursor, sync);
-
-    // Turning the preference on mid-visit puts the portrait back at rest
-    // straight away, rather than at whatever angle the next pointer move
-    // happens to notice it at.
-    onMediaChange(prefersReducedMotion, function () {
-        if (prefersReducedMotion.matches) {
-            rest();
-        }
     });
 })();
