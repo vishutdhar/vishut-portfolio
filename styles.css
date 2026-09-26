@@ -1356,9 +1356,10 @@ footer {
         top: 100%;
         left: 0;
         right: 0;
-        background: var(--nav-bg);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        /* Solid, not the translucent nav tint: the dropdown sits over the
+           portrait on phones, and iOS does not blur behind it. */
+        background: var(--bg-primary);
+        box-shadow: 0 20px 40px var(--cast-color);
         flex-direction: column;
         align-items: stretch;
         gap: 0;
