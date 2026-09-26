@@ -310,8 +310,10 @@ backToTopButton.addEventListener('click', function () {
 // The experience section was already over that line, and the testimonials were
 // 0.16 of a percentage point from it.
 //
-// Intersecting at all is the honest question, and rootMargin still holds the
-// reveal until the section is 20px onto the screen.
+// Intersecting at all is the honest question. The root is extended 15% of
+// the viewport below the fold so the fade starts before the content arrives:
+// a phone flick moves more than a screen in the time the fade takes, and a
+// reveal that only starts on entry leaves the reader looking at blank space.
 var revealObserver = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
         if (entry.isIntersecting) {
@@ -320,7 +322,7 @@ var revealObserver = new IntersectionObserver(function (entries) {
     });
 }, {
     threshold: 0,
-    rootMargin: '0px 0px -20px 0px'
+    rootMargin: '0px 0px 15% 0px'
 });
 
 // Add reveal class to sections and observe them
@@ -335,10 +337,11 @@ document.querySelectorAll('.projects-grid, .education-grid, .testimonials-grid, 
     revealObserver.observe(grid);
 });
 
-// Add reveal to experience items
-document.querySelectorAll('.experience-item').forEach(function (item, index) {
+// Add reveal to experience items. Each item is observed on its own and
+// enters when it reaches the screen, so no stagger by index: that delay
+// would apply to the last item even when it is the only one arriving.
+document.querySelectorAll('.experience-item').forEach(function (item) {
     item.classList.add('reveal');
-    item.style.transitionDelay = (index * 0.15) + 's';
     revealObserver.observe(item);
 });
 
