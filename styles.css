@@ -1374,7 +1374,6 @@ footer {
     .nav-links a { display: block; padding: 0.75rem 0; }
     .nav-links li { border-bottom: 1px solid var(--border); }
     .nav-links li:last-child { border-bottom: none; padding-top: 0.75rem; }
-    .nav-links .nav-contact { padding: 0.65rem 1rem; }
     .hero-grid { gap: 2.5rem; }
     .hero h1 { font-size: clamp(3rem, 6.5vw, 4.5rem); }
     .about-content { gap: 2.5rem; }
@@ -1876,11 +1875,32 @@ a.app-card {
         2px 4px 10px var(--cast-color);
 }
 
+/* In the phone menu Contact is a row like the other three, not a button. */
 @media screen and (max-width: 960px) {
-    .nav-links a.nav-contact {
-        display: flex;
-        width: 100%;
-        margin-top: 0.5rem;
+    .nav-links a.nav-contact,
+    .nav-links a.nav-contact:hover,
+    .nav-links a.nav-contact:active {
+        display: block;
+        min-height: 0;
+        padding: 0.75rem 0;
+        background: none;
+        color: var(--text-secondary);
+        border-radius: 0;
+        box-shadow: none;
+        transform: none;
+    }
+
+    .nav-links a.nav-contact:hover,
+    .nav-links a.nav-contact.active {
+        color: var(--text-primary);
+    }
+
+    .nav-links a.nav-contact::after {
+        display: block;
+    }
+
+    .nav-links li:last-child {
+        padding-top: 0;
     }
 }
 
