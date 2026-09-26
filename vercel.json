@@ -56,6 +56,19 @@
                     "value": "noindex"
                 }
             ]
+        },
+        {
+            "source": "/041fd0a88c5fc958e3f01219ed9b753c.txt",
+            "headers": [
+                {
+                    "key": "X-Robots-Tag",
+                    "value": "noindex"
+                },
+                {
+                    "key": "Cache-Control",
+                    "value": "no-cache"
+                }
+            ]
         }
     ]
 }
