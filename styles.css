@@ -2009,9 +2009,17 @@ div.contact-item {
     }
 }
 
-@media screen and (max-width: 640px) {
+/* The mount only pays off when a pointer can swing it. On touch and on
+   narrow screens it reads as a misaligned second photo, so the portrait
+   stands alone there, with a single soft cast shadow and the ring sweep as
+   its entrance. */
+@media (hover: none), screen and (max-width: 640px) {
     .hero-frame::before {
-        transform: translate(8px, 10px) rotate(1.5deg);
+        display: none;
+    }
+
+    .hero-frame {
+        box-shadow: 4px 12px 28px var(--cast-color);
     }
 }
 
