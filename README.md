@@ -25,7 +25,7 @@ A professional portfolio website showcasing my experience as a Senior Supplier Q
 
 ## Sections
 
-- **Hero** - Introduction with key metrics
+- **Hero** - Name, role at GM, and the one-line approach; no stat strip
 - **About** - Professional summary and skills
 - **Experience** - Work history with accomplishments and company logo marks (GM, Continental)
 - **Projects** - Major achievements including $15M cost savings
