@@ -81,36 +81,24 @@ body {
 }
 
 .role {
-    top: 281px;
-    font-size: 26px;
+    top: 275px;
+    max-width: 640px;
+    white-space: normal;
+    line-height: 1.35;
+    font-size: 20px;
     font-weight: 400;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--text-secondary);
 }
 
-.stats {
-    top: 361px;
-    display: flex;
-    gap: 60px;
-    align-items: flex-start;
-}
-
-.stat-value {
+.lede {
+    top: 372px;
+    max-width: 640px;
     font-family: 'DM Serif Display', serif;
-    font-size: 53px;
-    line-height: 1;
-    color: var(--accent);
-}
-
-.stat-label {
-    margin-top: 6px;
-    font-size: 16.5px;
-    font-weight: 400;
-    letter-spacing: 1.19px;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-    white-space: nowrap;
+    font-size: 34px;
+    line-height: 1.3;
+    color: var(--text-primary);
 }
 
 .domain {
@@ -138,20 +126,7 @@ body {
       caption. The captions below stay short because the page spells them out
       at widths this layout has no room for.
     -->
-    <div class="content stats">
-        <div>
-            <div class="stat-value" data-page-label="Years experience">8+</div>
-            <div class="stat-label">Years Experience</div>
-        </div>
-        <div>
-            <div class="stat-value" data-page-label="Annual savings">$15M</div>
-            <div class="stat-label">Annual Savings</div>
-        </div>
-        <div>
-            <div class="stat-value" data-page-label="16949 Lead Auditor">IATF</div>
-            <div class="stat-label">16949 Lead Auditor</div>
-        </div>
-    </div>
+    <div class="content lede"></div>
 
     <div class="domain">vishutdhar.com</div>
 </body>

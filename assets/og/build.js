@@ -118,41 +118,10 @@ function readHeroContent(page) {
         const role = only('.hero-title', 'role');
         if (role.error) return role;
 
-        // Every stat must sit in its own item with exactly one value and one
-        // label, so a nested or orphaned element cannot be paired up wrongly.
-        const items = [...hero.querySelectorAll('.stat-item')];
-        const totalValues = hero.querySelectorAll('.stat-number').length;
-        const totalLabels = hero.querySelectorAll('.stat-label').length;
-        if (items.length !== 3 || totalValues !== 3 || totalLabels !== 3) {
-            return {
-                error: 'Expected 3 hero stats in index.html, each one value and one label. Found ' +
-                    items.length + ' items, ' + totalValues + ' values, ' + totalLabels + ' labels'
-            };
-        }
+        const lede = only('.hero-lede', 'lede');
+        if (lede.error) return lede;
 
-        const pairs = [];
-        for (const item of items) {
-            const values = item.querySelectorAll('.stat-number');
-            const labels = item.querySelectorAll('.stat-label');
-            if (values.length !== 1 || labels.length !== 1) {
-                return { error: 'A hero stat in index.html does not have exactly one value and one label' };
-            }
-            const value = norm(values[0].textContent);
-            const label = norm(labels[0].textContent);
-            if (!value || !label) {
-                return { error: 'A hero stat in index.html has an empty value or label' };
-            }
-            pairs.push([label, value]);
-        }
-
-        // Distinct labels are checked separately: two stats sharing one would
-        // collapse into a single entry and the survivor would win silently.
-        const labels = pairs.map(p => p[0]);
-        if (new Set(labels).size !== labels.length) {
-            return { error: 'Hero stats in index.html do not have distinct labels: ' + labels.join(', ') };
-        }
-
-        return { value: { name: name.value, role: role.value, stats: Object.fromEntries(pairs) } };
+        return { value: { name: name.value, role: role.value, lede: lede.value } };
     }, html);
 }
 
@@ -180,62 +149,13 @@ function readHeroContent(page) {
         if (read.error) throw new Error(read.error);
         const content = read.value;
 
-        // The template is checked as strictly as the page was: it has to claim
-        // every hero stat exactly once, or the card can be rendered complete
-        // while quietly missing or repeating a figure.
+        // The card carries the page's own sentence, so the two cannot drift.
         const injection = await page.evaluate((c) => {
-            // Normalised the same way the page labels were, so the two sides
-            // match on visible text rather than on incidental whitespace.
-            const norm = (text) => text.replace(/\s+/g, ' ').trim();
-
-            const groups = [...document.querySelectorAll('.stats > div')];
-            const wanted = Object.keys(c.stats);
-
-            if (groups.length !== wanted.length) {
-                return { error: `The card template has ${groups.length} stat slots but the page has ${wanted.length} stats` };
-            }
-
-            const slots = [];
-            for (const group of groups) {
-                const values = group.querySelectorAll('.stat-value');
-                const captions = group.querySelectorAll('.stat-label');
-                if (values.length !== 1 || captions.length !== 1) {
-                    return { error: 'A stat slot in the card template does not have exactly one value and one caption' };
-                }
-                // Writing the figure replaces everything inside the value, so a
-                // caption nested in there would be erased as the card renders.
-                if (values[0].contains(captions[0])) {
-                    return { error: 'A stat caption in the card template sits inside the value and would be overwritten' };
-                }
-
-                const label = norm(values[0].dataset.pageLabel || '');
-                const caption = norm(captions[0].textContent);
-                if (!label) return { error: 'A stat slot in the card template has no data-page-label' };
-                if (!caption) return { error: `The card template caption for "${label}" is empty` };
-                if (!(label in c.stats)) {
-                    return {
-                        error: `index.html has no hero stat labelled "${label}". ` +
-                            `Found: ${wanted.map(l => `"${l}"`).join(', ')}`
-                    };
-                }
-                // The card shortens the page's wording rather than restating it,
-                // so a caption has to be the front of the label it draws from.
-                // Swap two labels and this is what notices.
-                if (!label.toLowerCase().startsWith(caption.toLowerCase())) {
-                    return { error: `The card caption "${caption}" does not match the hero stat "${label}" its figure comes from` };
-                }
-
-                slots.push({ el: values[0], label });
-            }
-
-            const claimed = slots.map(s => s.label);
-            if (new Set(claimed).size !== claimed.length) {
-                return { error: `The card template claims a hero stat twice: ${claimed.join(', ')}` };
-            }
-
+            const lede = document.querySelector('.lede');
+            if (!lede) return { error: 'The card template has no .lede slot' };
             document.querySelector('.name').textContent = c.name;
             document.querySelector('.role').textContent = c.role;
-            slots.forEach(({ el, label }) => { el.textContent = c.stats[label]; });
+            lede.textContent = c.lede;
             return {};
         }, content);
 
@@ -265,7 +185,7 @@ function readHeroContent(page) {
         // screenshot, and the card is only ever seen at this fixed size.
         const overflowing = await page.evaluate((margin) => {
             const limit = document.documentElement.clientWidth - margin;
-            return [...document.querySelectorAll('.name, .role, .stats, .domain')]
+            return [...document.querySelectorAll('.name, .role, .lede, .domain')]
                 .map(el => ({ el, right: el.getBoundingClientRect().right }))
                 .filter(({ right }) => right > limit)
                 .map(({ el, right }) => `${el.className.replace('content ', '')} reaches ${Math.round(right)}px, past ${limit}px`);
@@ -291,7 +211,7 @@ function readHeroContent(page) {
             }
         }
 
-        const summary = Object.entries(content.stats).map(([label, value]) => `${value} ${label}`).join(', ');
+        const summary = content.lede;
         console.log(`Wrote ${OUTPUT} (${WIDTH}x${HEIGHT}) with ${summary}`);
     } finally {
         // Shutting down must not throw over the failure that brought us here,

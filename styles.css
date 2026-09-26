@@ -431,9 +431,27 @@ nav.scrolled {
 
 .hero-title {
     font-size: 1.15rem;
-    color: var(--text-secondary);
-    font-weight: 400;
-    margin-bottom: 2.5rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    margin-bottom: 0.35rem;
+}
+
+.hero-domain {
+    font-size: 0.95rem;
+    color: var(--text-tertiary);
+    margin-bottom: 2rem;
+}
+
+/* The one sentence the page is built around: set as a statement, not a
+   strapline, and given the reading measure a sentence needs. */
+.hero-lede {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+    line-height: 1.35;
+    color: var(--text-primary);
+    max-width: 22ch;
+    margin-bottom: 2.25rem;
+    text-wrap: balance;
 }
 
 /* Three metrics share one compact row, including on phones. */
@@ -1439,7 +1457,9 @@ footer {
     .hero-frame { margin: 0; }
     .hero-profile img { max-width: 128px; }
     .hero h1 { font-size: clamp(2.65rem, 11vw, 3.8rem); margin-bottom: 0.75rem; }
-    .hero-title { font-size: 1rem; margin-bottom: 1.5rem; max-width: 30ch; }
+    .hero-title { font-size: 1rem; max-width: 30ch; }
+    .hero-domain { margin-bottom: 1.5rem; }
+    .hero-lede { margin-bottom: 1.75rem; }
     .hero-stats { gap: 0.65rem; padding-top: 1.25rem; margin-bottom: 1.5rem; }
     .stat-number { font-size: clamp(1.85rem, 7.5vw, 2.4rem); }
     .stat-label { font-size: 0.75rem; }
