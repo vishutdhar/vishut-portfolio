@@ -57,7 +57,7 @@ The existing palette and font pairing are deliberate continuity choices. Avoid a
 
 **Specification:** “fix the UI,” and decide whether to keep the current UI or completely overhaul it.
 
-**What was built:** A refinement of the existing charcoal and copper identity. The opening screen has a larger name, a smaller portrait, and three compact metrics. Both main actions fit within the first phone screen. Navigation has four primary choices and a home link. About uses one introduction and a separate skill list. Experience reads as an open timeline; projects retain substantial panels with larger results; education and recommendations use quieter layouts. Personal projects sit beside the professional work, with Contact closing the page. The duplicate portrait is removed.
+**What was built:** A refinement of the existing charcoal and copper identity. The opening screen has a larger name, a smaller portrait, and three compact metrics. Both main actions fit within the first phone screen. Navigation has four primary choices and a home link. About uses one introduction and a separate skill list. Experience reads as an open timeline; projects retain substantial panels with larger results; education and recommendations use quieter layouts. Personal projects close the page, after Contact, and are reachable from the Personal projects link beside the project heading. The duplicate portrait is removed.
 
 **Files changed:**
 
