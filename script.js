@@ -272,7 +272,6 @@ function updateScrollUI() {
     if (maxScroll > 0 && y >= maxScroll - 2 && navSections.length) {
         activeId = navSections[navSections.length - 1].id;
     }
-    if (activeId === 'apps') activeId = 'projects';
     navLinkElements.forEach(function (link) {
         link.classList.toggle('active', link.getAttribute('href') === '#' + activeId);
     });

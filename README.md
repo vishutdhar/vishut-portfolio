@@ -32,7 +32,6 @@ A professional portfolio website showcasing my experience as a Senior Supplier Q
 - **Education** - Academic background
 - **Testimonials** - Professional recommendations
 - **Contact** - Email, LinkedIn, phone
-- **Personal Projects** - Freedom Terminal, the independent software studio, plus automations shipped outside of work
 
 ## Project Structure
 
@@ -48,7 +47,6 @@ vishut-portfolio/
 ├── apple-touch-icon.png     # Home screen icon
 ├── icon.svg                 # Favicon (crawlable file)
 ├── vercel.json              # Security headers, redirects, caching
-├── assets/apps/             # Personal project app icons
 ├── assets/fonts/            # Self-hosted woff2 fonts
 ├── robots.txt               # Search engine directives
 ├── sitemap.xml              # Page index

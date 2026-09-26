@@ -12,8 +12,8 @@ Refine the existing identity: charcoal surfaces, copper accents, DM Serif Displa
 - Typography: DM Serif Display for the name, major section headings, statistics, and quotations. DM Sans for navigation, job titles, project titles, education, and body copy. Use sentence case for small labels.
 - Alignment: one shared content width and left edge across navigation, hero, and sections. Keep long reading lines bounded. Left-align mobile text; compact metrics into one row.
 - Layout: a prominent name and smaller portrait form the opening composition; About has a short introduction beside a quiet skill list; experience uses an open timeline; project panels carry the main raised surfaces; education uses two compact entries; testimonials use open quotations; Contact closes the page.
-- Navigation: About, Experience, Projects, Contact; the name mark links home. Keep personal projects adjacent to professional projects, reachable through an explicit local link. Preserve all old fragment destinations.
-- Navigation highlighting: select the section at the reading position, keep Projects selected through personal projects, and select Contact at the bottom even when that final section cannot reach the reading position.
+- Navigation: About, Experience, Projects, Contact; the name mark links home. Preserve all old fragment destinations.
+- Navigation highlighting: select the section at the reading position, and select Contact at the bottom even when that final section cannot reach the reading position.
 - Motion: keep the existing portrait lighting and reduced-motion behavior. Open text sections and education must not lift like clickable cards.
 
 ```text
@@ -25,7 +25,7 @@ Contact / Experience
 --------------------------------------------------------------------
 About / introduction                  Skills
 Experience: title + date, followed by a bounded open reading column
-Projects: two substantial panels; personal projects immediately below
+Projects: two substantial panels
 Education: two compact entries
 Testimonials: two columns of open quotations
 Contact
@@ -57,7 +57,7 @@ The existing palette and font pairing are deliberate continuity choices. Avoid a
 
 **Specification:** “fix the UI,” and decide whether to keep the current UI or completely overhaul it.
 
-**What was built:** A refinement of the existing charcoal and copper identity. The opening screen has a larger name, a smaller portrait, and three compact metrics. Both main actions fit within the first phone screen. Navigation has four primary choices and a home link. About uses one introduction and a separate skill list. Experience reads as an open timeline; projects retain substantial panels with larger results; education and recommendations use quieter layouts. Personal projects close the page, after Contact, and are reachable from the Personal projects link beside the project heading. The duplicate portrait is removed.
+**What was built:** A refinement of the existing charcoal and copper identity. The opening screen has a larger name, a smaller portrait, and three compact metrics. Both main actions fit within the first phone screen. Navigation has four primary choices and a home link. About uses one introduction and a separate skill list. Experience reads as an open timeline; projects retain substantial panels with larger results; education and recommendations use quieter layouts. Contact closes the page. The duplicate portrait is removed.
 
 **Files changed:**
 
@@ -80,7 +80,7 @@ The existing palette and font pairing are deliberate continuity choices. Avoid a
 **How to verify:**
 
 1. Open the preview on your desktop and phone. On the phone, confirm the portrait, name, metrics, and both actions fit together without horizontal scrolling.
-2. Use About, Experience, Projects, and Contact. Use the Personal projects link beside the project heading. Confirm the right section appears, then use browser Back and the VD home link.
+2. Use About, Experience, Projects, and Contact. Confirm the right section appears, then use browser Back and the VD home link.
 3. On a phone, open the menu, select a section, and rotate the device. The menu should close normally and stay closed after returning to portrait orientation.
 4. Cycle dark, light, and system themes; reload to check the saved choice. Read the experience, education, and recommendation sections in both themes.
 5. Use Tab and Enter to navigate. Escape should close the phone menu. Open print preview and confirm that the content is readable on white paper.
