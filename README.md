@@ -31,7 +31,7 @@ A professional portfolio website showcasing my experience as a Senior Supplier Q
 - **What colleagues say** (`#testimonials`) - All eight recommendations, grouped by company
 - **About** (`#about`, includes `#education`) - Summary, grouped skills, education and certification
 - **Outside work** (`#apps`) - Freedom Terminal and @USC1787
-- **Get in touch** (`#contact`) - Email, phone, LinkedIn, GitHub
+- **Contact** (`#contact`) - Email, phone, LinkedIn, GitHub
 
 ## Project Structure
 

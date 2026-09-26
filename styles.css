@@ -35,7 +35,18 @@
     --section-gap: 128px;
 
     color-scheme: light;
-    interpolate-size: allow-keywords;
+
+    /* Motion. One vocabulary for the whole page; no bounce, no overshoot.
+       script.js repeats the curves it needs for WAAPI. */
+    --ease-out: cubic-bezier(.2, 0, 0, 1);      /* responses, arrivals, settles */
+    --ease-in: cubic-bezier(.4, 0, 1, 1);       /* things leaving or closing */
+    --ease-inout: cubic-bezier(.4, 0, .2, 1);   /* theme reveal */
+    --ease-run: cubic-bezier(.35, 0, .25, 1);   /* a process running at a level */
+    --ease-step: cubic-bezier(.6, 0, .15, 1);   /* the step change: decisive, then set */
+    --d-press: 60ms;
+    --d-hover: 120ms;
+    --d-ui: 200ms;
+    --d-move: 280ms;
 }
 
 :root[data-theme="dark"] {
@@ -112,20 +123,35 @@ img {
     height: auto;
 }
 
+/* A hovered link's underline firms up and tucks toward the word. No colour
+   change: links are ink. */
 a {
     color: inherit;
     text-decoration-line: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.2em;
+    transition: text-decoration-thickness var(--d-hover) var(--ease-out),
+                text-underline-offset var(--d-hover) var(--ease-out);
 }
 
 a:hover {
     text-decoration-thickness: 2px;
+    text-underline-offset: 0.16em;
 }
 
+/* The ring closes in on the control as focus arrives, so keyboard movement
+   is easy to follow. */
 :focus-visible {
     outline: 2px solid var(--ink);
     outline-offset: 3px;
+    animation: focus-in 140ms var(--ease-out);
+}
+
+@keyframes focus-in {
+    from {
+        outline-offset: 6px;
+        outline-color: transparent;
+    }
 }
 
 /* Sections, main and quotes take focus only from script, after an in-page
@@ -177,6 +203,7 @@ html:not(.js) .js-only {
     font-size: 1rem;
     font-weight: 600;
     transform: translateY(-200%);
+    transition: transform 160ms var(--ease-out);
 }
 
 .skip-link:focus {
@@ -276,6 +303,7 @@ nav {
     z-index: 50;
     background: var(--paper);
     border-bottom: 1px solid transparent;
+    transition: border-color 180ms linear;
 }
 
 nav.scrolled {
@@ -290,9 +318,12 @@ nav.scrolled {
 }
 
 /* At the top of the page the h1 is the name; the wordmark joins the bar
-   only once the h1 has scrolled away (script.js sets .scrolled). */
+   only once the h1 has scrolled away (script.js sets .scrolled), so the name
+   hands off from the page to the bar. */
 html.js nav:not(.scrolled) .nav-logo {
+    opacity: 0;
     visibility: hidden;
+    transition: opacity 180ms var(--ease-out), visibility 0s linear 180ms;
 }
 
 .nav-logo {
@@ -302,6 +333,7 @@ html.js nav:not(.scrolled) .nav-logo {
     line-height: 1;
     text-decoration: none;
     white-space: nowrap;
+    transition: opacity 180ms var(--ease-out);
 }
 
 .nav-links {
@@ -329,6 +361,41 @@ html.js nav:not(.scrolled) .nav-logo {
     text-decoration-thickness: 2px;
 }
 
+/* In the desktop bar one indicator slides to the current section instead of
+   an underline jumping between links. script.js measures the active link
+   and writes its position; it adds .has-indicator only at 961px and up. */
+@media (min-width: 961px) {
+    .nav-links {
+        position: relative;
+    }
+
+    .nav-links.has-indicator::before {
+        content: "";
+        position: absolute;
+        top: var(--ind-y, 0);
+        left: 0;
+        width: 100px;
+        height: 0;
+        /* A border, not a background: forced colours keep borders
+           (as CanvasText) and drop backgrounds. */
+        border-top: 2px solid var(--ink);
+        opacity: var(--ind-o, 0);
+        transform: translateX(var(--ind-x, 0)) scaleX(var(--ind-s, 0));
+        transform-origin: left center;
+        transition: transform var(--d-move) var(--ease-out),
+                    opacity 160ms var(--ease-out);
+        pointer-events: none;
+    }
+
+    .nav-links.ind-snap::before {
+        transition: none;
+    }
+
+    .nav-links.has-indicator a.active {
+        text-decoration-line: none;
+    }
+}
+
 .nav-actions {
     display: flex;
     gap: 8px;
@@ -347,18 +414,41 @@ html.js nav:not(.scrolled) .nav-logo {
     background: transparent;
     color: var(--ink);
     cursor: pointer;
+    transition: border-color var(--d-hover) var(--ease-out),
+                transform var(--d-hover) var(--ease-out);
+}
+
+.theme-toggle:hover {
+    border-color: var(--ink);
+}
+
+.theme-toggle:active,
+.mobile-menu-toggle:active {
+    transform: translateY(1px);
+    transition-duration: var(--d-press);
+}
+
+/* The three icons share one cell. The one for the mode in effect shows;
+   script.js turns the old one out and the new one in when it changes. */
+.theme-toggle {
+    display: inline-grid;
+    place-items: center;
 }
 
 .theme-toggle .icon {
-    display: none;
+    grid-area: 1 / 1;
+    display: block;
     width: 20px;
     height: 20px;
+    opacity: 0;
+    transform: rotate(-90deg) scale(.6);
 }
 
 :root:not([data-theme-mode="dark"]):not([data-theme-mode="system"]) #themeIconLight,
 :root[data-theme-mode="dark"] #themeIconDark,
 :root[data-theme-mode="system"] #themeIconSystem {
-    display: block;
+    opacity: 1;
+    transform: none;
 }
 
 html:not(.js) .theme-toggle {
@@ -372,12 +462,20 @@ html:not(.js) .theme-toggle {
     border-color: transparent;
 }
 
+.mobile-menu-toggle:hover {
+    border-color: var(--graphite);
+}
+
 .mobile-menu-toggle span {
     display: block;
     width: 18px;
     height: 2px;
     background: currentColor;
-    transition: transform 150ms ease, opacity 150ms ease;
+    transition: transform 160ms var(--ease-in);
+}
+
+.mobile-menu-toggle.active span {
+    transition: transform 220ms var(--ease-out);
 }
 
 .mobile-menu-toggle.active span:nth-child(1) {
@@ -385,7 +483,7 @@ html:not(.js) .theme-toggle {
 }
 
 .mobile-menu-toggle.active span:nth-child(2) {
-    opacity: 0;
+    transform: scaleX(0);
 }
 
 .mobile-menu-toggle.active span:nth-child(3) {
@@ -483,11 +581,17 @@ html:not(.js) .theme-toggle {
     font-weight: 600;
     line-height: 1;
     text-decoration: none;
-    transition: background-color 120ms ease;
+    transition: background-color var(--d-hover) var(--ease-out),
+                transform var(--d-hover) var(--ease-out);
 }
 
 .btn-primary:hover {
     background: var(--ic-hover);
+}
+
+.btn-primary:active {
+    transform: translateY(1px);
+    transition-duration: var(--d-press);
 }
 
 /* ---------- The scrap-rate chart ---------- */
@@ -537,6 +641,7 @@ html:not(.js) .theme-toggle {
     left: calc(100% + 6px);
     width: 6px;
     border-top: 1px solid var(--graphite);
+    transform-origin: right center;
 }
 
 .sc-y-6 { top: 0; }
@@ -551,8 +656,35 @@ html:not(.js) .theme-toggle {
     grid-column: 2;
     grid-row: 1;
     position: relative;
+    /* The axes are drawn by the pseudo-elements below so they can be ruled
+       in; the transparent border keeps the plot's inner box where it was. */
+    border-left: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+}
+
+/* y-axis */
+.sc-plot::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: -1px;
+    left: -1px;
+    width: 0;
+    /* Borders, not backgrounds, so forced colours keep the axes. */
     border-left: 1px solid var(--graphite);
-    border-bottom: 1px solid var(--graphite);
+    transform-origin: center bottom;
+}
+
+/* x-axis (time) */
+.sc-plot::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: -1px;
+    height: 0;
+    border-top: 1px solid var(--graphite);
+    transform-origin: left center;
 }
 
 /* The stage break: a dashed reference from the top of the axis to the
@@ -688,6 +820,7 @@ html:not(.js) .theme-toggle {
     margin-top: 8px;
     font-size: 0.875rem;
     line-height: 1.4;
+    text-wrap: balance;
 }
 
 /* From 1100px the hero is one two-row grid. Row one: the text in columns
@@ -731,10 +864,26 @@ html:not(.js) .theme-toggle {
     }
 }
 
-/* The one moment of motion nobody asked for: the chart draws once. The
-   default is the finished chart; theme-init.js arms this only when motion
-   is welcome, and script.js releases it when the plot is first in view.
-   Red level, then the drop, then the green level, then the labels. */
+/* The one moment of motion nobody asked for: the chart plots the Spring
+   Hill run once, as a measured process. Calibrate (axes, ticks), run 1 (red
+   at 5%), change (stage break, step down), run 2 (green at 0.5%), report
+   (the saving). Both runs share one duration and curve: the same process
+   measured the same way; only the level changed.
+
+   The default is the finished chart. theme-init.js arms this before paint,
+   only when motion is welcome. script.js then adds .run-frame + .is-drawn
+   (load mode: the plot is on screen) or .frame-ready now and .is-drawn
+   later (scroll mode: the frame is shown at once, the process runs when
+   the plot is in view). --t shifts the process back by the frame's 280ms. */
+.scrap-chart {
+    --t: 0ms;
+}
+
+.scrap-chart.frame-ready {
+    --t: -280ms;
+}
+
+/* Undrawn: the process */
 .chart-armed .scrap-chart:not(.is-drawn) .sc-line {
     transform: scaleX(0);
 }
@@ -748,21 +897,82 @@ html:not(.js) .theme-toggle {
     opacity: 0;
 }
 
-.chart-armed .sc-before {
-    transition: transform 600ms cubic-bezier(.3, 0, .2, 1);
+.chart-armed .scrap-chart:not(.is-drawn) .sc-result {
+    transform: translateY(6px);
 }
 
-.chart-armed .sc-stage,
+/* Undrawn: the frame, until .frame-ready or .is-drawn */
+.chart-armed .scrap-chart:not(.is-drawn):not(.frame-ready) .sc-plot::before {
+    transform: scaleY(0);
+}
+
+.chart-armed .scrap-chart:not(.is-drawn):not(.frame-ready) .sc-plot::after,
+.chart-armed .scrap-chart:not(.is-drawn):not(.frame-ready) .sc-y::after {
+    transform: scaleX(0);
+}
+
+.chart-armed .scrap-chart:not(.is-drawn):not(.frame-ready) .sc-y {
+    opacity: 0;
+}
+
+/* Calibrate. These transitions exist only in load mode, so .frame-ready
+   snaps. .sc-y keeps its translateY(-50%) for position: only its opacity
+   and its tick (::after) animate. */
+.scrap-chart.run-frame .sc-plot::before {
+    transition: transform 280ms var(--ease-out);
+}
+
+.scrap-chart.run-frame .sc-plot::after {
+    transition: transform 360ms var(--ease-out);
+}
+
+.scrap-chart.run-frame .sc-y {
+    transition: opacity 160ms var(--ease-out) var(--tick-delay);
+}
+
+.scrap-chart.run-frame .sc-y::after {
+    transition: transform 160ms var(--ease-out) var(--tick-delay);
+}
+
+/* ticks are laid in from 0% upward */
+.sc-y-0 { --tick-delay: 60ms; }
+.sc-y-1 { --tick-delay: 90ms; }
+.sc-y-2 { --tick-delay: 120ms; }
+.sc-y-3 { --tick-delay: 150ms; }
+.sc-y-4 { --tick-delay: 180ms; }
+.sc-y-5 { --tick-delay: 210ms; }
+.sc-y-6 { --tick-delay: 240ms; }
+
+/* Run 1, change, run 2, report */
+.chart-armed .sc-before {
+    transition: transform 440ms var(--ease-run) calc(280ms + var(--t));
+}
+
+.chart-armed .sc-lab-before,
+.chart-armed .sc-x-before {
+    transition: opacity 200ms var(--ease-out) calc(320ms + var(--t));
+}
+
+.chart-armed .sc-stage {
+    transition: transform 200ms var(--ease-out) calc(620ms + var(--t));
+}
+
 .chart-armed .sc-drop {
-    transition: transform 250ms ease-in 600ms;
+    transition: transform 240ms var(--ease-step) calc(700ms + var(--t));
 }
 
 .chart-armed .sc-after {
-    transition: transform 600ms cubic-bezier(.3, 0, .2, 1) 850ms;
+    transition: transform 440ms var(--ease-run) calc(900ms + var(--t));
 }
 
-.chart-armed .sc-fade {
-    transition: opacity 200ms linear 1400ms;
+.chart-armed .sc-lab-after,
+.chart-armed .sc-x-after {
+    transition: opacity 200ms var(--ease-out) calc(940ms + var(--t));
+}
+
+.chart-armed .sc-result {
+    transition: opacity 240ms var(--ease-out) calc(980ms + var(--t)),
+                transform 280ms var(--ease-out) calc(980ms + var(--t));
 }
 
 /* ---------- Results ---------- */
@@ -785,6 +995,18 @@ html:not(.js) .theme-toggle {
 
 .result + .result {
     margin-top: 40px;
+}
+
+.result-detail {
+    margin-top: 8px;
+    max-width: 36em;
+    text-wrap: balance;
+    font-size: 1.125rem;
+    line-height: 1.55;
+}
+
+.result-detail + .result-context {
+    margin-top: 4px;
 }
 
 .result-context {
@@ -824,6 +1046,7 @@ html:not(.js) .theme-toggle {
 }
 
 .role {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--gap);
@@ -854,6 +1077,10 @@ html:not(.js) .theme-toggle {
     margin-top: 8px;
     padding-left: 1.1em;
     list-style: disc;
+}
+
+.role-what li {
+    text-wrap: pretty;
 }
 
 .role-what li + li {
@@ -901,30 +1128,87 @@ html:not(.js) .theme-toggle {
     margin-top: -1px;
 }
 
+.role-details summary::before {
+    transition: translate var(--d-hover) var(--ease-out);
+}
+
+/* The vertical bar makes a quarter turn about its centre and lies down on
+   the horizontal one: + becomes -, and the turn shows which way it went.
+   Both bars are centred on x = 5px. */
 .role-details summary::after {
     left: 4px;
     width: 2px;
     height: 10px;
     margin-top: -5px;
-    transition: transform 150ms ease;
+    transition: transform 240ms var(--ease-out),
+                translate var(--d-hover) var(--ease-out);
 }
 
-.role-details[open] summary::after {
-    transform: scaleY(0);
+.role-details[open]:not(.is-closing) summary::after {
+    transform: rotate(90deg);
+}
+
+/* A press nudges the glyph, not the label. */
+.role-details summary:active::before,
+.role-details summary:active::after {
+    translate: 1px 0;
+}
+
+.role-details summary:active::before {
+    transition: translate var(--d-press) var(--ease-out);
+}
+
+.role-details summary:active::after {
+    transition: transform 240ms var(--ease-out),
+                translate var(--d-press) var(--ease-out);
+}
+
+.role-details summary {
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color var(--d-hover) var(--ease-out);
 }
 
 .role-details summary:hover {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
+    text-decoration-color: currentColor;
 }
 
+/* Forced colours would paint the resting transparent underline. */
+@media (forced-colors: active) {
+    .role-details summary {
+        text-decoration-line: none;
+    }
+
+    /* The +/- glyph is painted with a background, which forced colours
+       would turn into Canvas. */
+    .role-details summary::before,
+    .role-details summary::after {
+        background: CanvasText;
+    }
+
+    .role-details summary:hover {
+        text-decoration-line: underline;
+    }
+}
+
+/* Padding, not margin, so the opening height includes it and nothing pops
+   at the end. script.js animates the list's real height on open and close;
+   it clips only while it moves. */
 .role-details ul {
-    margin-top: 4px;
+    padding-top: 4px;
 }
 
-.role-details::details-content {
-    transition: block-size 200ms ease-out, content-visibility 200ms allow-discrete;
+/* Closing sets `open` false at once (for assistive tech); the closed
+   content stays rendered while script shrinks it. */
+.role-details.is-closing::details-content {
+    display: block;
+    content-visibility: visible;
+}
+
+.role-details.is-animating > ul {
+    overflow: clip;
 }
 
 .recommended {
@@ -961,9 +1245,11 @@ html:not(.js) .theme-toggle {
     border-top: 1px solid var(--rule);
 }
 
+/* The employer heads its group across the full width, the same as in
+   Experience, and the quotes start on the reading edge below it. */
 .voice-group > h3 {
-    grid-column: 1 / 4;
-    grid-row: 1;
+    grid-column: 1 / -1;
+    margin-bottom: 24px;
 }
 
 .voice-group > .voice,
@@ -978,6 +1264,7 @@ html:not(.js) .theme-toggle {
 .voice {
     position: relative;
     scroll-margin-top: 24px;
+    break-inside: avoid;
 }
 
 .voice + .voice {
@@ -998,24 +1285,25 @@ html:not(.js) .theme-toggle {
         grid-column: 4 / 12;
     }
 
+    /* Two across, then one wide: the first two supporting quotes sit side
+       by side with their tops level, and the third takes the full measure
+       below them, like the lead above. No quote ever splits, and the
+       reading order is the source order. */
     .voice-more {
-        grid-column: 4 / 13;
-        columns: 2;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         column-gap: calc(var(--gap) * 2);
+        row-gap: 40px;
+        align-items: start;
+        grid-column: 4 / 13;
     }
 
-    /* Three quotes into two columns only balance if text may run on from
-       the foot of one column to the head of the next, as it does in a
-       magazine. A name never parts from its quote, and no fragment is
-       shorter than three lines. */
-    .voice-more blockquote p {
-        orphans: 3;
-        widows: 3;
+    .voice-more > .voice + .voice {
+        margin-top: 0;
     }
 
-    .voice-more figcaption {
-        break-inside: avoid;
-        break-before: avoid;
+    .voice-more > .voice:nth-child(3) {
+        grid-column: 1 / -1;
     }
 }
 
@@ -1036,18 +1324,41 @@ html:not(.js) .theme-toggle {
     font-weight: 450;
 }
 
-/* A followed "Recommended by" link marks its quote with a bar in the
-   gutter, so the quote itself does not move or re-wrap. */
+/* A followed link ("Recommended by", a result's role) marks where it
+   landed with a bar in the gutter, so the text itself does not move or
+   re-wrap. With script the bar is drawn down once the scroll has settled,
+   held, then faded (script.js removes the class when it has gone). */
 /* :target only without script: pushState does not move :target, so with
    script.js running it would leave a second bar behind. */
 html:not(.js) .voice:target::before,
-.voice.is-target::before {
+html:not(.js) .role:target::before,
+.voice.is-target::before,
+.role.is-target::before {
     content: "";
     position: absolute;
     top: 4px;
     bottom: 4px;
     left: -16px;
     border-left: 3px solid var(--ink);
+}
+
+.voice.is-target::before,
+.role.is-target::before {
+    transform-origin: center top;
+    animation: mark-draw 360ms var(--ease-out) both,
+               mark-fade 600ms linear 3000ms forwards;
+}
+
+@keyframes mark-draw {
+    from {
+        transform: scaleY(0);
+    }
+}
+
+@keyframes mark-fade {
+    to {
+        opacity: 0;
+    }
 }
 
 /* ---------- About and education ---------- */
@@ -1142,9 +1453,10 @@ html:not(.js) .voice:target::before,
 /* ---------- Outside work ---------- */
 
 /* Each app's text starts on the page's reading edge (column 4); the icon
-   hangs in the column before it. */
+   sits at the start of the rail, where other sections put their dates and
+   group names. */
 .apps {
-    margin-top: 32px;
+    margin-top: 0;
 }
 
 .app {
@@ -1159,9 +1471,9 @@ html:not(.js) .voice:target::before,
 }
 
 .app-icon {
-    grid-column: 3;
+    grid-column: 1;
     grid-row: 1;
-    justify-self: end;
+    justify-self: start;
 }
 
 .app-text {
@@ -1177,6 +1489,12 @@ html:not(.js) .voice:target::before,
 
 .app-icon-round {
     border-radius: 50%;
+}
+
+/* The @USC1787 artwork is a near-circular squircle on white; clip to it so
+   no white corners show on the dark theme. */
+.app-icon-squircle {
+    border-radius: 46%;
 }
 
 .app h3 {
@@ -1205,6 +1523,7 @@ html:not(.js) .voice:target::before,
 .contact-email:hover,
 .contact-email:focus-visible {
     text-decoration-thickness: 2px;
+    text-underline-offset: 0.1em;
 }
 
 .contact-noscript {
@@ -1255,7 +1574,7 @@ footer .container > p {
         background: var(--paper);
         visibility: hidden;
         opacity: 0;
-        transition: opacity 150ms ease, visibility 0s linear 150ms;
+        transition: opacity 120ms var(--ease-in), visibility 0s linear 120ms;
     }
 
     /* The page under an open menu is veiled, so the panel reads as one
@@ -1268,22 +1587,50 @@ footer .container > p {
         right: 0;
         height: 100vh;
         background: var(--paper);
-        opacity: .88;
+        opacity: 0;
+        transition: opacity 120ms var(--ease-in);
     }
 
     .nav-links li:last-child {
         border-bottom: 1px solid var(--rule);
     }
 
+    /* The panel itself is opaque from the first frame of opening, so the
+       hero never shows through the rows; only the veil fades in, and the
+       rows arrive on the panel below. Closing fades the whole panel. */
     .nav-links.active {
         visibility: visible;
         opacity: 1;
-        transition: opacity 150ms ease;
+        transition: none;
+    }
+
+    .nav-links.active::after {
+        opacity: .88;
+        transition: opacity 160ms var(--ease-out);
     }
 
     .nav-links li {
         border-top: 1px solid var(--rule);
     }
+
+    /* The panel unrolls from the bar: its rows arrive top-down on open.
+       On close they hold still while the panel fades, then reset. */
+    html.js .nav-links li {
+        opacity: 0;
+        transform: translateY(-6px);
+        transition: opacity 0s linear 120ms, transform 0s linear 120ms;
+    }
+
+    html.js .nav-links.active li {
+        opacity: 1;
+        transform: none;
+        transition: opacity 220ms var(--ease-out), transform 220ms var(--ease-out);
+    }
+
+    html.js .nav-links.active li:nth-child(2) { transition-delay: 40ms; }
+    html.js .nav-links.active li:nth-child(3) { transition-delay: 80ms; }
+    html.js .nav-links.active li:nth-child(4) { transition-delay: 120ms; }
+    html.js .nav-links.active li:nth-child(5) { transition-delay: 160ms; }
 
     .nav-links a {
         display: flex;
@@ -1507,7 +1854,9 @@ footer .container > p {
     }
 
     html:not(.js) .voice:target::before,
-    .voice.is-target::before {
+    html:not(.js) .role:target::before,
+    .voice.is-target::before,
+    .role.is-target::before {
         left: -12px;
     }
 
@@ -1571,6 +1920,28 @@ footer .container > p {
         transition-delay: 0s !important;
         animation: none !important;
     }
+
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
+    }
+}
+
+/* The theme change: script.js wipes the new sheet down from the nav's bottom
+   rule, hard-edged. The old page stays put underneath; nothing cross-fades. */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+    z-index: 1;
+}
+
+::view-transition-new(root) {
+    z-index: 2;
 }
 
 /* ==========================================================================
@@ -1589,6 +1960,14 @@ footer .container > p {
         --on-ic: #fff;
         --section-gap: 40px;
         color-scheme: light;
+    }
+
+    /* Paper shows the finished state of everything, and nothing moves. */
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+        animation: none !important;
     }
 
     /* Every size is in rem, so this one line sets the whole paper scale:
@@ -1677,10 +2056,26 @@ footer .container > p {
     }
 
     .sc-draw,
-    .sc-fade {
+    .sc-fade,
+    .sc-result,
+    .sc-y,
+    .sc-y::after,
+    .sc-plot::before,
+    .sc-plot::after {
         transform: none !important;
         opacity: 1 !important;
         transition: none !important;
+        animation: none !important;
+    }
+
+    .sc-y {
+        transform: translateY(-50%) !important;
+    }
+
+    .voice.is-target::before,
+    .role.is-target::before,
+    .nav-links::before {
+        display: none;
     }
 
     .scrap-chart {
@@ -1709,7 +2104,7 @@ footer .container > p {
     }
 
     .role-details ul {
-        margin-top: 8px;
+        padding-top: 8px;
     }
 
     .voice,
