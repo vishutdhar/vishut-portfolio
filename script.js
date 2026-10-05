@@ -846,13 +846,24 @@ function onMediaChange(query, handler) {
         } else {
             document.removeEventListener('pointermove', lean);
             document.removeEventListener('pointerout', settle);
-            document.querySelectorAll(KEYS).forEach(function (key) {
-                key.style.removeProperty('--kx');
-                key.style.removeProperty('--ky');
-            });
+            settleAll();
         }
+    }
+
+    function settleAll() {
+        document.querySelectorAll(KEYS).forEach(function (key) {
+            key.style.removeProperty('--kx');
+            key.style.removeProperty('--ky');
+        });
     }
 
     sync();
     if (cursor.addEventListener) cursor.addEventListener('change', sync);
+    // Turned on mid-hover, the preference would otherwise leave that one cap
+    // leaning until the pointer left it.
+    if (prefersReducedMotion.addEventListener) {
+        prefersReducedMotion.addEventListener('change', function () {
+            if (prefersReducedMotion.matches) settleAll();
+        });
+    }
 })();
