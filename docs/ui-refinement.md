@@ -105,3 +105,11 @@ Scroll is the second axis of the depth system, so a phone with no pointer still 
 - On desktop a single nav underline glides between sections instead of switching.
 - On fine pointers the keycaps lean up to 4px toward the cursor, and the VD mark turns on a hinge.
 - Everything honors reduced motion and is removed in print. Browsers without view timelines keep the previous reveal unchanged.
+
+## Response pass
+
+Three moments where the page answers the reader.
+
+- The hero line writes itself once on arrival, one word at a time, the full stop landing last. Reduced motion keeps it as plain text.
+- Each project metric is underlined in copper the instant its count lands.
+- Changing the theme is a circular wipe from the toggle button, through the View Transitions API, with a plain cut where that is unsupported or motion is reduced.

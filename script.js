@@ -103,7 +103,16 @@ themeSynced = true;
 
 themeToggle.addEventListener('click', function () {
     var next = THEME_MODES[(THEME_MODES.indexOf(currentThemeMode()) + 1) % THEME_MODES.length];
-    applyThemeMode(next);
+    // The wipe grows from the button that was pressed. Recorded on the root
+    // so the view transition pseudo-elements can read it.
+    var rect = themeToggle.getBoundingClientRect();
+    html.style.setProperty('--vt-x', (rect.left + rect.width / 2).toFixed(0) + 'px');
+    html.style.setProperty('--vt-y', (rect.top + rect.height / 2).toFixed(0) + 'px');
+    if (document.startViewTransition && !prefersReducedMotion.matches) {
+        document.startViewTransition(function () { applyThemeMode(next); });
+    } else {
+        applyThemeMode(next);
+    }
     try { localStorage.setItem('theme', next); } catch (e) {}
 });
 
@@ -408,7 +417,13 @@ var statsObserver = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
         if (entry.isIntersecting && !entry.target.dataset.animated) {
             entry.target.dataset.animated = 'true';
-            if (prefersReducedMotion.matches) return;
+            if (prefersReducedMotion.matches) {
+                // No count to wait for: the rule under each result shows at once.
+                entry.target.querySelectorAll('.metric-value').forEach(function (metric) {
+                    metric.classList.add('counted');
+                });
+                return;
+            }
             // Hero stat numbers
             var statNumbers = entry.target.querySelectorAll('.stat-number');
             statNumbers.forEach(function (stat) {
@@ -440,9 +455,16 @@ var statsObserver = new IntersectionObserver(function (entries) {
                         if (!startTime) startTime = ts;
                         var p = Math.min((ts - startTime) / 800, 1);
                         metric.textContent = fmt(p * end);
-                        if (p < 1) requestAnimationFrame(step);
+                        if (p < 1) {
+                            requestAnimationFrame(step);
+                        } else {
+                            // The count has landed; underline the result.
+                            metric.classList.add('counted');
+                        }
                     };
                     requestAnimationFrame(step);
+                } else {
+                    metric.classList.add('counted');
                 }
             });
         }
@@ -804,6 +826,37 @@ function onMediaChange(query, handler) {
         if (prefersReducedMotion.matches) {
             release();
         }
+    });
+})();
+
+// The hero line writes itself. The sentence is split into words, each a
+// span the stylesheet brings in on its own delay, and a closing mark is
+// split off the last word so it can land after the words. Only the one
+// sentence gets this; it is the page's whole point of view. Skipped under
+// reduced motion, where the sentence stays plain text and rises with the
+// rest of the hero.
+(function () {
+    var lede = document.querySelector('.hero-lede');
+    if (!lede || prefersReducedMotion.matches) return;
+    var words = lede.textContent.trim().split(/\s+/);
+    if (words.length < 2) return;
+    lede.textContent = '';
+    var step = 0;
+    words.forEach(function (word, i) {
+        var mark = /[.!?]$/.test(word) && i === words.length - 1 ? word.slice(-1) : '';
+        var span = document.createElement('span');
+        span.className = 'lede-word';
+        span.style.setProperty('--i', step++);
+        span.textContent = mark ? word.slice(0, -1) : word;
+        lede.appendChild(span);
+        if (mark) {
+            var dot = document.createElement('span');
+            dot.className = 'lede-mark';
+            dot.style.setProperty('--i', step++);
+            dot.textContent = mark;
+            lede.appendChild(dot);
+        }
+        if (i < words.length - 1) lede.appendChild(document.createTextNode(' '));
     });
 })();
 
