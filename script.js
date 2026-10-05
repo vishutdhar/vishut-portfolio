@@ -781,3 +781,53 @@ function onMediaChange(query, handler) {
         }
     });
 })();
+
+// Magnetic keycaps. On a fine pointer each raised control leans a few pixels
+// toward the cursor while it is hovered, as a key would under a fingertip
+// that is not quite centred. The stylesheet reads --kx/--ky in its hover
+// lift and resolves them to zero everywhere else, so touch, keyboard focus,
+// and reduced motion all see the plain lift. Pointer only, never touch: a
+// finger has no position between contacts for the cap to lean toward.
+(function () {
+    var cursor = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');
+    var KEYS = '.btn, .theme-toggle, .hero-social-link, .back-to-top, .nav-contact';
+    var REACH = 4; // px, the furthest a cap leans
+
+    function lean(e) {
+        if (e.pointerType === 'touch' || prefersReducedMotion.matches) return;
+        var key = e.target.closest(KEYS);
+        if (!key) return;
+        var rect = key.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        key.style.setProperty('--kx', (clampUnit((e.clientX - rect.left) / rect.width * 2 - 1) * REACH).toFixed(2));
+        key.style.setProperty('--ky', (clampUnit((e.clientY - rect.top) / rect.height * 2 - 1) * REACH).toFixed(2));
+    }
+
+    function settle(e) {
+        var key = e.target.closest(KEYS);
+        if (!key) return;
+        key.style.removeProperty('--kx');
+        key.style.removeProperty('--ky');
+    }
+
+    var listening = false;
+    function sync() {
+        var wanted = cursor.matches;
+        if (wanted === listening) return;
+        listening = wanted;
+        if (wanted) {
+            document.addEventListener('pointermove', lean, { passive: true });
+            document.addEventListener('pointerout', settle, { passive: true });
+        } else {
+            document.removeEventListener('pointermove', lean);
+            document.removeEventListener('pointerout', settle);
+            document.querySelectorAll(KEYS).forEach(function (key) {
+                key.style.removeProperty('--kx');
+                key.style.removeProperty('--ky');
+            });
+        }
+    }
+
+    sync();
+    if (cursor.addEventListener) cursor.addEventListener('change', sync);
+})();
