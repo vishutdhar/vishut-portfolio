@@ -2369,6 +2369,101 @@ html:not(.js) .highlight {
 
 
 /* ============================================
+   RESPONSE PASS: THE PAGE ANSWERS
+
+   Three moments where the page reacts to the reader rather than to time.
+   The one sentence writes itself once on arrival; a result is underlined
+   the instant its number stops counting; the theme changes as a wipe from
+   the button that asked for it instead of a cut.
+   ============================================ */
+
+/* The hero line arrives one word at a time, the full stop last and with a
+   small landing. script.js splits the sentence into these spans; without
+   it the sentence is plain text and rises with the rest of the hero. */
+.lede-word,
+.lede-mark {
+    display: inline-block;
+    animation: word-in 0.5s cubic-bezier(.2,.7,.2,1) backwards;
+    animation-delay: calc(0.55s + var(--i, 0) * 0.09s);
+}
+
+.lede-mark {
+    animation-name: mark-land;
+    animation-duration: 0.4s;
+}
+
+@keyframes word-in {
+    from { opacity: 0; transform: translateY(0.35em); filter: blur(4px); }
+    to   { opacity: 1; transform: none; filter: none; }
+}
+
+@keyframes mark-land {
+    from { opacity: 0; transform: translateY(-0.2em) scale(1.8); }
+    60%  { opacity: 1; transform: scale(0.9); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* A copper rule confirms each result once its count lands. */
+.metric-value {
+    position: relative;
+}
+
+.metric-value::after {
+    content: '';
+    position: absolute;
+    left: 0.04em;
+    bottom: 0.08em;
+    width: 1.1em;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.5s cubic-bezier(.2,.7,.2,1);
+}
+
+.metric-value.counted::after,
+html:not(.js) .metric-value::after {
+    transform: scaleX(1);
+}
+
+/* Theme change as a wipe from the toggle. script.js records the button's
+   centre in --vt-x/--vt-y and runs the change inside a view transition;
+   the new page is revealed through a growing circle over the old one.
+   Browsers without view transitions simply cut, as before. */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+    animation: theme-wipe 0.6s cubic-bezier(.2,.7,.2,1);
+}
+
+@keyframes theme-wipe {
+    from { clip-path: circle(0px at var(--vt-x, 100%) var(--vt-y, 0px)); }
+    to   { clip-path: circle(150vmax at var(--vt-x, 100%) var(--vt-y, 0px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lede-word,
+    .lede-mark {
+        animation: none;
+    }
+
+    .metric-value::after {
+        transform: scaleX(1);
+        transition: none;
+    }
+
+    ::view-transition-new(root) {
+        animation: none;
+    }
+}
+
+
+/* ============================================
    CONTROLS: ONE KEYCAP
    Every clickable control is the same object: 44px tall, 8px radius, the
    key face, a lit top edge, a 2px bottom edge, a soft cast shadow. The
@@ -2664,7 +2759,8 @@ html:not(.js) .highlight {
     }
 
     .experience-item:first-child::after,
-    .experience-timeline::after {
+    .experience-timeline::after,
+    .metric-value::after {
         display: none;
     }
 
