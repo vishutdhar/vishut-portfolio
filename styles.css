@@ -333,6 +333,30 @@ nav.scrolled {
     align-items: center;
     gap: 2rem;
     list-style: none;
+    position: relative;
+}
+
+/* One underline for the whole row. script.js measures the active link and
+   sets --ix/--iy/--iw on the list, so the mark glides from section to
+   section instead of switching. Without JS the per-link underline below
+   still shows; with it, the per-link one steps aside for the active link
+   and stays for hover. */
+.nav-links::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 1.5px;
+    width: calc(var(--iw, 0) * 1px);
+    background: var(--accent);
+    transform: translate(calc(var(--ix, 0) * 1px), calc(var(--iy, 0) * 1px));
+    opacity: var(--ishow, 0);
+    pointer-events: none;
+    transition: transform 0.45s cubic-bezier(.2,.7,.2,1), width 0.45s cubic-bezier(.2,.7,.2,1), opacity 0.2s ease;
+}
+
+html.js .nav-links a.active:not(:hover)::after {
+    width: 0;
 }
 
 .nav-links a {
@@ -1357,6 +1381,8 @@ footer {
         overscroll-behavior-y: contain;
     }
     .nav-links.active { display: flex; }
+    .nav-links::after { display: none; }
+    html.js .nav-links a.active:not(:hover)::after { width: 100%; }
     .nav-links a { display: block; padding: 0.75rem 0; }
     .nav-links li { border-bottom: 1px solid var(--border); }
     .nav-links li:last-child { border-bottom: none; padding-top: 0.75rem; }
@@ -1668,7 +1694,7 @@ footer {
 }
 
 @keyframes hero-drift-portrait {
-    to { transform: translateY(-20px); }
+    to { transform: translateY(-20px) perspective(900px) rotateX(5deg) scale(0.97); }
 }
 
 
@@ -1757,7 +1783,7 @@ footer {
 }
 
 .btn-primary:hover {
-    transform: translateY(-1px);
+    transform: translate(calc(var(--kx, 0) * 1px), calc(var(--ky, 0) * 1px - 1px));
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.28),
         0 4px 0 var(--accent-edge),
@@ -1793,7 +1819,7 @@ footer {
 .social-link:hover,
 .back-to-top:hover,
 .skill-tag:hover {
-    transform: translateY(-1px);
+    transform: translate(calc(var(--kx, 0) * 1px), calc(var(--ky, 0) * 1px - 1px));
     box-shadow:
         inset 0 1px 0 var(--edge-light),
         0 3px 0 var(--key-edge),
@@ -1828,7 +1854,7 @@ footer {
 }
 
 .nav-links a.nav-contact:hover {
-    transform: translateY(-1px);
+    transform: translate(calc(var(--kx, 0) * 1px), calc(var(--ky, 0) * 1px - 1px));
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.28),
         0 4px 0 var(--accent-edge),
@@ -1996,12 +2022,14 @@ div.contact-item {
            they are reading surfaces. */
         .testimonial-card,
         .education-card {
-            transition: transform 0.35s cubic-bezier(.2,.7,.2,1), box-shadow 0.35s ease;
+            transition: translate 0.35s cubic-bezier(.2,.7,.2,1), box-shadow 0.35s ease;
         }
 
+        /* `translate`, not `transform`: the scroll pass below owns transform
+           on these sheets, and the two properties compose. */
         .testimonial-card:hover,
         .education-card:hover {
-            transform: translateY(-3px);
+            translate: 0 -3px;
         }
     }
 }
@@ -2171,6 +2199,164 @@ html:not(.js) .highlight {
 
     .highlight {
         background-size: 100% 100%;
+    }
+}
+
+
+/* ============================================
+   SCROLL PASS: THE LAMP'S SECOND AXIS
+
+   The pointer is one axis of this page's depth; on a phone there is none.
+   Scroll is the other. Each reading surface is a sheet that stands up as it
+   arrives from below and leans away again as it leaves at the top, driven
+   by its own position in the viewport rather than by a timer, so it is as
+   still as the thumb is and costs nothing at rest. The angles are small on
+   purpose: the eye reads the depth, not the trick.
+
+   Where this runs it takes over transform from the entry reveal (an
+   animation outranks a transition on the same property); the reveal's
+   opacity fade still plays. Project cards keep their pointer tilt on
+   desktop, so there the scroll tilt stays off them. Browsers without view
+   timelines keep the previous behaviour untouched.
+   ============================================ */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .experience-item,
+        .education-card,
+        .testimonial-card {
+            animation: sheet-pass linear both;
+            animation-timeline: view();
+        }
+
+        @media (hover: none), screen and (max-width: 640px) {
+            .project-card {
+                animation: sheet-pass linear both;
+                animation-timeline: view();
+            }
+        }
+    }
+}
+
+/* Hinged at the top on the way in and at the bottom on the way out, so the
+   sheet only ever leans away from the reader: nothing projects wider than
+   its box, and the page never grows a horizontal scrollbar. The top hinge
+   on entry also keeps the sheet's top edge where the layout put it, which
+   is the edge the reveal observer watches; hinged at the bottom, a tall
+   role's projected top would sit below the fold and its fade would wait. */
+@keyframes sheet-pass {
+    0%   { transform-origin: center top; transform: perspective(900px) rotateX(-7deg) translate3d(0, 0, -40px); }
+    22%  { transform-origin: center top; transform: none; }
+    78%  { transform-origin: center bottom; transform: none; }
+    100% { transform-origin: center bottom; transform: perspective(900px) rotateX(4deg) translate3d(0, 0, -24px); }
+}
+
+/* The timeline fills as you read it. The reading line is 30% down the
+   screen, the same line the nav highlight uses, so the two agree on where
+   you are. A copper line draws down the groove to that point, and the bead
+   of the role under it glows. Both are position, not time: nothing moves
+   unless the thumb does. */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .experience-timeline {
+            view-timeline: --career block;
+            view-timeline-inset: 0 70%;
+        }
+
+        .experience-timeline::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent-solid-hover), var(--accent));
+            box-shadow: 0 0 10px var(--accent-wash);
+            transform-origin: top center;
+            transform: scaleY(0);
+            pointer-events: none;
+            animation: groove-fill linear both;
+            animation-timeline: --career;
+            animation-range: entry-crossing 0% entry-crossing 100%;
+        }
+
+        .experience-item {
+            view-timeline: --role block;
+            view-timeline-inset: 0 70%;
+        }
+
+        .experience-item::before {
+            animation: bead-live linear both;
+            animation-timeline: --role;
+            animation-range: entry-crossing 0% entry-crossing 100%;
+        }
+    }
+}
+
+@keyframes groove-fill {
+    from { transform: scaleY(0); }
+    to   { transform: scaleY(1); }
+}
+
+@keyframes bead-live {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 1px 2px 5px var(--cast-color), 0 0 0 3px var(--bg-primary);
+    }
+    3%, 97% {
+        transform: scale(1.35);
+        box-shadow: 1px 2px 5px var(--cast-color), 0 0 0 3px var(--bg-primary), 0 0 14px 4px var(--accent-wash);
+    }
+}
+
+/* The current role's bead is live: a soft ring leaves it every few seconds. */
+.experience-item:first-child::after {
+    content: '';
+    position: absolute;
+    left: calc(-2rem - 4px);
+    top: 0.65rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 0 2px var(--accent);
+    opacity: 0;
+    animation: bead-ping 2.8s cubic-bezier(.2,.7,.2,1) 1.2s infinite;
+}
+
+/* The timeline is narrower on phones (1.25rem, set further up), and the
+   relief rule above restated the desktop offset after that block, which
+   pushed the bead 12px left of the groove. Same bead, same groove. */
+@media screen and (max-width: 640px) {
+    .experience-item::before,
+    .experience-item:first-child::after {
+        left: calc(-1.25rem - 4px);
+    }
+}
+
+@keyframes bead-ping {
+    0%   { transform: scale(1); opacity: 0.7; }
+    70%  { transform: scale(2.6); opacity: 0; }
+    100% { transform: scale(2.6); opacity: 0; }
+}
+
+/* The name mark turns toward the pointer like a tile on a hinge. */
+.nav-logo {
+    transition: transform 0.35s cubic-bezier(.2,.7,.2,1), text-shadow 0.35s ease;
+    transform-origin: left center;
+}
+
+@media (any-hover: hover) and (any-pointer: fine) {
+    .nav-logo:hover {
+        transform: perspective(400px) rotateY(16deg);
+        text-shadow: 2px 3px 0 var(--accent-wash), 4px 8px 14px var(--cast-color);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .experience-item:first-child::after,
+    .nav-logo:hover {
+        animation: none;
+        transform: none;
     }
 }
 
@@ -2466,7 +2652,13 @@ html:not(.js) .highlight {
     .project-card,
     .testimonial-card {
         box-shadow: none !important;
+        animation: none !important;
         page-break-inside: avoid;
+    }
+
+    .experience-item:first-child::after,
+    .experience-timeline::after {
+        display: none;
     }
 
     /* a.contact-item, not .contact-item: the class is also on the location

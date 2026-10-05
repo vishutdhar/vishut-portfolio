@@ -257,6 +257,25 @@ var navLinkElements = document.querySelectorAll('.nav-links a');
 var navSections = document.querySelectorAll('main > section[id]');
 var scrollTicking = false;
 
+// Slides the single nav underline to the active link. Measured against the
+// list rather than the link's offsetParent, so a change of layout or font
+// cannot leave it a few pixels off. Contact is a keycap and carries its own
+// state, so the mark steps out when Contact is the section being read.
+function placeNavMark(link) {
+    if (!navLinks) return;
+    if (!link || link.classList.contains('nav-contact')) {
+        navLinks.style.setProperty('--ishow', '0');
+        return;
+    }
+    var list = navLinks.getBoundingClientRect();
+    var rect = link.getBoundingClientRect();
+    if (!rect.width) return;
+    navLinks.style.setProperty('--ix', (rect.left - list.left).toFixed(1));
+    navLinks.style.setProperty('--iy', (rect.bottom - list.top + 4).toFixed(1));
+    navLinks.style.setProperty('--iw', rect.width.toFixed(1));
+    navLinks.style.setProperty('--ishow', '1');
+}
+
 function updateScrollUI() {
     scrollTicking = false;
     var y = window.scrollY;
@@ -272,9 +291,13 @@ function updateScrollUI() {
     if (maxScroll > 0 && y >= maxScroll - 2 && navSections.length) {
         activeId = navSections[navSections.length - 1].id;
     }
+    var activeLink = null;
     navLinkElements.forEach(function (link) {
-        link.classList.toggle('active', link.getAttribute('href') === '#' + activeId);
+        var on = link.getAttribute('href') === '#' + activeId;
+        link.classList.toggle('active', on);
+        if (on) activeLink = link;
     });
+    placeNavMark(activeLink);
     nav.classList.toggle('scrolled', y > 50);
     var progress = maxScroll > 0 ? Math.min(Math.max(y / maxScroll, 0), 1) : 0;
     scrollProgress.style.transform = 'scaleX(' + progress + ')';
@@ -289,6 +312,8 @@ function scheduleScrollUI() {
 }
 window.addEventListener('scroll', scheduleScrollUI, { passive: true });
 window.addEventListener('resize', scheduleScrollUI);
+// Link widths settle once the web fonts arrive; measure the nav mark again then.
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleScrollUI);
 updateScrollUI();
 
 // Back to top button click handler
@@ -780,4 +805,54 @@ function onMediaChange(query, handler) {
             release();
         }
     });
+})();
+
+// Magnetic keycaps. On a fine pointer each raised control leans a few pixels
+// toward the cursor while it is hovered, as a key would under a fingertip
+// that is not quite centred. The stylesheet reads --kx/--ky in its hover
+// lift and resolves them to zero everywhere else, so touch, keyboard focus,
+// and reduced motion all see the plain lift. Pointer only, never touch: a
+// finger has no position between contacts for the cap to lean toward.
+(function () {
+    var cursor = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');
+    var KEYS = '.btn, .theme-toggle, .hero-social-link, .back-to-top, .nav-contact';
+    var REACH = 4; // px, the furthest a cap leans
+
+    function lean(e) {
+        if (e.pointerType === 'touch' || prefersReducedMotion.matches) return;
+        var key = e.target.closest(KEYS);
+        if (!key) return;
+        var rect = key.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        key.style.setProperty('--kx', (clampUnit((e.clientX - rect.left) / rect.width * 2 - 1) * REACH).toFixed(2));
+        key.style.setProperty('--ky', (clampUnit((e.clientY - rect.top) / rect.height * 2 - 1) * REACH).toFixed(2));
+    }
+
+    function settle(e) {
+        var key = e.target.closest(KEYS);
+        if (!key) return;
+        key.style.removeProperty('--kx');
+        key.style.removeProperty('--ky');
+    }
+
+    var listening = false;
+    function sync() {
+        var wanted = cursor.matches;
+        if (wanted === listening) return;
+        listening = wanted;
+        if (wanted) {
+            document.addEventListener('pointermove', lean, { passive: true });
+            document.addEventListener('pointerout', settle, { passive: true });
+        } else {
+            document.removeEventListener('pointermove', lean);
+            document.removeEventListener('pointerout', settle);
+            document.querySelectorAll(KEYS).forEach(function (key) {
+                key.style.removeProperty('--kx');
+                key.style.removeProperty('--ky');
+            });
+        }
+    }
+
+    sync();
+    if (cursor.addEventListener) cursor.addEventListener('change', sync);
 })();
