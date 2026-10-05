@@ -333,6 +333,30 @@ nav.scrolled {
     align-items: center;
     gap: 2rem;
     list-style: none;
+    position: relative;
+}
+
+/* One underline for the whole row. script.js measures the active link and
+   sets --ix/--iy/--iw on the list, so the mark glides from section to
+   section instead of switching. Without JS the per-link underline below
+   still shows; with it, the per-link one steps aside for the active link
+   and stays for hover. */
+.nav-links::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 1.5px;
+    width: calc(var(--iw, 0) * 1px);
+    background: var(--accent);
+    transform: translate(calc(var(--ix, 0) * 1px), calc(var(--iy, 0) * 1px));
+    opacity: var(--ishow, 0);
+    pointer-events: none;
+    transition: transform 0.45s cubic-bezier(.2,.7,.2,1), width 0.45s cubic-bezier(.2,.7,.2,1), opacity 0.2s ease;
+}
+
+html.js .nav-links a.active:not(:hover)::after {
+    width: 0;
 }
 
 .nav-links a {
@@ -1357,6 +1381,8 @@ footer {
         overscroll-behavior-y: contain;
     }
     .nav-links.active { display: flex; }
+    .nav-links::after { display: none; }
+    html.js .nav-links a.active:not(:hover)::after { width: 100%; }
     .nav-links a { display: block; padding: 0.75rem 0; }
     .nav-links li { border-bottom: 1px solid var(--border); }
     .nav-links li:last-child { border-bottom: none; padding-top: 0.75rem; }
@@ -2224,6 +2250,64 @@ html:not(.js) .highlight {
     100% { transform-origin: center bottom; transform: perspective(900px) rotateX(4deg) translate3d(0, 0, -24px); }
 }
 
+/* The timeline fills as you read it. The reading line is 30% down the
+   screen, the same line the nav highlight uses, so the two agree on where
+   you are. A copper line draws down the groove to that point, and the bead
+   of the role under it glows. Both are position, not time: nothing moves
+   unless the thumb does. */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .experience-timeline {
+            view-timeline: --career block;
+            view-timeline-inset: 0 70%;
+        }
+
+        .experience-timeline::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent-solid-hover), var(--accent));
+            box-shadow: 0 0 10px var(--accent-wash);
+            transform-origin: top center;
+            transform: scaleY(0);
+            pointer-events: none;
+            animation: groove-fill linear both;
+            animation-timeline: --career;
+            animation-range: entry-crossing 0% entry-crossing 100%;
+        }
+
+        .experience-item {
+            view-timeline: --role block;
+            view-timeline-inset: 0 70%;
+        }
+
+        .experience-item::before {
+            animation: bead-live linear both;
+            animation-timeline: --role;
+            animation-range: entry-crossing 0% entry-crossing 100%;
+        }
+    }
+}
+
+@keyframes groove-fill {
+    from { transform: scaleY(0); }
+    to   { transform: scaleY(1); }
+}
+
+@keyframes bead-live {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 1px 2px 5px var(--cast-color), 0 0 0 3px var(--bg-primary);
+    }
+    3%, 97% {
+        transform: scale(1.35);
+        box-shadow: 1px 2px 5px var(--cast-color), 0 0 0 3px var(--bg-primary), 0 0 14px 4px var(--accent-wash);
+    }
+}
+
 /* The current role's bead is live: a soft ring leaves it every few seconds. */
 .experience-item:first-child::after {
     content: '';
@@ -2237,6 +2321,16 @@ html:not(.js) .highlight {
     box-shadow: 0 0 0 2px var(--accent);
     opacity: 0;
     animation: bead-ping 2.8s cubic-bezier(.2,.7,.2,1) 1.2s infinite;
+}
+
+/* The timeline is narrower on phones (1.25rem, set further up), and the
+   relief rule above restated the desktop offset after that block, which
+   pushed the bead 12px left of the groove. Same bead, same groove. */
+@media screen and (max-width: 640px) {
+    .experience-item::before,
+    .experience-item:first-child::after {
+        left: calc(-1.25rem - 4px);
+    }
 }
 
 @keyframes bead-ping {
@@ -2562,7 +2656,8 @@ html:not(.js) .highlight {
         page-break-inside: avoid;
     }
 
-    .experience-item:first-child::after {
+    .experience-item:first-child::after,
+    .experience-timeline::after {
         display: none;
     }
 

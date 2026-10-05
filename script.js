@@ -257,6 +257,25 @@ var navLinkElements = document.querySelectorAll('.nav-links a');
 var navSections = document.querySelectorAll('main > section[id]');
 var scrollTicking = false;
 
+// Slides the single nav underline to the active link. Measured against the
+// list rather than the link's offsetParent, so a change of layout or font
+// cannot leave it a few pixels off. Contact is a keycap and carries its own
+// state, so the mark steps out when Contact is the section being read.
+function placeNavMark(link) {
+    if (!navLinks) return;
+    if (!link || link.classList.contains('nav-contact')) {
+        navLinks.style.setProperty('--ishow', '0');
+        return;
+    }
+    var list = navLinks.getBoundingClientRect();
+    var rect = link.getBoundingClientRect();
+    if (!rect.width) return;
+    navLinks.style.setProperty('--ix', (rect.left - list.left).toFixed(1));
+    navLinks.style.setProperty('--iy', (rect.bottom - list.top + 4).toFixed(1));
+    navLinks.style.setProperty('--iw', rect.width.toFixed(1));
+    navLinks.style.setProperty('--ishow', '1');
+}
+
 function updateScrollUI() {
     scrollTicking = false;
     var y = window.scrollY;
@@ -272,9 +291,13 @@ function updateScrollUI() {
     if (maxScroll > 0 && y >= maxScroll - 2 && navSections.length) {
         activeId = navSections[navSections.length - 1].id;
     }
+    var activeLink = null;
     navLinkElements.forEach(function (link) {
-        link.classList.toggle('active', link.getAttribute('href') === '#' + activeId);
+        var on = link.getAttribute('href') === '#' + activeId;
+        link.classList.toggle('active', on);
+        if (on) activeLink = link;
     });
+    placeNavMark(activeLink);
     nav.classList.toggle('scrolled', y > 50);
     var progress = maxScroll > 0 ? Math.min(Math.max(y / maxScroll, 0), 1) : 0;
     scrollProgress.style.transform = 'scaleX(' + progress + ')';
@@ -289,6 +312,8 @@ function scheduleScrollUI() {
 }
 window.addEventListener('scroll', scheduleScrollUI, { passive: true });
 window.addEventListener('resize', scheduleScrollUI);
+// Link widths settle once the web fonts arrive; measure the nav mark again then.
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleScrollUI);
 updateScrollUI();
 
 // Back to top button click handler

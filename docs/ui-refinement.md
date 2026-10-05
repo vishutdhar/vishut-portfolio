@@ -101,6 +101,7 @@ Scroll is the second axis of the depth system, so a phone with no pointer still 
 
 - Roles, project cards (touch only), education entries, and testimonials are sheets driven by their own position in the viewport: hinged at the top on the way in, flat through the middle, hinged at the bottom on the way out. They only ever lean away, so nothing projects wider than its box.
 - The hero portrait tilts back and recedes as the hero scrolls off, in addition to the drift it already had.
-- The current role's timeline bead sends out a soft ring every few seconds.
+- The timeline fills with copper down to the reading line (30% from the top of the screen, the same line the nav highlight uses) and the bead of the role under that line glows. The current role's bead also sends out a soft ring every few seconds.
+- On desktop a single nav underline glides between sections instead of switching.
 - On fine pointers the keycaps lean up to 4px toward the cursor, and the VD mark turns on a hinge.
 - Everything honors reduced motion and is removed in print. Browsers without view timelines keep the previous reveal unchanged.
