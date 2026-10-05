@@ -2022,7 +2022,10 @@ div.contact-item {
            they are reading surfaces. */
         .testimonial-card,
         .education-card {
-            transition: translate 0.35s cubic-bezier(.2,.7,.2,1), box-shadow 0.35s ease;
+            transition:
+                transform 0.35s ease-out,
+                translate 0.35s cubic-bezier(.2,.7,.2,1),
+                box-shadow 0.35s ease;
         }
 
         /* `translate`, not `transform`: the scroll pass below owns transform
@@ -2228,7 +2231,11 @@ html:not(.js) .highlight {
             animation-timeline: view();
         }
 
-        @media (hover: none), screen and (max-width: 640px) {
+        /* Only where no input can hover at all. A touch-first laptop with a
+           mouse attached reports hover: none for its primary input while the
+           mouse still drives the pointer tilt, and this animation would take
+           the card's transform away from it. */
+        @media (any-hover: none) {
             .project-card {
                 animation: sheet-pass linear both;
                 animation-timeline: view();
