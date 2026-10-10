@@ -769,6 +769,10 @@ section {
     margin-bottom: 1rem;
 }
 
+.about-heading-second {
+    margin-top: 2rem;
+}
+
 .about-text p {
     color: var(--text-secondary);
     font-size: 1rem;
