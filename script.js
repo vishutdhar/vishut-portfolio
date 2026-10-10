@@ -1,16 +1,28 @@
-// Contact info obfuscation - prevents bots from scraping
+// Contact details are never in the page source as text. The email is
+// assembled when the script runs; the phone number is assembled only when a
+// person asks for it. Scrapers that load the page and read the text, with
+// or without running scripts, get "Show number" and nothing else. One tap
+// turns the button into a tel: link in place, and a second tap dials.
 (function () {
     var p = [50, 52, 56, 45, 50, 53, 50, 45, 52, 56, 51, 49];
     var e = [118, 105, 115, 104, 117, 116, 100, 104, 97, 114, 49, 57, 57, 51, 64, 103, 109, 97, 105, 108, 46, 99, 111, 109];
-    var phone = String.fromCharCode.apply(null, p);
     var email = String.fromCharCode.apply(null, e);
     var pl = document.getElementById('phone-link');
-    var pt = document.getElementById('phone-text');
     var el = document.getElementById('email-link');
     var et = document.getElementById('email-text');
-    if (pl && pt) {
-        pl.href = 'tel:' + phone;
-        pt.textContent = '(' + phone.substring(0, 3) + ') ' + phone.substring(4);
+    if (pl) {
+        pl.addEventListener('click', function reveal() {
+            var phone = String.fromCharCode.apply(null, p);
+            var link = document.createElement('a');
+            link.className = pl.className;
+            link.id = pl.id;
+            link.href = 'tel:' + phone;
+            while (pl.firstChild) link.appendChild(pl.firstChild);
+            var text = link.querySelector('#phone-text');
+            if (text) text.textContent = '(' + phone.substring(0, 3) + ') ' + phone.substring(4);
+            pl.replaceWith(link);
+            link.focus();
+        }, { once: true });
     }
     if (el && et) {
         el.href = 'mailto:' + email;
