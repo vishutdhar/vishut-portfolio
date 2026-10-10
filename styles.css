@@ -2480,6 +2480,19 @@ html:not(.js) .metric-value::after {
     border-radius: 8px;
 }
 
+/* The phone control starts life as a button and becomes a link once
+   pressed; both must be the same keycap. */
+button.contact-item {
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: inherit;
+    line-height: inherit;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    text-align: left;
+}
+
 .btn {
     min-height: 44px;
     padding: 0.7rem 1.6rem;

@@ -31,7 +31,7 @@ A professional portfolio website showcasing my experience as a Senior Supplier Q
 - **Projects** - Major achievements including $15M cost savings
 - **Education** - Academic background
 - **Testimonials** - Professional recommendations
-- **Contact** - Email, LinkedIn, phone
+- **Contact** - Email, LinkedIn, phone (shown only on tap, so it is not scraped)
 
 ## Project Structure
 
@@ -41,8 +41,8 @@ vishut-portfolio/
 ├── styles.css               # All styling (light/dark themes)
 ├── theme-init.js            # Applies the saved theme, or the system one, before first paint
 ├── script.js                # All page behavior
-├── vishut-dhar-headshot.jpg # Profile photo (JPEG fallback)
-├── vishut-dhar-headshot.webp # Profile photo (WebP)
+├── vishut-dhar-headshot.jpg # Profile photo, 800px (JPEG fallback)
+├── vishut-dhar-headshot.webp # Profile photo, 800px (WebP)
 ├── og-image.png             # Social sharing card (1200x630)
 ├── apple-touch-icon.png     # Home screen icon
 ├── icon.svg                 # Favicon (crawlable file)
