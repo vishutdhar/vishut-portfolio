@@ -2483,7 +2483,9 @@ html:not(.js) .metric-value::after {
 /* The phone control starts life as a button and becomes a link once
    pressed; both must be the same keycap. */
 button.contact-item {
-    font: inherit;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: inherit;
     line-height: inherit;
     cursor: pointer;
     appearance: none;
